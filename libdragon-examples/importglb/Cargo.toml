@@ -1,0 +1,13 @@
+[package]
+name = "importglb"
+version = "0.1.0"
+edition = "2021"
+build = "build.rs"
+rust-version.workspace = true
+
+[dependencies]
+libdragon = { path = "../../libdragon" }
+core_maths = "0.1.0"
+
+[build-dependencies]
+libdragon-build = { path = "../../libdragon-build" }
