@@ -31,7 +31,7 @@ pub const PI_STATUS: Register<u32> = Register {
 /// See [`dma_write_raw_async`](libdragon_sys::dma_write_raw_async) for details.
 #[inline]
 pub unsafe fn write_raw_async<T>(ram_address: &[T], pi_address: u32) {
-    let len = ram_address.len() * ::core::mem::size_of::<T>();
+    let len = core::mem::size_of_val(ram_address);
     unsafe {
         libdragon_sys::dma_write_raw_async(
             ram_address.as_ptr() as *const _,
@@ -48,7 +48,7 @@ pub unsafe fn write_raw_async<T>(ram_address: &[T], pi_address: u32) {
 /// See [`dma_write`](libdragon_sys::dma_write) for details.
 #[inline]
 pub fn write<T>(ram_address: &[T], pi_address: u32) {
-    let len = ram_address.len() * ::core::mem::size_of::<T>();
+    let len = core::mem::size_of_val(ram_address);
     unsafe {
         libdragon_sys::dma_write(ram_address.as_ptr() as *const _, pi_address, len as u32);
     }
@@ -64,7 +64,7 @@ pub fn write<T>(ram_address: &[T], pi_address: u32) {
 /// See [`dma_read_raw_async`](libdragon_sys::dma_read_raw_async) for details.
 #[inline]
 pub unsafe fn read_raw_async<T>(ram_address: &mut [T], pi_address: u32) {
-    let len = ram_address.len() * ::core::mem::size_of::<T>();
+    let len = core::mem::size_of_val(ram_address);
     unsafe {
         libdragon_sys::dma_read_raw_async(
             ram_address.as_mut_ptr() as *mut _,
@@ -84,7 +84,7 @@ pub unsafe fn read_raw_async<T>(ram_address: &mut [T], pi_address: u32) {
 /// See [`dma_read_async`](libdragon_sys::dma_read_async) for details.
 #[inline]
 pub unsafe fn read_async<T>(ram_address: &mut [T], pi_address: u32) {
-    let len = ram_address.len() * ::core::mem::size_of::<T>();
+    let len = core::mem::size_of_val(ram_address);
     unsafe {
         libdragon_sys::dma_read_async(ram_address.as_mut_ptr() as *mut _, pi_address, len as u32);
     }
@@ -97,7 +97,7 @@ pub unsafe fn read_async<T>(ram_address: &mut [T], pi_address: u32) {
 /// See [`dma_read`](libdragon_sys::dma_read) for details.
 #[inline]
 pub fn read<T>(ram_address: &mut [T], pi_address: u32) {
-    let len = ram_address.len() * ::core::mem::size_of::<T>();
+    let len = core::mem::size_of_val(ram_address);
     unsafe {
         libdragon_sys::dma_read(ram_address.as_ptr() as *mut _, pi_address, len as u32);
     }

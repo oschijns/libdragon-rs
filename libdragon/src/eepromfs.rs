@@ -39,6 +39,10 @@ pub struct Eepfs {
     e:     Vec<libdragon_sys::eepfs_entry_t>,
 }
 
+impl Default for Eepfs {
+    fn default() -> Self { Self::new() }
+}
+
 impl Eepfs {
     /// Create a new [Eepfs] object.
     pub fn new() -> Self {
@@ -118,7 +122,7 @@ impl Eepfs {
     pub fn read_into<S, T: AsRef<dfs::Path>>(&self, path: T, dest: &mut [S]) -> Result<()> {
         let path_bytes: &[u8] = path.as_ref().as_bytes();
         let cpath = Box::pin(CString::new(path_bytes).unwrap());
-        let size = dest.len() * ::core::mem::size_of::<S>();
+        let size = core::mem::size_of_val(dest);
         let v = unsafe { libdragon_sys::eepfs_read(cpath.as_ptr(), dest.as_ptr() as *mut _, size) };
         if v != EEPFS_ESUCCESS {
             return Err(LibDragonError::EepfsError { error: v.into() });
@@ -132,7 +136,7 @@ impl Eepfs {
     pub fn write<S, T: AsRef<dfs::Path>>(&mut self, path: T, src: &[S]) -> Result<()> {
         let path_bytes: &[u8] = path.as_ref().as_bytes();
         let cpath = Box::pin(CString::new(path_bytes).unwrap());
-        let size = src.len() * ::core::mem::size_of::<S>();
+        let size = core::mem::size_of_val(src);
         let v =
             unsafe { libdragon_sys::eepfs_write(cpath.as_ptr(), src.as_ptr() as *const _, size) };
         if v != EEPFS_ESUCCESS {

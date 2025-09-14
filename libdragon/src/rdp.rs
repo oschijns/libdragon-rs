@@ -40,27 +40,27 @@ pub const DP_TMEM_BUSY: Register<u32> = Register {
 /// Status bits (reading DP_STATUS)
 
 /// DP is using DMEM DMA
-pub const DP_STATUS_DMEM_DMA: u32 = libdragon_sys::DP_STATUS_DMEM_DMA as u32;
+pub const DP_STATUS_DMEM_DMA: u32 = libdragon_sys::DP_STATUS_DMEM_DMA;
 /// DP is frozen
-pub const DP_STATUS_FREEZE: u32 = libdragon_sys::DP_STATUS_FREEZE as u32;
+pub const DP_STATUS_FREEZE: u32 = libdragon_sys::DP_STATUS_FREEZE;
 /// DP is flushed
-pub const DP_STATUS_FLUSH: u32 = libdragon_sys::DP_STATUS_FLUSH as u32;
+pub const DP_STATUS_FLUSH: u32 = libdragon_sys::DP_STATUS_FLUSH;
 /// DP GCLK is busy
-pub const DP_STATUS_GCLK_ALIVE: u32 = libdragon_sys::DP_STATUS_GCLK_ALIVE as u32;
+pub const DP_STATUS_GCLK_ALIVE: u32 = libdragon_sys::DP_STATUS_GCLK_ALIVE;
 /// DP TMEM is busy
-pub const DP_STATUS_TMEM_BUSY: u32 = libdragon_sys::DP_STATUS_TMEM_BUSY as u32;
+pub const DP_STATUS_TMEM_BUSY: u32 = libdragon_sys::DP_STATUS_TMEM_BUSY;
 /// DP pipeline is busy
-pub const DP_STATUS_PIPE_BUSY: u32 = libdragon_sys::DP_STATUS_PIPE_BUSY as u32;
+pub const DP_STATUS_PIPE_BUSY: u32 = libdragon_sys::DP_STATUS_PIPE_BUSY;
 /// DP command unit is busy
-pub const DP_STATUS_BUSY: u32 = libdragon_sys::DP_STATUS_BUSY as u32;
+pub const DP_STATUS_BUSY: u32 = libdragon_sys::DP_STATUS_BUSY;
 /// DP command buffer is ready
-pub const DP_STATUS_BUFFER_READY: u32 = libdragon_sys::DP_STATUS_BUFFER_READY as u32;
+pub const DP_STATUS_BUFFER_READY: u32 = libdragon_sys::DP_STATUS_BUFFER_READY;
 /// DP DMA is busy
-pub const DP_STATUS_DMA_BUSY: u32 = libdragon_sys::DP_STATUS_DMA_BUSY as u32;
+pub const DP_STATUS_DMA_BUSY: u32 = libdragon_sys::DP_STATUS_DMA_BUSY;
 /// DP command end register is valid
-pub const DP_STATUS_END_VALID: u32 = libdragon_sys::DP_STATUS_END_VALID as u32;
+pub const DP_STATUS_END_VALID: u32 = libdragon_sys::DP_STATUS_END_VALID;
 /// DP command start register is valid
-pub const DP_STATUS_START_VALID: u32 = libdragon_sys::DP_STATUS_START_VALID as u32;
+pub const DP_STATUS_START_VALID: u32 = libdragon_sys::DP_STATUS_START_VALID;
 
 /// Write status bits (writing DP_STATUS)
 
@@ -146,7 +146,7 @@ pub fn load_texture(texslot: u32, texloc: u32, mirror: Mirror, sprite: &Sprite) 
             texloc,
             mirror.into(),
             sprite.as_const_sprite_s() as *mut libdragon_sys::sprite_t,
-        ) as u32
+        )
     }
 }
 
@@ -167,7 +167,7 @@ pub fn load_texture_stride(
             mirror.into(),
             sprite.as_const_sprite_s() as *mut libdragon_sys::sprite_t,
             offset,
-        ) as u32
+        )
     }
 }
 
@@ -183,6 +183,7 @@ pub fn draw_textured_rectangle(texslot: u32, tx: i32, ty: i32, bx: i32, by: i32,
 /// Draw a textured rectangle with a scaled texture
 ///
 /// See [`rdp_draw_textured_rectangle_scaled`](libdragon_sys::rdp_draw_textured_rectangle_scaled)
+#[allow(clippy::too_many_arguments)]
 pub fn draw_textured_rectangle_scaled(
     texslot: u32,
     tx: i32,

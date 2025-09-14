@@ -36,20 +36,34 @@ After applying _clippy_'s changes, we can rerun all the examples to guarantee no
 
 | Example     | Compile | Run     | Remark |
 |-------------|---------|---------|--------|
-| a440        |         |         |        |
-| audioplayer |         |         |        |
-| customfont  |         |         |        |
-| dfstest     |         |         |        |
-| fontdemo    |         |         |        |
-| gldemo      |         |         |        |
-| importglb   |         |         |        |
-| joypadtest  |         |         |        |
-| mixertest   |         |         |        |
-| rdpqtest    |         |         |        |
-| rspqdemo    |         |         |        |
-| spritemap   |         |         |        |
-| test        |         |         |        |
-| vtest       |         |         |        |
+| a440        | Ok      | Ok      |        |
+| audioplayer | Ok      | Ok      |        |
+| customfont  | Ok      | Ok      |        |
+| dfstest     | Ok      | Ok      |        |
+| fontdemo    | Ok      | Ok      |        |
+| gldemo      | Ok      | Ok      |        |
+| importglb   | Ok      | Ok      |        |
+| joypadtest  | Ok      | Ok      |        |
+| mixertest   | Ok      | Ok      |        |
+| rdpqtest    | Ok      | Ok      |        |
+| rspqdemo    | Ok      | Ok      |        |
+| spritemap   | Ok      | Ok      |        |
+| test        | Ok      | Ok      |        |
+| vtest       | Ok      | Ok      |        |
+
+### Notes:
+One of _clippy_ suggestion caused an error on music playback.
+
+```
+// replacing
+if let Some(_) = core::mem::replace(&mut self.backing_instance, None) { ... }
+
+// by
+if self.backing_instance.take().is_some() { ... }
+
+// caused
+AI reading from RDRAM address 0xa9490 which is modified in the cache (missing cache writeback?) on Arcade_S900.xm64
+```
 
 
 ## Upgrading the Rust's toolchain

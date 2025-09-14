@@ -185,7 +185,10 @@ impl Xm64 {
 
 impl Drop for Xm64 {
     /// Uses [`xm64player_close`](libdragon_sys::xm64player_close).
+    #[allow(clippy::redundant_pattern_matching)]
+    #[allow(clippy::mem_replace_option_with_none)]
     fn drop(&mut self) {
+        // For some reason, the player will crash if we do not explicitely call `mem::replace` on the instance.
         if let Some(_) = core::mem::replace(&mut self.backing_instance, None) {
             // free callback memory
             if let Some(ctx) = self.effect_callback {

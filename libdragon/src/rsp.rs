@@ -30,86 +30,86 @@ pub const SP_SEMAPHORE: Register<u32> = Register {
 };
 
 /// SP halted
-pub const SP_STATUS_HALTED: u32 = libdragon_sys::SP_STATUS_HALTED as u32;
+pub const SP_STATUS_HALTED: u32 = libdragon_sys::SP_STATUS_HALTED;
 /// SP executed a break instruction
-pub const SP_STATUS_BROKE: u32 = libdragon_sys::SP_STATUS_BROKE as u32;
+pub const SP_STATUS_BROKE: u32 = libdragon_sys::SP_STATUS_BROKE;
 /// SP DMA busy
-pub const SP_STATUS_DMA_BUSY: u32 = libdragon_sys::SP_STATUS_DMA_BUSY as u32;
+pub const SP_STATUS_DMA_BUSY: u32 = libdragon_sys::SP_STATUS_DMA_BUSY;
 /// SP DMA full
-pub const SP_STATUS_DMA_FULL: u32 = libdragon_sys::SP_STATUS_DMA_FULL as u32;
+pub const SP_STATUS_DMA_FULL: u32 = libdragon_sys::SP_STATUS_DMA_FULL;
 /// SP IO busy
-pub const SP_STATUS_IO_BUSY: u32 = libdragon_sys::SP_STATUS_IO_BUSY as u32;
+pub const SP_STATUS_IO_BUSY: u32 = libdragon_sys::SP_STATUS_IO_BUSY;
 /// SP is in a single step mode
-pub const SP_STATUS_SSTEP: u32 = libdragon_sys::SP_STATUS_SSTEP as u32;
+pub const SP_STATUS_SSTEP: u32 = libdragon_sys::SP_STATUS_SSTEP;
 /// SP generate interrupt when hit a break instruction
-pub const SP_STATUS_INTERRUPT_ON_BREAK: u32 = libdragon_sys::SP_STATUS_INTERRUPT_ON_BREAK as u32;
+pub const SP_STATUS_INTERRUPT_ON_BREAK: u32 = libdragon_sys::SP_STATUS_INTERRUPT_ON_BREAK;
 /// SP signal 0 is set
-pub const SP_STATUS_SIG0: u32 = libdragon_sys::SP_STATUS_SIG0 as u32;
+pub const SP_STATUS_SIG0: u32 = libdragon_sys::SP_STATUS_SIG0;
 /// SP signal 1 is set
-pub const SP_STATUS_SIG1: u32 = libdragon_sys::SP_STATUS_SIG1 as u32;
+pub const SP_STATUS_SIG1: u32 = libdragon_sys::SP_STATUS_SIG1;
 /// SP signal 2 is set
-pub const SP_STATUS_SIG2: u32 = libdragon_sys::SP_STATUS_SIG2 as u32;
+pub const SP_STATUS_SIG2: u32 = libdragon_sys::SP_STATUS_SIG2;
 /// SP signal 3 is set
-pub const SP_STATUS_SIG3: u32 = libdragon_sys::SP_STATUS_SIG3 as u32;
+pub const SP_STATUS_SIG3: u32 = libdragon_sys::SP_STATUS_SIG3;
 /// SP signal 4 is set
-pub const SP_STATUS_SIG4: u32 = libdragon_sys::SP_STATUS_SIG4 as u32;
+pub const SP_STATUS_SIG4: u32 = libdragon_sys::SP_STATUS_SIG4;
 /// SP signal 5 is set
-pub const SP_STATUS_SIG5: u32 = libdragon_sys::SP_STATUS_SIG5 as u32;
+pub const SP_STATUS_SIG5: u32 = libdragon_sys::SP_STATUS_SIG5;
 /// SP signal 6 is set
-pub const SP_STATUS_SIG6: u32 = libdragon_sys::SP_STATUS_SIG6 as u32;
+pub const SP_STATUS_SIG6: u32 = libdragon_sys::SP_STATUS_SIG6;
 /// SP signal 7 is set
-pub const SP_STATUS_SIG7: u32 = libdragon_sys::SP_STATUS_SIG7 as u32;
+pub const SP_STATUS_SIG7: u32 = libdragon_sys::SP_STATUS_SIG7;
 
 /// SP_STATUS write mask: clear #SP_STATUS_HALTED bit
-pub const SP_WSTATUS_CLEAR_HALT: u32 = libdragon_sys::SP_WSTATUS_CLEAR_HALT as u32;
+pub const SP_WSTATUS_CLEAR_HALT: u32 = libdragon_sys::SP_WSTATUS_CLEAR_HALT;
 /// SP_STATUS write mask: set #SP_STATUS_HALTED bit
-pub const SP_WSTATUS_SET_HALT: u32 = libdragon_sys::SP_WSTATUS_SET_HALT as u32;
+pub const SP_WSTATUS_SET_HALT: u32 = libdragon_sys::SP_WSTATUS_SET_HALT;
 /// SP_STATUS write mask: clear BROKE bit
-pub const SP_WSTATUS_CLEAR_BROKE: u32 = libdragon_sys::SP_WSTATUS_CLEAR_BROKE as u32;
+pub const SP_WSTATUS_CLEAR_BROKE: u32 = libdragon_sys::SP_WSTATUS_CLEAR_BROKE;
 /// SP_STATUS write mask: clear INTR bit
-pub const SP_WSTATUS_CLEAR_INTR: u32 = libdragon_sys::SP_WSTATUS_CLEAR_INTR as u32;
+pub const SP_WSTATUS_CLEAR_INTR: u32 = libdragon_sys::SP_WSTATUS_CLEAR_INTR;
 /// SP_STATUS write mask: set HALT bit
-pub const SP_WSTATUS_SET_INTR: u32 = libdragon_sys::SP_WSTATUS_SET_INTR as u32;
+pub const SP_WSTATUS_SET_INTR: u32 = libdragon_sys::SP_WSTATUS_SET_INTR;
 /// SP_STATUS write mask: clear SSTEP bit
-pub const SP_WSTATUS_CLEAR_SSTEP: u32 = libdragon_sys::SP_WSTATUS_CLEAR_SSTEP as u32;
+pub const SP_WSTATUS_CLEAR_SSTEP: u32 = libdragon_sys::SP_WSTATUS_CLEAR_SSTEP;
 /// SP_STATUS write mask: set SSTEP bit
-pub const SP_WSTATUS_SET_SSTEP: u32 = libdragon_sys::SP_WSTATUS_SET_SSTEP as u32;
+pub const SP_WSTATUS_SET_SSTEP: u32 = libdragon_sys::SP_WSTATUS_SET_SSTEP;
 /// SP_STATUS write mask: clear #SP_STATUS_INTERRUPT_ON_BREAK bit
-pub const SP_WSTATUS_CLEAR_INTR_BREAK: u32 = libdragon_sys::SP_WSTATUS_CLEAR_INTR_BREAK as u32;
+pub const SP_WSTATUS_CLEAR_INTR_BREAK: u32 = libdragon_sys::SP_WSTATUS_CLEAR_INTR_BREAK;
 /// SP_STATUS write mask: set SSTEP bit
-pub const SP_WSTATUS_SET_INTR_BREAK: u32 = libdragon_sys::SP_WSTATUS_SET_INTR_BREAK as u32;
+pub const SP_WSTATUS_SET_INTR_BREAK: u32 = libdragon_sys::SP_WSTATUS_SET_INTR_BREAK;
 /// SP_STATUS write mask: clear SIG0 bit
-pub const SP_WSTATUS_CLEAR_SIG0: u32 = libdragon_sys::SP_WSTATUS_CLEAR_SIG0 as u32;
+pub const SP_WSTATUS_CLEAR_SIG0: u32 = libdragon_sys::SP_WSTATUS_CLEAR_SIG0;
 /// SP_STATUS write mask: set SIG0 bit
-pub const SP_WSTATUS_SET_SIG0: u32 = libdragon_sys::SP_WSTATUS_SET_SIG0 as u32;
+pub const SP_WSTATUS_SET_SIG0: u32 = libdragon_sys::SP_WSTATUS_SET_SIG0;
 /// SP_STATUS write mask: clear SIG1 bit
-pub const SP_WSTATUS_CLEAR_SIG1: u32 = libdragon_sys::SP_WSTATUS_CLEAR_SIG1 as u32;
+pub const SP_WSTATUS_CLEAR_SIG1: u32 = libdragon_sys::SP_WSTATUS_CLEAR_SIG1;
 /// SP_STATUS write mask: set SIG1 bit
-pub const SP_WSTATUS_SET_SIG1: u32 = libdragon_sys::SP_WSTATUS_SET_SIG1 as u32;
+pub const SP_WSTATUS_SET_SIG1: u32 = libdragon_sys::SP_WSTATUS_SET_SIG1;
 /// SP_STATUS write mask: clear SIG2 bit
-pub const SP_WSTATUS_CLEAR_SIG2: u32 = libdragon_sys::SP_WSTATUS_CLEAR_SIG2 as u32;
+pub const SP_WSTATUS_CLEAR_SIG2: u32 = libdragon_sys::SP_WSTATUS_CLEAR_SIG2;
 /// SP_STATUS write mask: set SIG2 bit
-pub const SP_WSTATUS_SET_SIG2: u32 = libdragon_sys::SP_WSTATUS_SET_SIG2 as u32;
+pub const SP_WSTATUS_SET_SIG2: u32 = libdragon_sys::SP_WSTATUS_SET_SIG2;
 /// SP_STATUS write mask: clear SIG3 bit
-pub const SP_WSTATUS_CLEAR_SIG3: u32 = libdragon_sys::SP_WSTATUS_CLEAR_SIG3 as u32;
+pub const SP_WSTATUS_CLEAR_SIG3: u32 = libdragon_sys::SP_WSTATUS_CLEAR_SIG3;
 /// SP_STATUS write mask: set SIG3 bit
-pub const SP_WSTATUS_SET_SIG3: u32 = libdragon_sys::SP_WSTATUS_SET_SIG3 as u32;
+pub const SP_WSTATUS_SET_SIG3: u32 = libdragon_sys::SP_WSTATUS_SET_SIG3;
 /// SP_STATUS write mask: clear SIG4 bit
-pub const SP_WSTATUS_CLEAR_SIG4: u32 = libdragon_sys::SP_WSTATUS_CLEAR_SIG4 as u32;
+pub const SP_WSTATUS_CLEAR_SIG4: u32 = libdragon_sys::SP_WSTATUS_CLEAR_SIG4;
 /// SP_STATUS write mask: set SIG4 bit
-pub const SP_WSTATUS_SET_SIG4: u32 = libdragon_sys::SP_WSTATUS_SET_SIG4 as u32;
+pub const SP_WSTATUS_SET_SIG4: u32 = libdragon_sys::SP_WSTATUS_SET_SIG4;
 /// SP_STATUS write mask: clear SIG5 bit
-pub const SP_WSTATUS_CLEAR_SIG5: u32 = libdragon_sys::SP_WSTATUS_CLEAR_SIG5 as u32;
+pub const SP_WSTATUS_CLEAR_SIG5: u32 = libdragon_sys::SP_WSTATUS_CLEAR_SIG5;
 /// SP_STATUS write mask: set SIG5 bit
-pub const SP_WSTATUS_SET_SIG5: u32 = libdragon_sys::SP_WSTATUS_SET_SIG5 as u32;
+pub const SP_WSTATUS_SET_SIG5: u32 = libdragon_sys::SP_WSTATUS_SET_SIG5;
 /// SP_STATUS write mask: clear SIG6 bit
-pub const SP_WSTATUS_CLEAR_SIG6: u32 = libdragon_sys::SP_WSTATUS_CLEAR_SIG6 as u32;
+pub const SP_WSTATUS_CLEAR_SIG6: u32 = libdragon_sys::SP_WSTATUS_CLEAR_SIG6;
 /// SP_STATUS write mask: set SIG6 bit
-pub const SP_WSTATUS_SET_SIG6: u32 = libdragon_sys::SP_WSTATUS_SET_SIG6 as u32;
+pub const SP_WSTATUS_SET_SIG6: u32 = libdragon_sys::SP_WSTATUS_SET_SIG6;
 /// SP_STATUS write mask: clear SIG7 bit
-pub const SP_WSTATUS_CLEAR_SIG7: u32 = libdragon_sys::SP_WSTATUS_CLEAR_SIG7 as u32;
+pub const SP_WSTATUS_CLEAR_SIG7: u32 = libdragon_sys::SP_WSTATUS_CLEAR_SIG7;
 /// SP_STATUS write mask: set SIG7 bit
-pub const SP_WSTATUS_SET_SIG7: u32 = libdragon_sys::SP_WSTATUS_SET_SIG7 as u32;
+pub const SP_WSTATUS_SET_SIG7: u32 = libdragon_sys::SP_WSTATUS_SET_SIG7;
 
 /// Snapshot of the registers status of the RSP.
 ///
@@ -143,7 +143,7 @@ pub type RspUcodeT = libdragon_sys::rsp_ucode_t;
 #[macro_export]
 macro_rules! define_rsp_ucode {
     ($sname:ident) => {
-        crate::paste! {
+        $crate::paste! {
             extern "C" {
                 static mut [<$sname _text_start>]: ::core::ffi::c_uchar;
                 static mut [<$sname _text_end>]: ::core::ffi::c_void;
@@ -241,7 +241,7 @@ pub fn wait() {
 ///
 /// See [`rsp_load_code`](libdragon_sys::rsp_load_code) for details.
 pub fn load_code<T>(code: &mut [T], imem_offset: usize) {
-    let sz = code.len() * ::core::mem::size_of::<T>();
+    let sz = core::mem::size_of_val(code);
     unsafe {
         libdragon_sys::rsp_load_code(
             code.as_mut_ptr() as *mut ::core::ffi::c_void,
@@ -255,7 +255,7 @@ pub fn load_code<T>(code: &mut [T], imem_offset: usize) {
 ///
 /// See [`rsp_load_data`](libdragon_sys::rsp_load_data) for details.
 pub fn load_data<T>(data: &mut [T], dmem_offset: usize) {
-    let sz = data.len() * ::core::mem::size_of::<T>();
+    let sz = core::mem::size_of_val(data);
     unsafe {
         libdragon_sys::rsp_load_data(
             data.as_mut_ptr() as *mut ::core::ffi::c_void,

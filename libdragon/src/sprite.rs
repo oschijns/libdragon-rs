@@ -3,6 +3,7 @@ use crate::*;
 /// Wrapper for LibDragon's Sprite structure.
 ///
 /// See [`sprite_t`](libdragon_sys::sprite_t) for details.
+#[allow(clippy::box_collection)]
 pub struct Sprite<'a> {
     ptr:     *mut libdragon_sys::sprite_t,
     _data:   Option<core::pin::Pin<Box<Vec<u8>>>>,
@@ -46,17 +47,17 @@ impl<'a> Sprite<'a> {
     /// Load a sprite from a buffer
     ///
     /// See [`sprite_load_buf`](libdragon_sys::sprite_load_buf) for details.
-    pub fn load_buf<'b, T>(buf: &'b mut [T]) -> Sprite<'b> {
+    pub fn load_buf<T>(buf: &mut [T]) -> Sprite<'_> {
         let ptr = unsafe {
             libdragon_sys::sprite_load_buf(
                 buf.as_mut_ptr() as *mut _,
-                (buf.len() * core::mem::size_of::<T>()) as i32,
+                core::mem::size_of_val(buf) as i32,
             )
         };
 
         Sprite {
             ptr,
-            _data:   None,
+            _data: None,
             phantom: core::marker::PhantomData,
         }
     }
@@ -168,7 +169,9 @@ impl<'a> Sprite<'a> {
             sprite_get_detail_pixels_r(
                 surface.as_mut_ptr(),
                 self.ptr,
-                info.map_or(::core::ptr::null_mut(), |p| core::mem::transmute(p)),
+                info.map_or(::core::ptr::null_mut(), |p| {
+                    p as *mut sprite::SpriteDetail as *mut libdragon_sys::sprite_detail_s
+                }),
                 &mut parms.into(),
             );
         }

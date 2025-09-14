@@ -47,7 +47,7 @@ impl DyLib {
 
         let handle = unsafe { libdragon_sys::dlopen(cpath.as_ptr(), flags.bits() as i32) };
 
-        if handle == ::core::ptr::null_mut() {
+        if handle.is_null() {
             return Err(LibDragonError::DlError {
                 error: Error::DlOpenError,
             });
@@ -64,7 +64,7 @@ impl DyLib {
 
         let ptr = unsafe { libdragon_sys::dlsym(self.handle, c_name.as_ptr()) };
 
-        if ptr == ::core::ptr::null_mut() {
+        if ptr.is_null() {
             return Err(LibDragonError::DlError {
                 error: Error::DlSymError,
             });
@@ -94,6 +94,7 @@ impl TryFrom<*mut ::core::ffi::c_void> for SymbolInfo {
     /// Convert address to symbol
     ///
     /// See [`dladdr`](libdragon_sys::dladdr) for details.
+    #[allow(clippy::not_unsafe_ptr_arg_deref)]
     fn try_from(addr: *mut ::core::ffi::c_void) -> core::result::Result<Self, Self::Error> {
         let mut info: core::mem::MaybeUninit<libdragon_sys::Dl_info> =
             core::mem::MaybeUninit::uninit();

@@ -68,7 +68,7 @@ extern "C" fn timer_callback(ovfl: ::core::ffi::c_int, ctx: *mut ::core::ffi::c_
     };
 
     // call user code
-    (cb.user_callback)(ovfl as i32);
+    (cb.user_callback)(ovfl);
 
     // leak the pointer again for the next call
     let _ = Box::leak(cb);
@@ -117,9 +117,9 @@ impl Timer {
     }
 
     fn free_context(&mut self) {
-        if let Some(ptr) = core::mem::replace(&mut self.ctx, None) {
+        if let Some(ptr) = self.ctx.take() {
             // creating a Box and then dropping it will free the TimerCallback memory
-            let _ = unsafe { Box::from_raw(ptr as *mut TimerCallback) };
+            let _ = unsafe { Box::from_raw(ptr) };
         }
     }
 

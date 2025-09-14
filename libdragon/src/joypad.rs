@@ -166,7 +166,7 @@ pub fn poll() {
 /// Rust-specific: convenience function to iterate through all Joypad ports
 ///
 /// See the `joypadtest` example application for a demonstration
-pub fn foreach(cb: impl Fn(Port) -> ()) {
+pub fn foreach(cb: impl Fn(Port)) {
     for port in 0..libdragon_sys::JOYPAD_PORT_COUNT as usize {
         cb(Port::get(port));
     }

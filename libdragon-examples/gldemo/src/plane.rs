@@ -48,7 +48,7 @@ impl Plane {
 
         Self {
             plane_buffers,
-            plane_array:       plane_array[0],
+            plane_array: plane_array[0],
             plane_index_count: 0,
         }
     }

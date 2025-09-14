@@ -30,7 +30,7 @@ pub fn present() -> EepromType { unsafe { libdragon_sys::eeprom_present().into()
 ///
 /// See [`eeprom_total_blocks`](libdragon_sys::eeprom_total_blocks) for details
 #[inline]
-pub fn total_blocks() -> usize { unsafe { libdragon_sys::eeprom_total_blocks() as usize } }
+pub fn total_blocks() -> usize { unsafe { libdragon_sys::eeprom_total_blocks() } }
 
 /// Read a block from EEPROM
 ///

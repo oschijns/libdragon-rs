@@ -55,7 +55,7 @@ impl Model64<'_> {
 
         let ptr = unsafe { libdragon_sys::model64_load(cpath.as_ptr()) };
 
-        if ptr == ::core::ptr::null_mut() {
+        if ptr.is_null() {
             // TODO a different error code?
             return Err(LibDragonError::DfsError {
                 error: dfs::DfsError::NotFound,
@@ -71,25 +71,13 @@ impl Model64<'_> {
     /// Load a sprite from a buffer
     ///
     /// See [`model64_load_buf`](libdragon_sys::model64_load_buf) for details.
-    pub fn load_buf<'a, T>(buf: &'a mut [T]) -> Model64<'a> {
+    pub fn load_buf<T>(buf: &mut [T]) -> Model64<'_> {
         let ptr = unsafe {
             libdragon_sys::model64_load_buf(
                 buf.as_mut_ptr() as *mut _,
-                (buf.len() * core::mem::size_of::<T>()) as i32,
+                core::mem::size_of_val(buf) as i32,
             )
         };
-
-        Model64 {
-            ptr,
-            phantom: core::marker::PhantomData,
-        }
-    }
-
-    /// Clone a Model64
-    ///
-    /// See [`model64_clone`](libdragon_sys::model64_clone) for details.
-    pub fn clone<'a>(&self) -> Model64<'a> {
-        let ptr = unsafe { libdragon_sys::model64_clone(self.ptr) };
 
         Model64 {
             ptr,
@@ -109,7 +97,7 @@ impl Model64<'_> {
     ///
     /// See [`model64_get_mesh`](libdragon_sys::model64_get_mesh) for details.
     #[inline]
-    pub fn get_mesh<'a>(&'a self, mesh_index: usize) -> Mesh<'a> {
+    pub fn get_mesh(&self, mesh_index: usize) -> Mesh<'_> {
         let ptr = unsafe { libdragon_sys::model64_get_mesh(self.ptr, mesh_index as u32) };
 
         Mesh {
@@ -130,13 +118,13 @@ impl Model64<'_> {
     ///
     /// See [`model64_get_node`](libdragon_sys::model64_get_node) for details.
     #[inline]
-    pub fn get_node<'a>(&'a self, node_index: usize) -> Model64Node<'a> {
+    pub fn get_node(&self, node_index: usize) -> Model64Node<'_> {
         let ptr = unsafe { libdragon_sys::model64_get_node(self.ptr, node_index as u32) };
 
         Model64Node {
             ptr,
             model_ptr: self.ptr,
-            phantom:   core::marker::PhantomData,
+            phantom: core::marker::PhantomData,
         }
     }
 
@@ -146,13 +134,13 @@ impl Model64<'_> {
         let c_name = CString::new(name).unwrap();
         let ptr = unsafe { libdragon_sys::model64_search_node(self.ptr, c_name.as_ptr()) };
 
-        if ptr == core::ptr::null_mut() {
+        if ptr.is_null() {
             return None;
         }
         Some(Model64Node {
             ptr,
             model_ptr: self.ptr,
-            phantom:   core::marker::PhantomData,
+            phantom: core::marker::PhantomData,
         })
     }
 
@@ -261,6 +249,20 @@ impl Model64<'_> {
     }
 }
 
+impl<'a> Clone for Model64<'a> {
+    /// Clone a Model64
+    ///
+    /// See [`model64_clone`](libdragon_sys::model64_clone) for details.
+    fn clone(&self) -> Model64<'a> {
+        let ptr = unsafe { libdragon_sys::model64_clone(self.ptr) };
+
+        Model64 {
+            ptr,
+            phantom: core::marker::PhantomData,
+        }
+    }
+}
+
 impl Drop for Model64<'_> {
     /// Free the Model64 memory
     ///
@@ -285,7 +287,7 @@ impl Mesh<'_> {
     ///
     /// See [`model64_get_primitive`](libdragon_sys::model64_get_primitive) for details.
     #[inline]
-    pub fn get_primitive<'a>(&'a self, primitive_index: u32) -> Primitive<'a> {
+    pub fn get_primitive(&self, primitive_index: u32) -> Primitive<'_> {
         let ptr = unsafe { libdragon_sys::model64_get_primitive(self.ptr, primitive_index) };
         Primitive {
             ptr,

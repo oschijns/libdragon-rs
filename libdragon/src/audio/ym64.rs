@@ -103,29 +103,31 @@ impl Ym64 {
     }
 
     /// See [`struct ym64player_t`](libdragon_sys::ym64player_t) for details.
-    pub fn nframes(&self) -> u32 { unsafe { (*self.ptr).nframes as u32 } }
+    pub fn nframes(&self) -> u32 { unsafe { (*self.ptr).nframes } }
     pub fn curframe(&self) -> i32 { unsafe { (*self.ptr).curframe } }
     pub fn first_ch(&self) -> i32 { unsafe { (*self.ptr).first_ch } }
 
     /// See [`string ym64player_songinfo_t`](libdragon_sys::ym64player_songinfo_t)
     pub fn name(&self) -> Result<&str> {
-        let name_str = unsafe { CStr::from_ptr(self.song_info.name.as_ptr() as *const i8) };
+        let name_str = unsafe { CStr::from_ptr(self.song_info.name.as_ptr()) };
         Ok(name_str.to_str()?)
     }
 
     pub fn author(&self) -> Result<&str> {
-        let author_str = unsafe { CStr::from_ptr(self.song_info.author.as_ptr() as *const i8) };
+        let author_str = unsafe { CStr::from_ptr(self.song_info.author.as_ptr()) };
         Ok(author_str.to_str()?)
     }
 
     pub fn comment(&self) -> Result<&str> {
-        let comment_str = unsafe { CStr::from_ptr(self.song_info.comment.as_ptr() as *const i8) };
+        let comment_str = unsafe { CStr::from_ptr(self.song_info.comment.as_ptr()) };
         Ok(comment_str.to_str()?)
     }
 }
 
 impl Drop for Ym64 {
     /// Uses [`ym64player_close`](libdragon_sys::ym64player_close).
+    #[allow(clippy::redundant_pattern_matching)]
+    #[allow(clippy::mem_replace_option_with_none)]
     fn drop(&mut self) {
         if let Some(_) = core::mem::replace(&mut self.backing_instance, None) {
             unsafe {

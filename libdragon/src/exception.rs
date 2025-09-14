@@ -186,7 +186,7 @@ impl Exception {
     }
     /// Access [`exception_t.regs`](libdragon_sys::exception_t::regs).
     #[inline]
-    pub fn regs<'a>(&'a self) -> RegBlock<'a> {
+    pub fn regs(&self) -> RegBlock<'_> {
         RegBlock {
             ptr:     unsafe { (*self.ptr).regs },
             phantom: core::marker::PhantomData,

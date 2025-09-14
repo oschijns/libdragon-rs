@@ -104,7 +104,7 @@ pub fn get_buffer_length() -> usize { unsafe { libdragon_sys::audio_get_buffer_l
 ///
 /// See [`audio_write_begin`](libdragon_sys::audio_write_begin) and
 /// [`audio_write_end`](libdragon_sys::audio_write_end) for details.
-pub fn write<F: FnMut(&mut [i16]) -> ()>(mut cb: F) {
+pub fn write<F: FnMut(&mut [i16])>(mut cb: F) {
     let size = get_buffer_length() * 2;
     let buf = unsafe {
         let ptr = libdragon_sys::audio_write_begin(); // blocking call

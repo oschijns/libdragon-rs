@@ -17,6 +17,10 @@ pub struct SampleBuffer {
     waveform_read:    Option<*mut WaveformReadInternal>,
 }
 
+impl Default for SampleBuffer {
+    fn default() -> Self { Self::new() }
+}
+
 impl SampleBuffer {
     /// Create a new, uninitialized SampleBuffer. This buffer has no
     /// backing memory and cannot be used until [SampleBuffer::init] is called.
@@ -36,6 +40,7 @@ impl SampleBuffer {
     /// This function has no equivalent in LibDragon. Here, memory is allocated
     /// of size `size` in bytes and the sample buffer is initialized. If [SampleBuffer::close] is
     /// called on this object, then it can still be used after a new call to [SampleBuffer::init].
+    #[allow(clippy::cmp_null)]
     pub fn new_with_capacity(size: usize) -> Self {
         let buf: &mut [u8] = unsafe {
             let mem = libdragon_sys::malloc_uncached_aligned(8, size) as *mut _;
@@ -70,7 +75,7 @@ impl SampleBuffer {
     /// See [`samplebuffer_init`](libdragon_sys::samplebuffer_init) for details.
     pub fn init<'a>(&'a mut self, uncached_mem: &'a mut [u8]) {
         // free backed memory
-        if let Some(ptr) = core::mem::replace(&mut self.owned_memory, None) {
+        if let Some(ptr) = self.owned_memory.take() {
             unsafe {
                 libdragon_sys::free_uncached(ptr as *mut ::core::ffi::c_void);
             }
@@ -154,7 +159,7 @@ impl SampleBuffer {
     /// of the returned slice provides that information.
     ///
     /// See [`samplebuffer_get`](libdragon_sys::samplebuffer_get) for details.
-    pub fn get<'a, T>(&'a self, wpos: usize, wlen: usize) -> &'a [T] {
+    pub fn get<T>(&self, wpos: usize, wlen: usize) -> &[T] {
         unsafe {
             let mut i: i32 = wlen as i32;
             let ptr = libdragon_sys::samplebuffer_get(self.ptr, wpos as i32, &mut i as *mut _);
@@ -165,7 +170,7 @@ impl SampleBuffer {
     /// Append samples into the buffer (zero-copy).
     ///
     /// See [`samplebuffer_append`](libdragon_sys::samplebuffer_append) for details.
-    pub fn append<'a, T>(&'a mut self, wlen: usize) -> &'a mut [T] {
+    pub fn append<T>(&mut self, wlen: usize) -> &mut [T] {
         unsafe {
             let ptr = libdragon_sys::samplebuffer_append(self.ptr, wlen as i32);
             core::slice::from_raw_parts_mut(ptr as *mut _, wlen)

@@ -45,7 +45,7 @@ impl MemPak {
     /// See [`read_mempak_sector`](libdragon_sys::read_mempak_sector) for details.
     #[inline]
     pub fn read_sector_into<T>(&self, sector: usize, dest: &mut [T]) -> Result<()> {
-        let size = dest.len() * ::core::mem::size_of::<T>();
+        let size = core::mem::size_of_val(dest);
         assert!(
             size >= BLOCK_SIZE,
             "dest slice must be at least BLOCK_SIZE bytes"
@@ -166,7 +166,7 @@ impl Entry {
     /// See [`write_mempak_entry_data`](libdragon_sys::write_mempak_entry_data) for details.
     pub fn write_data<T>(&mut self, src: &mut [T]) -> Result<()> {
         let required_size = self.blocks() * BLOCK_SIZE;
-        let size = src.len() * ::core::mem::size_of::<T>();
+        let size = core::mem::size_of_val(src);
         assert!(
             size >= required_size,
             "src data must be at least (blocks() * BLOCK_SIZE) bytes"

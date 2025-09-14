@@ -73,7 +73,9 @@ impl<'a> App<'a> {
             // render mode, and then restore it at the end.
             rdpq::mode_push();
             rdpq::mode_tlut(rdpq::Tlut::Rgba16);
-            rdpq::tex_upload_tlut(tiles_sprite.get_palette(), 0, 16);
+            unsafe {
+                rdpq::tex_upload_tlut(tiles_sprite.get_palette(), 0, 16);
+            }
             tlut = true;
         }
 
@@ -119,8 +121,8 @@ impl<'a> App<'a> {
             _tiles_sprite: tiles_sprite, // can't drop this memory
             tiles_block,
             objects,
-            num_objects:   1,
-            cur_tick:      0,
+            num_objects: 1,
+            cur_tick: 0,
         }
     }
 

@@ -37,7 +37,7 @@ pub fn load<S, T: AsRef<dfs::Path>>(path: T) -> Option<Box<[S]>> {
     unsafe {
         let mut sz: i32 = 0;
         let ptr = libdragon_sys::asset_load(cpath.as_ptr(), &mut sz as *mut _);
-        if ptr == core::ptr::null_mut() {
+        if ptr.is_null() {
             return None;
         }
 
@@ -68,7 +68,7 @@ pub fn fopen<T: AsRef<dfs::Path>>(path: T) -> Result<dfs::File> {
         libdragon_sys::asset_fopen(cpath.as_ptr(), &mut sz as *mut _)
     };
 
-    if fp == core::ptr::null_mut() {
+    if fp.is_null() {
         Err(LibDragonError::DfsError {
             error: dfs::DfsError::NotFound,
         })

@@ -1288,6 +1288,7 @@ pub fn PixelMapfv(map: i32, size: u32, values: &[f32]) {
 }
 
 #[inline(always)]
+#[allow(clippy::too_many_arguments)]
 pub fn TexImage1D<T>(
     target: i32,
     level: i32,
@@ -1313,6 +1314,7 @@ pub fn TexImage1D<T>(
 }
 
 #[inline(always)]
+#[allow(clippy::too_many_arguments)]
 pub fn TexImage2D<T>(
     target: i32,
     level: i32,

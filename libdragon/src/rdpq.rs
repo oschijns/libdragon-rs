@@ -1,3 +1,5 @@
+use core::cmp::Ordering;
+
 use crate::*;
 
 use sprite::Sprite;
@@ -77,9 +79,9 @@ pub const CFG_DEFAULT: u32 = libdragon_sys::RDPQ_CFG_DEFAULT;
 
 // Used in inline functions as part of the autosync engine. Not part of public API.
 #[inline(always)]
-fn _autosync_tile(n: u32) -> u32 { 1 << (0 + n) } // Autosync state: Bit used for tile N
+fn _autosync_tile(n: u32) -> u32 { 1 << n } // Autosync state: Bit used for tile N
 #[inline(always)]
-fn _autosync_tiles() -> u32 { 0xFF << 0 } // Autosync state: Mask for all bits regarding tile
+fn _autosync_tiles() -> u32 { 0xFF } // Autosync state: Mask for all bits regarding tile
 #[inline(always)]
 fn _autosync_tmem(n: u32) -> u32 { 1 << (8 + n) } // Autosync state: Bit used for tmem portion N
 #[inline(always)]
@@ -89,7 +91,7 @@ fn _autosync_pipe() -> u32 { 1 << 16 } // Autosync state: Bit used for pipe
 
 // Used internally for bit-packing RDP commands. Not part of public API
 #[inline(always)]
-fn _carg(value: u32, mask: u32, shift: u32) -> u32 { ((value as u32) & mask) << shift }
+fn _carg(value: u32, mask: u32, shift: u32) -> u32 { (value & mask) << shift }
 
 // Used for manually translated inline functions
 extern "C" {
@@ -126,7 +128,7 @@ pub struct TileParms {
 impl From<TileParms> for libdragon_sys::rdpq_tileparms_t {
     fn from(v: TileParms) -> Self {
         assert!(::core::mem::size_of::<TileParms>() == ::core::mem::size_of::<Self>());
-        unsafe { *::core::mem::transmute::<&TileParms, *const Self>(&v) }
+        unsafe { *(&v as *const rdpq::TileParms as *const libdragon_sys::rdpq_tileparms_t) }
     }
 }
 
@@ -522,7 +524,7 @@ pub fn set_detail_factor(value: f32) {
     unsafe {
         __rdpq_fixup_write8_syncchange(
             CMD_SET_PRIM_COLOR_COMPONENT,
-            (((conv & 0x1F) << 8) | (2 << 16)) as u32,
+            ((conv & 0x1F) << 8) | (2 << 16),
             0,
             0,
         );
@@ -828,7 +830,7 @@ pub fn fence() {
 /// See [`rdpq_exec`](libdragon_sys::rdpq_exec) for details.
 #[inline]
 pub fn exec<T>(buffer: &mut [T]) {
-    let size = buffer.len() * ::core::mem::size_of::<T>();
+    let size = core::mem::size_of_val(buffer);
     unsafe {
         libdragon_sys::rdpq_exec(buffer.as_mut_ptr() as *mut _, size as i32);
     }
@@ -866,7 +868,7 @@ pub fn write(num_rdp_commands: Option<usize>, ovl_id: u32, cmd_id: u32, args: Ve
     }
     if let Some(count) = num_rdp_commands {
         unsafe {
-            if rspq_block != ::core::ptr::null_mut() {
+            if !rspq_block.is_null() {
                 __rdpq_block_reserve(count as i32);
             }
         }
@@ -988,35 +990,34 @@ pub fn get_attached<'a>() -> Surface<'a> {
 
 // rdpq_constants.h
 
-pub const ADDRESS_TABLE_SIZE: u32 = libdragon_sys::RDPQ_ADDRESS_TABLE_SIZE as u32;
+pub const ADDRESS_TABLE_SIZE: u32 = libdragon_sys::RDPQ_ADDRESS_TABLE_SIZE;
 
-pub const DYNAMIC_BUFFER_SIZE: u32 = libdragon_sys::RDPQ_DYNAMIC_BUFFER_SIZE as u32;
+pub const DYNAMIC_BUFFER_SIZE: u32 = libdragon_sys::RDPQ_DYNAMIC_BUFFER_SIZE;
 
 /// Asserted if `rdpq_mode_blender` was called in fill/copy mode
-pub const ASSERT_FILLCOPY_BLENDING: u32 = libdragon_sys::RDPQ_ASSERT_FILLCOPY_BLENDING as u32;
+pub const ASSERT_FILLCOPY_BLENDING: u32 = libdragon_sys::RDPQ_ASSERT_FILLCOPY_BLENDING;
 /// Asserted if a 2-pass combiner is set with `rdpq_mode_combiner] while mipmap is enabled.
-pub const ASSERT_MIPMAP_COMB2: u32 = libdragon_sys::RDPQ_ASSERT_MIPMAP_COMB2 as u32;
+pub const ASSERT_MIPMAP_COMB2: u32 = libdragon_sys::RDPQ_ASSERT_MIPMAP_COMB2;
 /// Asserted if RDPQCmd_Triangle is called with `RDPQ_TRIANGLE_REFERENCE == 0`
-pub const ASSERT_INVALID_CMD_TRI: u32 = libdragon_sys::RDPQ_ASSERT_INVALID_CMD_TRI as u32;
+pub const ASSERT_INVALID_CMD_TRI: u32 = libdragon_sys::RDPQ_ASSERT_INVALID_CMD_TRI;
 /// Asserted if RDPQ_Send is called with invalid parameters (begin > end)
-pub const ASSERT_SEND_INVALID_SIZE: u32 = libdragon_sys::RDPQ_ASSERT_SEND_INVALID_SIZE as u32;
+pub const ASSERT_SEND_INVALID_SIZE: u32 = libdragon_sys::RDPQ_ASSERT_SEND_INVALID_SIZE;
 /// Asserted if the TMEM is full during an auto-TMEM operation
-pub const ASSERT_AUTOTMEM_FULL: u32 = libdragon_sys::RDPQ_ASSERT_AUTOTMEM_FULL as u32;
+pub const ASSERT_AUTOTMEM_FULL: u32 = libdragon_sys::RDPQ_ASSERT_AUTOTMEM_FULL;
 /// Asserted if the TMEM is full during an auto-TMEM operation
-pub const ASSERT_AUTOTMEM_UNPAIRED: u32 = libdragon_sys::RDPQ_ASSERT_AUTOTMEM_UNPAIRED as u32;
+pub const ASSERT_AUTOTMEM_UNPAIRED: u32 = libdragon_sys::RDPQ_ASSERT_AUTOTMEM_UNPAIRED;
 
 /// RDPQCmd_ClearZBuffer temporary buffer is too small
-pub const ASSERT_ZCLEAR_INVALID_BUFFER: u32 =
-    libdragon_sys::RDPQ_ASSERT_ZCLEAR_INVALID_BUFFER as u32;
+pub const ASSERT_ZCLEAR_INVALID_BUFFER: u32 = libdragon_sys::RDPQ_ASSERT_ZCLEAR_INVALID_BUFFER;
 
-pub const MAX_COMMAND_SIZE: u32 = libdragon_sys::RDPQ_MAX_COMMAND_SIZE as u32;
+pub const MAX_COMMAND_SIZE: u32 = libdragon_sys::RDPQ_MAX_COMMAND_SIZE;
 /// RDPQ block minimum size (in 32-bit words)
-pub const BLOCK_MIN_SIZE: u32 = libdragon_sys::RDPQ_BLOCK_MIN_SIZE as u32;
+pub const BLOCK_MIN_SIZE: u32 = libdragon_sys::RDPQ_BLOCK_MIN_SIZE;
 /// RDPQ block minimum size (in 32-bit words)
-pub const BLOCK_MAX_SIZE: u32 = libdragon_sys::RDPQ_BLOCK_MAX_SIZE as u32;
+pub const BLOCK_MAX_SIZE: u32 = libdragon_sys::RDPQ_BLOCK_MAX_SIZE;
 
 /// Whether or not the reference implementation is enabled
-pub const TRIANGLE_REFERENCE: u32 = libdragon_sys::RDPQ_TRIANGLE_REFERENCE as u32;
+pub const TRIANGLE_REFERENCE: u32 = libdragon_sys::RDPQ_TRIANGLE_REFERENCE;
 
 // rdpq_debug.h
 
@@ -1165,8 +1166,8 @@ impl<'a> Font<'a> {
     /// The buffer provided must outlive the returned [Font]
     ///
     /// See [`rdpq_font_load_buf`](libdragon_sys::rdpq_font_load_buf)
-    pub fn load_buf<'b, T>(buf: &'b mut [T]) -> Font<'b> {
-        let sz = buf.len() * ::core::mem::size_of::<T>();
+    pub fn load_buf<T>(buf: &mut [T]) -> Font<'_> {
+        let sz = core::mem::size_of_val(buf);
         let ptr =
             unsafe { libdragon_sys::rdpq_font_load_buf(buf.as_mut_ptr() as *mut _, sz as i32) };
         Font {
@@ -1240,7 +1241,7 @@ pub struct FontStyle {
 
 impl From<FontStyle> for libdragon_sys::rdpq_fontstyle_t {
     fn from(v: FontStyle) -> Self {
-        unsafe { *core::mem::transmute::<&FontStyle, *const Self>(&v) }
+        unsafe { *(&v as *const rdpq::FontStyle as *const libdragon_sys::rdpq_fontstyle_s) }
     }
 }
 
@@ -1448,13 +1449,13 @@ pub mod consts {
     pub const SOM_ZSOURCE_SHIFT: u64 = 2;
 
     /// Alpha Compare: disable
-    pub const SOM_ALPHACOMPARE_NONE: u64 = 0u64 << 0;
+    pub const SOM_ALPHACOMPARE_NONE: u64 = 0u64;
     /// Alpha Compare: use blend alpha as threshold
     pub const SOM_ALPHACOMPARE_THRESHOLD: u64 = 1u64 << 0;
     /// Alpha Compare: use noise as threshold
-    pub const SOM_ALPHACOMPARE_NOISE: u64 = 3u64 << 0;
+    pub const SOM_ALPHACOMPARE_NOISE: u64 = 3u64;
     /// Alpha Compare mask
-    pub const SOM_ALPHACOMPARE_MASK: u64 = 3u64 << 0;
+    pub const SOM_ALPHACOMPARE_MASK: u64 = 3u64;
     /// Alpha Compare mask shift
     pub const SOM_ALPHACOMPARE_SHIFT: u64 = 0;
 
@@ -2092,7 +2093,7 @@ fn __mode_change_som(mask: u64, val: u64) {
         unsafe {
             __rdpq_fixup_mode3(
                 libdragon_sys::RDPQ_CMD_MODIFY_OTHER_MODES,
-                0 | (1 << 15),
+                1 << 15,
                 !((mask >> 32) as u32),
                 (val >> 32) as u32,
             );
@@ -2390,7 +2391,7 @@ pub fn mode_combiner(comb: Combiner) {
         }
     } else {
         let mut comb1_mask = consts::COMB1_MASK;
-        if ((comb >> 0) & 7) == 1 {
+        if (comb & 7) == 1 {
             comb1_mask ^= 1u64 << 0;
         }
         if ((comb >> 3) & 7) == 1 {
@@ -2482,19 +2483,23 @@ pub fn mode_dithering(dither: Dither) {
 /// See [`rdpq_mode_alphacompare`](libdragon_sys::rdpq_mode_alphacompare) for details.
 #[inline]
 pub fn mode_alphacompare(threshold: i32) {
-    if threshold == 0 {
-        __mode_change_som(consts::SOM_ALPHACOMPARE_MASK, 0);
-    } else if threshold > 0 {
-        __mode_change_som(
-            consts::SOM_ALPHACOMPARE_MASK,
-            consts::SOM_ALPHACOMPARE_THRESHOLD,
-        );
-        set_blend_color(graphics::rgba32(0, 0, 0, threshold as u8));
-    } else {
-        __mode_change_som(
-            consts::SOM_ALPHACOMPARE_MASK,
-            consts::SOM_ALPHACOMPARE_NOISE,
-        );
+    match threshold.cmp(&0) {
+        Ordering::Equal => {
+            __mode_change_som(consts::SOM_ALPHACOMPARE_MASK, 0);
+        }
+        Ordering::Greater => {
+            __mode_change_som(
+                consts::SOM_ALPHACOMPARE_MASK,
+                consts::SOM_ALPHACOMPARE_THRESHOLD,
+            );
+            set_blend_color(graphics::rgba32(0, 0, 0, threshold as u8));
+        }
+        Ordering::Less => {
+            __mode_change_som(
+                consts::SOM_ALPHACOMPARE_MASK,
+                consts::SOM_ALPHACOMPARE_NOISE,
+            );
+        }
     }
 }
 
@@ -2556,9 +2561,7 @@ pub fn mode_mipmap(mode: Mipmap, mut num_levels: usize) {
     if mode == Mipmap::None {
         num_levels = 0;
     }
-    if num_levels != 0 {
-        num_levels -= 1;
-    }
+    num_levels = num_levels.saturating_sub(1);
     let mode: libdragon_sys::rdpq_mipmap_s = mode.into();
     __mode_change_som(
         consts::SOM_TEXTURE_LOD
@@ -2672,7 +2675,7 @@ impl Paragraph {
     /// Alignment offset of the text (Y coord)
     pub fn y0(&self) -> f32 { unsafe { (*self.c).y0 } }
     /// Array of chars
-    pub fn chars<'a>(&'a self) -> &'a [ParagraphChar] {
+    pub fn chars(&self) -> &[ParagraphChar] {
         // As long as ParagraphChar wraps only rdpq_paragraph_char_t, this cast should be safe
         let ptr: *const ParagraphChar = unsafe { (*self.c).chars.as_ptr() as *const _ };
         unsafe { ::core::slice::from_raw_parts(ptr, self.nchars()) }
@@ -2711,11 +2714,11 @@ impl<'a> ParagraphBuilder<'a> {
     /// Start a paragraph builder.
     ///
     /// See [`rdpq_paragraph_builder_begin`](libdragon_sys::rdpq_paragraph_builder_begin) for details.
-    pub fn begin<'b>(
+    pub fn begin(
         parms: TextParms,
         initial_font_id: u8,
-        layout: Option<&'b Paragraph>,
-    ) -> ParagraphBuilder<'b> {
+        layout: Option<&Paragraph>,
+    ) -> ParagraphBuilder<'_> {
         // text parms have to persist throughout the entire builder
         let parms: libdragon_sys::rdpq_textparms_t = parms.into();
         let pinned = Box::pin(parms);
@@ -2848,6 +2851,7 @@ fn __rdpq_texture_rectangle_fx(tile: Tile, x0: i32, y0: i32, x1: i32, y1: i32, s
 }
 
 #[inline(always)]
+#[allow(clippy::too_many_arguments)]
 fn __rdpq_texture_rectangle_scaled_fx(
     tile: Tile,
     x0: i32,
@@ -2877,6 +2881,7 @@ fn __rdpq_texture_rectangle_scaled_fx(
 }
 
 #[inline(always)]
+#[allow(clippy::too_many_arguments)]
 fn __rdpq_texture_rectangle_raw_fx(
     tile: Tile,
     x0: i32,
@@ -2894,9 +2899,7 @@ fn __rdpq_texture_rectangle_raw_fx(
     unsafe {
         __rdpq_texture_rectangle(
             _carg(x1 as u32, 0xFFF, 12) | _carg(y1 as u32, 0xFFF, 0),
-            _carg(tile.0 as u32, 0x7, 24)
-                | _carg(x0 as u32, 0xFFF, 12)
-                | _carg(y0 as u32, 0xFFF, 0),
+            _carg(tile.0, 0x7, 24) | _carg(x0 as u32, 0xFFF, 12) | _carg(y0 as u32, 0xFFF, 0),
             _carg(s0 as u32, 0xFFFF, 16) | _carg(t0 as u32, 0xFFFF, 0),
             _carg(dsdx as u32, 0xFFFF, 16) | _carg(dtdy as u32, 0xFFFF, 0),
         );
@@ -2904,6 +2907,7 @@ fn __rdpq_texture_rectangle_raw_fx(
 }
 
 #[inline(always)]
+#[allow(clippy::too_many_arguments)]
 fn __rdpq_texture_rectangle_flip_raw_fx(
     tile: Tile,
     x0: i32,
@@ -2922,12 +2926,10 @@ fn __rdpq_texture_rectangle_flip_raw_fx(
         __rdpq_write16_syncuse(
             CMD_TEXTURE_RECTANGLE_FLIP,
             _carg(x1 as u32, 0xFFF, 12) | _carg(y1 as u32, 0xFFF, 0),
-            _carg(tile.0 as u32, 0x7, 24)
-                | _carg(x0 as u32, 0xFFF, 12)
-                | _carg(y0 as u32, 0xFFF, 0),
+            _carg(tile.0, 0x7, 24) | _carg(x0 as u32, 0xFFF, 12) | _carg(y0 as u32, 0xFFF, 0),
             _carg(s as u32, 0xFFFF, 16) | _carg(t as u32, 0xFFFF, 0),
             _carg(dsdy as u32, 0xFFFF, 16) | _carg(dtdx as u32, 0xFFFF, 0),
-            libdragon_sys::AUTOSYNC_PIPE | _autosync_tile(tile.0 as u32) | _autosync_tmem(0),
+            libdragon_sys::AUTOSYNC_PIPE | _autosync_tile(tile.0) | _autosync_tmem(0),
         );
     }
 }
@@ -2968,6 +2970,7 @@ where
 ///
 /// See [`rdpq_texture_rectangle_scaled`](libdragon_sys::rdpq_texture_rectangle_scaled) and `rdpq_rect.h` for details.
 #[inline]
+#[allow(clippy::too_many_arguments)]
 pub fn texture_rectangle_scaled<T>(
     tile: Tile,
     x0: T,
@@ -2992,6 +2995,7 @@ pub fn texture_rectangle_scaled<T>(
 ///
 /// See [`rdpq_texture_rectangle_raw`](libdragon_sys::rdpq_texture_rectangle_raw) and `rdpq_rect.h` for details.
 #[inline]
+#[allow(clippy::too_many_arguments)]
 pub fn texture_rectangle_raw<T>(
     tile: Tile,
     x0: T,
@@ -3018,6 +3022,7 @@ pub fn texture_rectangle_raw<T>(
 ///
 /// See [`rdpq_texture_rectangle_flip_raw`](libdragon_sys::rdpq_texture_rectangle_flip_raw) and `rdpq_rect.h` for details.
 #[inline]
+#[allow(clippy::too_many_arguments)]
 pub fn texture_rectangle_flip_raw<T>(
     tile: Tile,
     x0: T,
@@ -3109,7 +3114,7 @@ pub struct TexParmsST {
 impl From<TexParms> for libdragon_sys::rdpq_texparms_t {
     fn from(v: TexParms) -> Self {
         assert!(::core::mem::size_of::<TexParms>() == ::core::mem::size_of::<Self>());
-        unsafe { *::core::mem::transmute::<&TexParms, *const Self>(&v) }
+        unsafe { *(&v as *const rdpq::TexParms as *const libdragon_sys::rdpq_texparms_s) }
     }
 }
 
@@ -3185,9 +3190,9 @@ pub fn tex_upload_sub(
 ///
 /// See [`rdpq_tex_upload_tlut`](libdragon_sys::rdpq_tex_upload_tlut) for details.
 #[inline]
-pub fn tex_upload_tlut(tlut: TlutPalette, color_idx: i32, num_colors: i32) {
+pub unsafe fn tex_upload_tlut(tlut: TlutPalette, color_idx: i32, num_colors: i32) {
     unsafe {
-        libdragon_sys::rdpq_tex_upload_tlut(tlut as *mut u16, color_idx, num_colors);
+        libdragon_sys::rdpq_tex_upload_tlut(tlut, color_idx, num_colors);
     }
 }
 
@@ -3311,7 +3316,7 @@ pub struct BlitParms {
 impl From<BlitParms> for libdragon_sys::rdpq_blitparms_s {
     fn from(v: BlitParms) -> Self {
         assert!(::core::mem::size_of::<BlitParms>() == ::core::mem::size_of::<Self>());
-        unsafe { *::core::mem::transmute::<&BlitParms, *const Self>(&v) }
+        unsafe { *(&v as *const rdpq::BlitParms as *const libdragon_sys::rdpq_blitparms_s) }
     }
 }
 
@@ -3409,7 +3414,7 @@ pub struct TextParms {
 
 impl From<TextParms> for libdragon_sys::rdpq_textparms_t {
     fn from(v: TextParms) -> Self {
-        unsafe { *core::mem::transmute::<&TextParms, *const Self>(&v) }
+        unsafe { *(&v as *const rdpq::TextParms as *const libdragon_sys::rdpq_textparms_s) }
     }
 }
 
@@ -3570,7 +3575,7 @@ pub fn triangle(fmt: &TriFmt, v1: &[f32], v2: &[f32], v3: &[f32]) {
         "vertices must be two components each"
     );
     unsafe {
-        let ptr = core::mem::transmute(fmt);
+        let ptr = fmt as *const rdpq::TriFmt as *const libdragon_sys::rdpq_trifmt_s;
         libdragon_sys::rdpq_triangle(ptr, v1.as_ptr(), v2.as_ptr(), v3.as_ptr());
     }
 }

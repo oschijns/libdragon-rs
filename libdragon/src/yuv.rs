@@ -58,7 +58,7 @@ pub fn new_colorspace(Kr: f32, Kb: f32, y0: i32, yrange: i32, crange: i32) -> Co
         core::mem::MaybeUninit::uninit();
     unsafe {
         yuv_new_colorspace_r(tmp.as_mut_ptr(), Kr, Kb, y0, yrange, crange);
-        core::mem::transmute(tmp.assume_init())
+        tmp.assume_init()
     }
 }
 
@@ -207,7 +207,7 @@ impl Default for FmvParms<'_> {
 impl From<FmvParms<'_>> for libdragon_sys::yuv_fmv_parms_t {
     fn from(v: FmvParms) -> Self {
         Self {
-            cs:        unsafe { ::core::mem::transmute(v.cs) },
+            cs:        v.cs as *const libdragon_sys::yuv_colorspace_t,
             halign:    v.halign.into(),
             valign:    v.valign.into(),
             zoom:      v.zoom.into(),
@@ -220,13 +220,13 @@ impl From<FmvParms<'_>> for libdragon_sys::yuv_fmv_parms_t {
 ///
 /// See [`yuv_blitter_new_fmv`](libdragon_sys::yuv_blitter_new_fmv) for details.
 #[inline]
-pub fn blitter_new_fmv<'a>(
+pub fn blitter_new_fmv(
     video_width: u32,
     video_height: u32,
     screen_width: u32,
     screen_height: u32,
-    parms: FmvParms<'a>,
-) -> Blitter<'a> {
+    parms: FmvParms<'_>,
+) -> Blitter<'_> {
     assert!(
         ::core::mem::size_of::<libdragon_sys::yuv_blitter_t>() == 4,
         "if this struct gets larger, write a C wrapper"

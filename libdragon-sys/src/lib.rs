@@ -5,4 +5,10 @@
 #![allow(non_snake_case)]
 #![allow(improper_ctypes)] // TODO getting warnings on u128 types
 
+// disable some clippy suggestions for generated code
+#![allow(clippy::useless_transmute)]
+#![allow(clippy::too_many_arguments)]
+#![allow(clippy::approx_constant)]
+#![allow(clippy::missing_safety_doc)]
+
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));

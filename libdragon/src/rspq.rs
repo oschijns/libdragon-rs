@@ -80,7 +80,7 @@ impl rsp::RspUcode {
     ///
     /// See [`rspq_overlay_get_state`](libdragon_sys::rspq_overlay_get_state) for details.
     #[inline(always)]
-    pub fn get_state_mut<'a, T>(&'a mut self, count: usize) -> &'a mut [T] {
+    pub fn get_state_mut<T>(&mut self, count: usize) -> &mut [T] {
         unsafe {
             let ptr = libdragon_sys::rspq_overlay_get_state(
                 self.rsp_ucode.as_mut().get_mut() as *mut libdragon_sys::rsp_ucode_t
@@ -197,6 +197,10 @@ pub fn wait() {
 /// A syncpoint in the queue. A wrapper around
 /// [`rspq_syncpoint_t`](libdragon_sys::rspq_syncpoint_t).
 pub struct SyncPoint(libdragon_sys::rspq_syncpoint_t);
+
+impl Default for SyncPoint {
+    fn default() -> Self { Self::new() }
+}
 
 impl SyncPoint {
     /// Create a syncpoint in the queue.
@@ -381,7 +385,7 @@ pub fn noop() {
 #[inline]
 pub fn signal(i: u32) {
     unsafe {
-        libdragon_sys::rspq_signal(i as u32);
+        libdragon_sys::rspq_signal(i);
     }
 }
 
@@ -392,7 +396,7 @@ pub fn signal(i: u32) {
 /// See [`rspq_dma_to_rdram`](libdragon_sys::rspq_dma_to_rdram) for details.
 #[inline]
 pub fn dma_to_rdram<T>(rdram_addr: &mut [T], dmem_addr: u32, is_async: bool) {
-    let len = rdram_addr.len() * ::core::mem::size_of::<T>();
+    let len = core::mem::size_of_val(rdram_addr);
     assert!((len & 7) == 0, "size transfered must be a multiple of 8");
     unsafe {
         libdragon_sys::rspq_dma_to_rdram(
@@ -411,7 +415,7 @@ pub fn dma_to_rdram<T>(rdram_addr: &mut [T], dmem_addr: u32, is_async: bool) {
 /// See [`rspq_dma_to_dmem`](libdragon_sys::rspq_dma_to_dmem) for details.
 #[inline]
 pub fn dma_to_dmem<T>(dmem_addr: u32, rdram_addr: &mut [T], is_async: bool) {
-    let len = rdram_addr.len() * ::core::mem::size_of::<T>();
+    let len = core::mem::size_of_val(rdram_addr);
     assert!((len & 7) == 0, "size transfered must be a multiple of 8");
     unsafe {
         libdragon_sys::rspq_dma_to_dmem(
@@ -617,7 +621,7 @@ pub fn profile_dump() {
 
 /// Copy the recorded data. See [`rspq_profile_get_data`](libdragon_sys::rspq_profile_get_data).
 pub fn profile_get_data() -> ProfileData {
-    let mut data = Box::new(ProfileData::default());
+    let mut data = Box::<ProfileData>::default();
     unsafe {
         libdragon_sys::rspq_profile_get_data(core::mem::transmute::<
             _,

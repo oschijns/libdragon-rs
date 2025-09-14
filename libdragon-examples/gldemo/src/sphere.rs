@@ -61,7 +61,7 @@ impl Sphere {
 
         Self {
             sphere_buffers,
-            sphere_array:       sphere_array[0],
+            sphere_array: sphere_array[0],
             sphere_rings,
             sphere_segments,
             sphere_index_count: 0,
@@ -95,7 +95,7 @@ impl Sphere {
                 if (segment & 1) != 0 { 1.0 } else { 0.0 },
                 if (ring & 1) != 0 { 1.0 } else { 0.0 },
             ],
-            color:    0,
+            color: 0,
         }
     }
 

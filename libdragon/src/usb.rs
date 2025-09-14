@@ -1,11 +1,11 @@
 use crate::*;
 
 /// Use if you're doing USB operations without the PI Manager (libultra only)
-pub const USE_OSRAW: u32 = libdragon_sys::USE_OSRAW as u32;
+pub const USE_OSRAW: u32 = libdragon_sys::USE_OSRAW;
 /// Max size of USB I/O. The bigger this value, the more ROM you lose!
-pub const DEBUG_ADDRESS_SIZE: u32 = libdragon_sys::DEBUG_ADDRESS_SIZE as u32;
+pub const DEBUG_ADDRESS_SIZE: u32 = libdragon_sys::DEBUG_ADDRESS_SIZE;
 /// Stops the USB library from working if it detects an emulator to prevent problems
-pub const CHECK_EMULATOR: u32 = libdragon_sys::CHECK_EMULATOR as u32;
+pub const CHECK_EMULATOR: u32 = libdragon_sys::CHECK_EMULATOR;
 
 /// Cart definitions
 pub enum Cart {
@@ -105,7 +105,7 @@ pub fn poll() -> u32 { unsafe { libdragon_sys::usb_poll() } }
 /// See [`usb_read`](libdragon_sys::usb_read) for details.
 #[inline]
 pub fn read<T>(buffer: &mut [T]) {
-    let size = buffer.len() * ::core::mem::size_of::<T>();
+    let size = core::mem::size_of_val(buffer);
     unsafe {
         libdragon_sys::usb_read(buffer.as_mut_ptr() as *mut _, size as i32);
     }

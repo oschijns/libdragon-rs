@@ -68,7 +68,7 @@ impl Color {
                 r: ((c >> 24) & 0xFF) as u8,
                 g: ((c >> 16) & 0xFF) as u8,
                 b: ((c >> 8) & 0xFF) as u8,
-                a: ((c >> 0) & 0xFF) as u8,
+                a: (c & 0xFF) as u8,
             },
         }
     }
@@ -76,7 +76,9 @@ impl Color {
 
 /// Convert a [Color] to a [`libdragon_sys::color_t`].
 impl From<Color> for libdragon_sys::color_t {
-    fn from(c: Color) -> Self { unsafe { *core::mem::transmute::<&Color, *const Self>(&c) } }
+    fn from(c: Color) -> Self {
+        unsafe { *(&c as *const graphics::Color as *const libdragon_sys::color_t) }
+    }
 }
 
 impl Default for Color {
@@ -150,7 +152,7 @@ impl<'a> Graphics<'a> {
     /// Take ownership of the underlying Surface. The `graphics_*` underlying functions can
     /// no longer be called and will cause an assert if used.
     #[inline]
-    pub fn finish(&mut self) -> Surface<'a> { core::mem::replace(&mut self.surface, None).unwrap() }
+    pub fn finish(&mut self) -> Surface<'a> { self.surface.take().unwrap() }
 
     /// Fill the entire screen with a particular color
     ///
@@ -370,7 +372,7 @@ pub fn set_default_font() {
 ///
 /// See [`graphics_set_font_sprite`](libdragon_sys::graphics_set_font_sprite) for details.
 #[inline]
-pub fn set_font_sprite<'b>(sprite: Sprite<'b>) -> core::pin::Pin<Box<Sprite<'b>>> {
+pub fn set_font_sprite(sprite: Sprite<'_>) -> core::pin::Pin<Box<Sprite<'_>>> {
     let pinned = Box::pin(sprite);
     unsafe {
         libdragon_sys::graphics_set_font_sprite(

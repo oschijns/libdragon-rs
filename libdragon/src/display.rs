@@ -242,7 +242,7 @@ pub fn get_zbuf<'a>() -> Surface<'a> {
 pub fn try_get<'a>() -> Option<Surface<'a>> {
     let ptr = unsafe { libdragon_sys::display_try_get() };
 
-    if ptr == ::core::ptr::null_mut() {
+    if ptr.is_null() {
         None
     } else {
         Some(Surface::from_ptr(ptr))

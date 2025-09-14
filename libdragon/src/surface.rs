@@ -96,7 +96,7 @@ impl TexFormat {
     pub fn name(self) -> String {
         let fmt = Into::<libdragon_sys::tex_format_t>::into(self);
         let ptr = unsafe { libdragon_sys::tex_format_name(fmt) };
-        let c_str = unsafe { CStr::from_ptr(ptr as *const i8) };
+        let c_str = unsafe { CStr::from_ptr(ptr) };
         String::from_utf8_lossy(c_str.to_bytes()).to_string()
     }
 }
@@ -117,9 +117,9 @@ impl<'a> Surface<'a> {
         Self {
             ptr,
             _backing_instance: None,
-            needs_free:        false,
-            is_const:          false,
-            phantom:           core::marker::PhantomData,
+            needs_free: false,
+            is_const: false,
+            phantom: core::marker::PhantomData,
         }
     }
 
@@ -143,13 +143,13 @@ impl<'a> Surface<'a> {
     /// ```
     ///
     /// See [`surface_make`](libdragon_sys::surface_make) for details.
-    pub fn make<'b, T>(
-        buffer: &'b mut [T],
+    pub fn make<T>(
+        buffer: &mut [T],
         format: TexFormat,
         width: u32,
         height: u32,
         stride: u32,
-    ) -> Surface<'b> {
+    ) -> Surface<'_> {
         let surf = libdragon_sys::surface_t {
             flags:  Into::<libdragon_sys::tex_format_t>::into(format) as u16,
             width:  width as u16,
@@ -172,12 +172,12 @@ impl<'a> Surface<'a> {
     /// Initialize a Surface with the provided linear buffer
     ///
     /// See [`surface_make_linear`](libdragon_sys::surface_make_linear) for details.
-    pub fn make_linear<'b, T>(
-        buffer: &'b mut [T],
+    pub fn make_linear<T>(
+        buffer: &mut [T],
         format: TexFormat,
         width: u32,
         height: u32,
-    ) -> Surface<'b> {
+    ) -> Surface<'_> {
         Self::make(
             buffer,
             format,
@@ -323,7 +323,7 @@ impl<'a> Surface<'a> {
     ///
     /// See [`surface_has_owned_buffer`](libdragon_sys::surface_has_owned_buffer)
     pub fn has_owned_buffer(&self) -> bool {
-        let valid_buf = unsafe { self.buffer::<u8>() != ::core::ptr::null_mut() };
+        let valid_buf = unsafe { !self.buffer::<u8>().is_null() };
         valid_buf && (self.flags() & 0x20) != 0
     }
 

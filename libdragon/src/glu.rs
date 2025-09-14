@@ -2,6 +2,7 @@
 
 // GLU
 #[inline(always)]
+#[allow(clippy::too_many_arguments)]
 pub fn LookAt(
     eyex: f32,
     eyey: f32,

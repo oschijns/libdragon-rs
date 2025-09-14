@@ -24,7 +24,7 @@ impl Backtrace {
     /// Translate the [Backtrace] to a set of [Symbols].
     ///
     /// See [`backtrace_symbols`](libdragon_sys::backtrace_symbols) for details.
-    pub fn symbols<'a>(&'a mut self, size: Option<usize>) -> Symbols<'a> {
+    pub fn symbols(&mut self, size: Option<usize>) -> Symbols<'_> {
         let size = core::cmp::min(size.unwrap_or(self.call_stack.len()), self.call_stack.len());
 
         let ptrs =
@@ -42,7 +42,7 @@ impl Backtrace {
     /// frames.
     ///
     /// See [`backtrace_symbols_cb`](libdragon_sys::backtrace_symbols_cb) for details.
-    pub fn symbols_cb<T: FnMut(BacktraceFrame) -> ()>(
+    pub fn symbols_cb<T: FnMut(BacktraceFrame)>(
         &mut self,
         size: Option<usize>,
         _flags: Option<()>,
@@ -52,7 +52,7 @@ impl Backtrace {
 
         let cb = Box::new(cb);
 
-        extern "C" fn internal_callback<T: FnMut(BacktraceFrame) -> ()>(
+        extern "C" fn internal_callback<T: FnMut(BacktraceFrame)>(
             ctx: *mut ::core::ffi::c_void,
             backtrace: *mut libdragon_sys::backtrace_frame_t,
         ) {
@@ -90,6 +90,9 @@ impl Symbols<'_> {
     pub fn len(&self) -> usize { self.symbols.len() }
 
     #[inline]
+    pub fn is_empty(&self) -> bool { self.symbols.is_empty() }
+
+    #[inline]
     pub fn symbol(&self, i: usize) -> Result<&str> {
         let c_symbol = unsafe { CStr::from_ptr(self.symbols[i]) };
         Ok(c_symbol.to_str()?)
@@ -99,7 +102,7 @@ impl Symbols<'_> {
 impl core::ops::Index<usize> for Symbols<'_> {
     type Output = str;
     #[inline]
-    fn index<'a>(&'a self, i: usize) -> &'a str { self.symbol(i).unwrap() }
+    fn index(&self, i: usize) -> &str { self.symbol(i).unwrap() }
 }
 
 /// Wrapper around [`backtrace_frame_t`](libdragon_sys::backtrace_frame_t).

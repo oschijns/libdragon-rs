@@ -169,21 +169,21 @@ impl<'a> App<'a> {
         rspq::profile_start();
 
         Self {
-            camera:        Camera {
+            camera: Camera {
                 distance: -10.0,
                 rotation: 0.0,
             },
             sprites, // can't let sprites memory be dropped, as they contain the texture data
             textures,
             texture_index: 0,
-            frames:        0,
-            animation:     3283,
+            frames: 0,
+            animation: 3283,
             sphere,
             cube,
             plane,
-            decal:         Decal::new(),
-            skinned:       Skinned::new(),
-            prim_test:     PrimTest::new(),
+            decal: Decal::new(),
+            skinned: Skinned::new(),
+            prim_test: PrimTest::new(),
         }
     }
 

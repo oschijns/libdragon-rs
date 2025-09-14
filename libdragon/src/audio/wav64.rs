@@ -67,6 +67,8 @@ impl Wav64 {
 
 impl Drop for Wav64 {
     /// Uses [`wav64_close`](libdragon_sys::wav64_close).
+    #[allow(clippy::redundant_pattern_matching)]
+    #[allow(clippy::mem_replace_option_with_none)]
     fn drop(&mut self) {
         if let Some(_) = core::mem::replace(&mut self.backing_instance, None) {
             unsafe {

@@ -3,9 +3,9 @@
 #![feature(panic_info_message)]
 #![feature(error_in_core)]
 #![feature(ascii_char)]
+#![allow(clippy::missing_safety_doc)]
 
 use core::arch::asm;
-
 use cstr_core::{CStr, CString};
 
 // Re-exports of common types and macros
@@ -159,10 +159,10 @@ impl<T: Copy, const SIZE: usize> Register<T, SIZE> {
     pub fn write_slice(&mut self, data: &[T], offset: usize) {
         assert!((offset + data.len()) <= SIZE, "overflow memory write");
         unsafe {
-            for i in 0..data.len() {
+            for (i, elem) in data.iter().enumerate() {
                 let addr =
                     (self.address as usize + (offset + i) * ::core::mem::size_of::<T>()) as *mut _;
-                core::ptr::write_volatile(addr, data[i]);
+                core::ptr::write_volatile(addr, elem);
             }
         }
     }
@@ -171,6 +171,7 @@ impl<T: Copy, const SIZE: usize> Register<T, SIZE> {
     pub fn read(&self) -> T { unsafe { core::ptr::read_volatile(self.address) } }
 
     /// Read an array of data of type `T` from the address specified by the register
+    #[allow(clippy::needless_range_loop)]
     pub fn read_slice(&self, len: usize, offset: usize) -> Vec<T> {
         assert!((offset + len) <= SIZE, "overflow memory read");
         let mut storage = Vec::with_capacity(len);
@@ -248,7 +249,7 @@ macro_rules! protect_gp {
     ( $($s:stmt);* ) => {
         let oldgp: *const ::core::ffi::c_void;
         unsafe {
-            let gp = &crate::_gp;
+            let gp = &$crate::_gp;
             asm!(".set noat", "move {0}, $gp", "move $gp, {1}", out(reg) oldgp, in(reg) gp);
         }
         let r = (||{
@@ -361,38 +362,38 @@ impl<'a, T> N64Pointer<'a> for [T] {
     /// The slice needs to be aligned to 16 bytes and a multiple of 16 bytes in size, otherwise
     /// a panic occurs.
     fn cache_hit_invalidate(&self, write_back: bool) {
-        let size = self.len() * ::core::mem::size_of::<T>();
+        let size = core::mem::size_of_val(self);
         data_cache_hit_invalidate(self.as_ptr(), size, write_back);
     }
 }
 
 /// Return a mutable reference to the object using cached memory access
 #[inline]
-pub fn cached_mut<'a, T>(v: &'a mut T) -> &'a mut T {
+pub fn cached_mut<T>(v: &mut T) -> &mut T {
     unsafe { &mut *((((v as *mut T as u32) & 0x1FFF_FFFF) | 0x8000_0000) as *mut T) }
 }
 
 /// Return a reference to the object using cached memory access
 #[inline]
-pub fn cached_ref<'a, T>(v: &'a T) -> &'a T {
+pub fn cached_ref<T>(v: &T) -> &T {
     unsafe { &*((((v as *const T as u32) & 0x1FFF_FFFF) | 0x8000_0000) as *const T) }
 }
 
 /// Return a mutable reference to the object using uncached memory access
 #[inline]
-pub fn uncached_mut<'a, T>(v: &'a mut T) -> &'a mut T {
+pub fn uncached_mut<T>(v: &mut T) -> &mut T {
     unsafe { &mut *((((v as *mut T as u32) & 0x1FFF_FFFF) | 0xA000_0000) as *mut T) }
 }
 
 /// Return a reference to the object using uncached memory access
 #[inline]
-pub fn uncached_ref<'a, T>(v: &'a T) -> &'a T {
+pub fn uncached_ref<T>(v: &T) -> &T {
     unsafe { &*((((v as *const T as u32) & 0x1FFF_FFFF) | 0xA000_0000) as *const T) }
 }
 
 /// Return a reference to the object in the physical memory space
 #[inline]
-pub fn physical_ref<'a, T>(v: &'a T) -> &'a T {
+pub fn physical_ref<T>(v: &T) -> &T {
     unsafe { &*(((v as *const T as u32) & !0xE000_0000) as *const T) }
 }
 
@@ -552,14 +553,14 @@ pub fn data_cache_hit_invalidate<T>(v: *const T, size: usize, write_back: bool) 
     for addr in (base..(base + size as u32)).step_by(16) {
         if write_back {
             unsafe {
-                asm!(".set noat", 
-                     "cache (5<<2)|1, 0({reg})", 
+                asm!(".set noat",
+                     "cache (5<<2)|1, 0({reg})",
                      reg = in(reg) addr)
             };
         } else {
             unsafe {
-                asm!(".set noat", 
-                     "cache (4<<2)|1, 0({reg})", 
+                asm!(".set noat",
+                     "cache (4<<2)|1, 0({reg})",
                      reg = in(reg) addr)
             };
         }
@@ -571,7 +572,7 @@ pub fn data_cache_hit_invalidate<T>(v: *const T, size: usize, write_back: bool) 
 /// for details.
 #[inline]
 pub fn data_cache_index_writeback_invalidate<T>(ptr: &mut [T]) {
-    let size = ptr.len() * ::core::mem::size_of::<T>();
+    let size = core::mem::size_of_val(ptr);
     unsafe {
         libdragon_sys::data_cache_index_writeback_invalidate(ptr.as_ptr() as *mut _, size as u32);
     }
@@ -596,14 +597,14 @@ pub fn inst_cache_hit_invalidate<T>(v: *const T, size: usize, write_back: bool) 
     for addr in (base..(base + size as u32)).step_by(16) {
         if write_back {
             unsafe {
-                asm!(".set noat", 
-                     "cache (5<<2)|0, 0({reg})", 
+                asm!(".set noat",
+                     "cache (5<<2)|0, 0({reg})",
                      reg = in(reg) addr)
             };
         } else {
             unsafe {
-                asm!(".set noat", 
-                     "cache (4<<2)|0, 0({reg})", 
+                asm!(".set noat",
+                     "cache (4<<2)|0, 0({reg})",
                      reg = in(reg) addr)
             };
         }
@@ -615,7 +616,7 @@ pub fn inst_cache_hit_invalidate<T>(v: *const T, size: usize, write_back: bool) 
 /// for details.
 #[inline]
 pub fn inst_cache_index_invalidate<T>(ptr: &mut [T]) {
-    let size = ptr.len() * ::core::mem::size_of::<T>();
+    let size = core::mem::size_of_val(ptr);
     unsafe {
         libdragon_sys::inst_cache_index_invalidate(ptr.as_ptr() as *mut _, size as u32);
     }

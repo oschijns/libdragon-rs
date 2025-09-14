@@ -292,20 +292,20 @@ impl Waveform {
     /// Get the (debug) name of the `Waveform`
     ///
     /// See [`waveform_s.name`](libdragon_sys::waveform_s) for details.
-    pub fn name<'a>(&'a self) -> Result<&'a str> {
-        let name_str = unsafe { CStr::from_ptr((*self.ptr).name as *const i8) };
+    pub fn name(&self) -> Result<&str> {
+        let name_str = unsafe { CStr::from_ptr((*self.ptr).name) };
         Ok(name_str.to_str()?)
     }
 
     /// Width of a sample of this waveform, in bits
     ///
     /// See [`waveform_s.bits`](libdragon_sys::waveform_s) for details.
-    pub fn bits(&self) -> u8 { unsafe { (*self.ptr).bits as u8 } }
+    pub fn bits(&self) -> u8 { unsafe { (*self.ptr).bits } }
 
     /// Number of interleaved audio channels in this waveform.
     ///
     /// See [`waveform_s.channels`](libdragon_sys::waveform_s) for details.
-    pub fn channels(&self) -> u8 { unsafe { (*self.ptr).channels as u8 } }
+    pub fn channels(&self) -> u8 { unsafe { (*self.ptr).channels } }
 
     /// Desired playback frequency (in samples per second, aka Hz)
     ///
@@ -316,6 +316,9 @@ impl Waveform {
     ///
     /// See [`waveform_s.len`](libdragon_sys::waveform_s) for details.
     pub fn len(&self) -> usize { unsafe { (*self.ptr).len as usize } }
+
+    /// Specify if the waveform is empty or not.
+    pub fn is_empty(&self) -> bool { unsafe { (*self.ptr).len != 0 } }
 
     /// Length of the loop of the waveform (from the end).
     ///

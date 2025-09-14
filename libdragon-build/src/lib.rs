@@ -1,8 +1,6 @@
-use std::{env, fs::File, io::Write, path::PathBuf, process::Command};
-
 use execute::Execute;
-
 use glob::glob;
+use std::{env, fs::File, io::Write, path::PathBuf, process::Command};
 
 pub type Result<T> = std::io::Result<T>;
 
@@ -97,7 +95,7 @@ impl Build {
                 format!("{}", self.rom_compression_level),
             ));
 
-            let mut fp = File::create(src_dir.join(&env_filename))?;
+            let mut fp = File::create(src_dir.join(env_filename))?;
             for var in vars {
                 writeln!(&mut fp, "{}={}", var.0, var.1)?;
             }
@@ -105,7 +103,7 @@ impl Build {
 
         // Copy the justfile over to the local directory
         if let Some(ref just_filename) = &self.just_filename {
-            let mut fp = File::create(src_dir.join(&just_filename))?;
+            let mut fp = File::create(src_dir.join(just_filename))?;
             write!(&mut fp, "{}", JUSTFILE_CONTENT)?;
         }
 
@@ -157,7 +155,7 @@ impl Build {
         let _ = std::fs::create_dir(outfile.clone().parent().unwrap());
 
         let gcc = Self::get_toolchain_program("gcc");
-        let mut compile = Command::new(&gcc);
+        let mut compile = Command::new(gcc);
         compile
             .arg("-march=mips1")
             .arg("-mabi=32")
@@ -229,9 +227,9 @@ impl Build {
             let ospath = segfile_bin.clone().into_os_string();
             let fullpath = ospath.to_string_lossy();
             let symprefix = String::from(&*fullpath)
-                .replace("/", "_")
-                .replace(".", "_")
-                .replace("-", "_");
+                .replace('/', "_")
+                .replace('.', "_")
+                .replace('-', "_");
 
             let mut segfile_o = outfile.clone();
             segfile_o.set_extension(format!("{}.o", segment));
@@ -286,7 +284,7 @@ impl Build {
         datasegment_o.set_extension("data.o");
 
         let ld = Self::get_toolchain_program("ld");
-        let mut link = Command::new(&ld);
+        let mut link = Command::new(ld);
         link.arg("-relocatable")
             .arg(format!("{}", textsegment_o.display()))
             .arg(format!("{}", datasegment_o.display()))

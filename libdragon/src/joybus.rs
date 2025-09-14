@@ -174,7 +174,7 @@ impl Joybus {
                 recv_data: *mut ::core::ffi::c_void,
             );
         }
-        let send_len = send_data.len() * ::core::mem::size_of::<T>();
+        let send_len = core::mem::size_of_val(send_data);
         let recv_len = recv_data.len() * ::core::mem::size_of::<U>();
         unsafe {
             joybus_exec_cmd(
@@ -320,7 +320,7 @@ impl Accessory {
         };
         match r {
             AccessoryIoStatus::Ok => Ok(res),
-            e @ _ => Err(LibDragonError::AccessoryIoError { error: e }),
+            e => Err(LibDragonError::AccessoryIoError { error: e }),
         }
     }
 
@@ -336,7 +336,7 @@ impl Accessory {
         };
         match r {
             AccessoryIoStatus::Ok => Ok(()),
-            e @ _ => Err(LibDragonError::AccessoryIoError { error: e }),
+            e => Err(LibDragonError::AccessoryIoError { error: e }),
         }
     }
 }

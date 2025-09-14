@@ -7,19 +7,19 @@ pub use embedded_io::{Read, Seek};
 const DFS_ESUCCESS: i32 = libdragon_sys::DFS_ESUCCESS as i32;
 
 #[doc(hidden)]
-const DFS_EBADINPUT: i32 = libdragon_sys::DFS_EBADINPUT as i32;
+const DFS_EBADINPUT: i32 = libdragon_sys::DFS_EBADINPUT;
 
 #[doc(hidden)]
-const DFS_ENOFILE: i32 = libdragon_sys::DFS_ENOFILE as i32;
+const DFS_ENOFILE: i32 = libdragon_sys::DFS_ENOFILE;
 
 #[doc(hidden)]
-const DFS_EBADFS: i32 = libdragon_sys::DFS_EBADFS as i32;
+const DFS_EBADFS: i32 = libdragon_sys::DFS_EBADFS;
 
 #[doc(hidden)]
-const DFS_ENFILE: i32 = libdragon_sys::DFS_ENFILE as i32;
+const DFS_ENFILE: i32 = libdragon_sys::DFS_ENFILE;
 
 #[doc(hidden)]
-const DFS_EBADHANDLE: i32 = libdragon_sys::DFS_EBADHANDLE as i32;
+const DFS_EBADHANDLE: i32 = libdragon_sys::DFS_EBADHANDLE;
 
 #[doc(hidden)]
 const FLAGS_FILE: i32 = libdragon_sys::FLAGS_FILE as i32;
@@ -104,7 +104,7 @@ pub fn init(base_fs_loc: Option<u32>) -> Result<()> {
 
     match s {
         DFS_ESUCCESS => Ok(()),
-        e @ _ => Err(LibDragonError::DfsError { error: e.into() }),
+        e => Err(LibDragonError::DfsError { error: e.into() }),
     }
 }
 
@@ -209,7 +209,7 @@ impl DfsFileHandle {
     ///
     /// See [`dfs_close`](libdragon_sys::dfs_close)
     pub fn close(&mut self) {
-        if let Some(fp) = core::mem::replace(&mut self.0, None) {
+        if let Some(fp) = self.0.take() {
             unsafe {
                 libdragon_sys::dfs_close(fp);
             }
@@ -361,7 +361,7 @@ impl File {
         let cmode = CString::new(mode).unwrap();
         let fp = unsafe { libdragon_sys::fopen(cpath.as_ptr(), cmode.as_ptr()) };
 
-        if fp == core::ptr::null_mut() {
+        if fp.is_null() {
             Err(LibDragonError::DfsError {
                 error: DfsError::NotFound,
             })
@@ -372,7 +372,7 @@ impl File {
 
     /// Closes a [FILE](libdragon_sys::FILE) using [fclose](libdragon_sys::fclose) and invalidates this [File] wrapper object.
     pub fn close(&mut self) {
-        if let Some(fp) = core::mem::replace(&mut self.fp, None) {
+        if let Some(fp) = self.fp.take() {
             unsafe {
                 libdragon_sys::fclose(fp);
             }
@@ -533,7 +533,7 @@ impl<'a> Dir<'a> {
         } else {
             Ok(Self {
                 path,
-                dir:  unsafe { dir.assume_init() },
+                dir: unsafe { dir.assume_init() },
             })
         }
     }
@@ -552,7 +552,7 @@ impl<'a> Dir<'a> {
                 libdragon_sys::ENOENT => Err(LibDragonError::DfsError {
                     error: DfsError::NotFound,
                 }),
-                errno @ _ => Err(LibDragonError::ErrnoError { errno }),
+                errno => Err(LibDragonError::ErrnoError { errno }),
             }
         } else {
             Ok(())
@@ -581,5 +581,5 @@ impl<'a> Dir<'a> {
 
     /// Size of the file
     /// See [dir_t](libdragon_sys::dir_t) for more information.
-    pub fn d_size(&self) -> i64 { self.dir.d_size as i64 }
+    pub fn d_size(&self) -> i64 { self.dir.d_size }
 }
