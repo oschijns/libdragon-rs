@@ -1,0 +1,16 @@
+# Formatting rules
+
+# force alignment of long enumerations
+enum_discrim_align_threshold = 20
+struct_field_align_threshold = 20
+
+# Group imports
+imports_granularity = "Crate"
+
+# Format doc comments too
+format_code_in_doc_comments = true
+
+# Reduce code length
+fn_single_line = true
+struct_lit_single_line = true
+use_field_init_shorthand = true

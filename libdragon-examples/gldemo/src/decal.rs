@@ -1,25 +1,21 @@
-
 use libdragon::*;
 
 pub struct Decal;
 
 impl Decal {
-    pub fn new() -> Self {
-        Self {
-        }
-    }
+    pub fn new() -> Self { Self {} }
 
     fn draw_quad(&self) {
         gl::Begin(gl::TRIANGLE_STRIP);
-            gl::Normal3f(0.0, 1.0, 0.0);
-            gl::TexCoord2f(0.0, 0.0);
-            gl::Vertex3f(-0.5, 0.0, -0.5);
-            gl::TexCoord2f(0.0, 1.0);
-            gl::Vertex3f(-0.5, 0.0, 0.5);
-            gl::TexCoord2f(1.0, 0.0);
-            gl::Vertex3f(0.5, 0.0, -0.5);
-            gl::TexCoord2f(1.0, 1.0);
-            gl::Vertex3f(0.5, 0.0, 0.5);
+        gl::Normal3f(0.0, 1.0, 0.0);
+        gl::TexCoord2f(0.0, 0.0);
+        gl::Vertex3f(-0.5, 0.0, -0.5);
+        gl::TexCoord2f(0.0, 1.0);
+        gl::Vertex3f(-0.5, 0.0, 0.5);
+        gl::TexCoord2f(1.0, 0.0);
+        gl::Vertex3f(0.5, 0.0, -0.5);
+        gl::TexCoord2f(1.0, 1.0);
+        gl::Vertex3f(0.5, 0.0, 0.5);
         gl::End();
     }
 
@@ -48,9 +44,7 @@ impl Decal {
         gl::Disable(gl::COLOR_MATERIAL);
         gl::DepthMask(gl::TRUE);
         gl::DepthFunc(gl::LESS);
-        
+
         gl::PopMatrix();
     }
 }
-
-

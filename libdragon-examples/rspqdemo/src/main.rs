@@ -10,11 +10,14 @@ use core_maths::*;
 use libdragon::*;
 
 mod vec;
-use vec::{VecSlot, VecMtx};
+use vec::{VecMtx, VecSlot};
 
 fn print_vectors(arr: &[Vec4]) {
     for v in arr {
-        println!("{:11.4}  {:11.4}  {:11.4}  {:11.4}", v.v[0], v.v[1], v.v[2], v.v[3]);
+        println!(
+            "{:11.4}  {:11.4}  {:11.4}  {:11.4}",
+            v.v[0], v.v[1], v.v[2], v.v[3]
+        );
     }
 }
 
@@ -88,7 +91,7 @@ extern "C" fn main() -> ! {
         vec.transform(i, MTX_SLOT, i);
     }
     vec.store(output_vectors, 0);
-    let transform_vectors_block = rspq::Block::end(); 
+    let transform_vectors_block = rspq::Block::end();
 
     // Print inputs first for reference
     println!("Input vectors:");
@@ -117,10 +120,10 @@ extern "C" fn main() -> ! {
 
     // Perform matrix composition by multiplying them together (transforming column vectors)
     // The resulting matrix is written to MTX_SLOT
-    vec.transform(22, 18, 16);         // Rotation * scale (first two columns)
-    vec.transform(23, 18, 17);         // Rotation * scale (last two columns)
-    vec.transform(MTX_SLOT+0, 20, 22); // Translation * rotation * scale (first two columns)
-    vec.transform(MTX_SLOT+1, 20, 23); // Translation * rotation * scale (last two columns)
+    vec.transform(22, 18, 16); // Rotation * scale (first two columns)
+    vec.transform(23, 18, 17); // Rotation * scale (last two columns)
+    vec.transform(MTX_SLOT + 0, 20, 22); // Translation * rotation * scale (first two columns)
+    vec.transform(MTX_SLOT + 1, 20, 23); // Translation * rotation * scale (last two columns)
     transform_vectors_block.run();
     print_output("Combined:", &mut vectors, &output_vectors);
 
@@ -133,7 +136,7 @@ extern "C" fn main() -> ! {
         if pressed.start {
             rsp_crash!("Reporting an RSP crash: {}", 1234);
         }
-    };
+    }
 }
 
 #[derive(Debug)]
@@ -147,6 +150,7 @@ pub struct Mat4x4 {
 }
 
 impl Mat4x4 {
+    #[rustfmt::skip]
     fn identity() -> Self {
         Self {
             m: [
@@ -158,6 +162,7 @@ impl Mat4x4 {
         }
     }
 
+    #[rustfmt::skip]
     fn scale(xs: f32, ys: f32, zs: f32) -> Self {
         Self {
             m: [
@@ -169,6 +174,7 @@ impl Mat4x4 {
         }
     }
 
+    #[rustfmt::skip]
     fn translate(xt: f32, yt: f32, zt: f32) -> Self {
         Self {
             m: [
@@ -180,6 +186,7 @@ impl Mat4x4 {
         }
     }
 
+    #[rustfmt::skip]
     fn _rotate_x(angle: f32) -> Self {
         let c = angle.cos();
         let s = angle.sin();
@@ -194,6 +201,7 @@ impl Mat4x4 {
         }
     }
 
+    #[rustfmt::skip]
     fn rotate_y(angle: f32) -> Self {
         let c = angle.cos();
         let s = angle.sin();
@@ -208,6 +216,7 @@ impl Mat4x4 {
         }
     }
 
+    #[rustfmt::skip]
     fn _rotate_z(angle: f32) -> Self {
         let c = angle.cos();
         let s = angle.sin();
@@ -222,4 +231,3 @@ impl Mat4x4 {
         }
     }
 }
-

@@ -6,7 +6,7 @@ pub enum Model64AnimSlot {
     Slot0,
     Slot1,
     Slot2,
-    Slot3
+    Slot3,
 }
 
 impl From<Model64AnimSlot> for libdragon_sys::model64_anim_slot_t {
@@ -22,26 +22,26 @@ impl From<Model64AnimSlot> for libdragon_sys::model64_anim_slot_t {
 
 /// Wrapper around [`model64_t`](libdragon_sys::model64_t)
 pub struct Model64<'a> {
-    ptr: *mut libdragon_sys::model64_t,
+    ptr:     *mut libdragon_sys::model64_t,
     phantom: core::marker::PhantomData<&'a u8>,
 }
 
 /// Wrapper around [`mesh_t`](libdragon_sys::mesh_t)
 pub struct Mesh<'a> {
-    ptr: *mut libdragon_sys::mesh_t,
+    ptr:     *mut libdragon_sys::mesh_t,
     phantom: core::marker::PhantomData<&'a u8>,
 }
 
 /// Wrapper around [`model64_model_t`](libdragon_sys::model64_model_t)
 pub struct Model64Node<'a> {
-    ptr: *mut libdragon_sys::model64_node_t,
+    ptr:       *mut libdragon_sys::model64_node_t,
     model_ptr: *mut libdragon_sys::model64_t,
-    phantom: core::marker::PhantomData<&'a u8>,
+    phantom:   core::marker::PhantomData<&'a u8>,
 }
 
 /// Wrapper around [`primitive_t`](libdragon_sys::primitive_t)
 pub struct Primitive<'a> {
-    ptr: *mut libdragon_sys::primitive_t,
+    ptr:     *mut libdragon_sys::primitive_t,
     phantom: core::marker::PhantomData<&'a u8>,
 }
 
@@ -53,17 +53,17 @@ impl Model64<'_> {
         let path_bytes: &[u8] = path.as_ref().as_bytes();
         let cpath = CString::new(path_bytes).unwrap();
 
-        let ptr = unsafe {
-            libdragon_sys::model64_load(cpath.as_ptr())
-        };
+        let ptr = unsafe { libdragon_sys::model64_load(cpath.as_ptr()) };
 
         if ptr == ::core::ptr::null_mut() {
             // TODO a different error code?
-            return Err(LibDragonError::DfsError{ error: dfs::DfsError::NotFound });
+            return Err(LibDragonError::DfsError {
+                error: dfs::DfsError::NotFound,
+            });
         }
 
         Ok(Model64 {
-            ptr: ptr,
+            ptr,
             phantom: core::marker::PhantomData,
         })
     }
@@ -73,11 +73,14 @@ impl Model64<'_> {
     /// See [`model64_load_buf`](libdragon_sys::model64_load_buf) for details.
     pub fn load_buf<'a, T>(buf: &'a mut [T]) -> Model64<'a> {
         let ptr = unsafe {
-            libdragon_sys::model64_load_buf(buf.as_mut_ptr() as *mut _, (buf.len() * core::mem::size_of::<T>()) as i32)
+            libdragon_sys::model64_load_buf(
+                buf.as_mut_ptr() as *mut _,
+                (buf.len() * core::mem::size_of::<T>()) as i32,
+            )
         };
-        
+
         Model64 {
-            ptr: ptr,
+            ptr,
             phantom: core::marker::PhantomData,
         }
     }
@@ -86,12 +89,10 @@ impl Model64<'_> {
     ///
     /// See [`model64_clone`](libdragon_sys::model64_clone) for details.
     pub fn clone<'a>(&self) -> Model64<'a> {
-        let ptr = unsafe {
-            libdragon_sys::model64_clone(self.ptr)
-        };
+        let ptr = unsafe { libdragon_sys::model64_clone(self.ptr) };
 
         Model64 {
-            ptr: ptr,
+            ptr,
             phantom: core::marker::PhantomData,
         }
     }
@@ -100,19 +101,19 @@ impl Model64<'_> {
     ///
     /// See [`model64_get_mesh_count`](libdragon_sys::model64_get_mesh_count) for details.
     #[inline]
-    pub fn get_mesh_count(&self) -> usize { unsafe { libdragon_sys::model64_get_mesh_count(self.ptr) as usize } }
+    pub fn get_mesh_count(&self) -> usize {
+        unsafe { libdragon_sys::model64_get_mesh_count(self.ptr) as usize }
+    }
 
     /// Return the mesh at the specified index
     ///
     /// See [`model64_get_mesh`](libdragon_sys::model64_get_mesh) for details.
     #[inline]
-    pub fn get_mesh<'a>(&'a self, mesh_index: usize) -> Mesh<'a> { 
-        let ptr = unsafe { 
-            libdragon_sys::model64_get_mesh(self.ptr, mesh_index as u32) 
-        };
+    pub fn get_mesh<'a>(&'a self, mesh_index: usize) -> Mesh<'a> {
+        let ptr = unsafe { libdragon_sys::model64_get_mesh(self.ptr, mesh_index as u32) };
 
         Mesh {
-            ptr: ptr,
+            ptr,
             phantom: core::marker::PhantomData,
         }
     }
@@ -121,21 +122,21 @@ impl Model64<'_> {
     ///
     /// See [`model64_get_node_count`](libdragon_sys::model64_get_node_count) for details.
     #[inline]
-    pub fn get_node_count(&self) -> usize { unsafe { libdragon_sys::model64_get_node_count(self.ptr) as usize } }
+    pub fn get_node_count(&self) -> usize {
+        unsafe { libdragon_sys::model64_get_node_count(self.ptr) as usize }
+    }
 
     /// Return the node at the specified index
     ///
     /// See [`model64_get_node`](libdragon_sys::model64_get_node) for details.
     #[inline]
-    pub fn get_node<'a>(&'a self, node_index: usize) -> Model64Node<'a> { 
-        let ptr = unsafe { 
-            libdragon_sys::model64_get_node(self.ptr, node_index as u32) 
-        };
+    pub fn get_node<'a>(&'a self, node_index: usize) -> Model64Node<'a> {
+        let ptr = unsafe { libdragon_sys::model64_get_node(self.ptr, node_index as u32) };
 
         Model64Node {
-            ptr: ptr,
+            ptr,
             model_ptr: self.ptr,
-            phantom: core::marker::PhantomData,
+            phantom:   core::marker::PhantomData,
         }
     }
 
@@ -143,94 +144,107 @@ impl Model64<'_> {
     #[inline]
     pub fn search_node<'a>(&'a self, name: &str) -> Option<Model64Node<'a>> {
         let c_name = CString::new(name).unwrap();
-        let ptr = unsafe {
-            libdragon_sys::model64_search_node(self.ptr, c_name.as_ptr())
-        };
+        let ptr = unsafe { libdragon_sys::model64_search_node(self.ptr, c_name.as_ptr()) };
 
         if ptr == core::ptr::null_mut() {
             return None;
         }
         Some(Model64Node {
-            ptr: ptr,
+            ptr,
             model_ptr: self.ptr,
-            phantom: core::marker::PhantomData,
+            phantom:   core::marker::PhantomData,
         })
     }
 
     /// Draw an entire model.
     ///
     /// See [`model64_draw`](libdragon_sys::model64_draw) for details.
-    #[inline] pub fn draw(&self) { unsafe { libdragon_sys::model64_draw(self.ptr); } }
+    #[inline]
+    pub fn draw(&self) {
+        unsafe {
+            libdragon_sys::model64_draw(self.ptr);
+        }
+    }
 
     /// Play an animation.
-    /// 
+    ///
     /// See [`model64_anim_play`](libdragon_sys::model64_anim_play) for details.
-    #[inline] pub fn anim_play(&mut self, anim: &str, slot: Model64AnimSlot, paused: bool, start_time: f32) {
+    #[inline]
+    pub fn anim_play(&mut self, anim: &str, slot: Model64AnimSlot, paused: bool, start_time: f32) {
         let c_anim = CString::new(anim).unwrap();
         unsafe {
-            libdragon_sys::model64_anim_play(self.ptr, c_anim.as_ptr(), slot.into(), paused, start_time);
+            libdragon_sys::model64_anim_play(
+                self.ptr,
+                c_anim.as_ptr(),
+                slot.into(),
+                paused,
+                start_time,
+            );
         }
     }
 
     /// Stop an animation.
-    /// 
+    ///
     /// See [`model64_anim_stop`](libdragon_sys::model64_anim_stop) for details.
-    #[inline] pub fn anim_stop(&mut self, slot: Model64AnimSlot) {
+    #[inline]
+    pub fn anim_stop(&mut self, slot: Model64AnimSlot) {
         unsafe {
             libdragon_sys::model64_anim_stop(self.ptr, slot.into());
         }
     }
 
     /// Get the length of an animation in seconds.
-    /// 
+    ///
     /// See [`model64_anim_get_length`](libdragon_sys::model64_anim_get_length) for details.
-    #[inline] pub fn get_length(&self, anim: &str) -> f32 {
+    #[inline]
+    pub fn get_length(&self, anim: &str) -> f32 {
         let c_anim = CString::new(anim).unwrap();
-        unsafe {
-            libdragon_sys::model64_anim_get_length(self.ptr, c_anim.as_ptr())
-        }
+        unsafe { libdragon_sys::model64_anim_get_length(self.ptr, c_anim.as_ptr()) }
     }
 
     /// Get the current time of an animation in seconds.
-    /// 
+    ///
     /// See [`model64_anim_get_time`](libdragon_sys::model64_anim_get_time) for details.
-    #[inline] pub fn get_time(&self, slot: Model64AnimSlot) -> f32 {
-        unsafe {
-            libdragon_sys::model64_anim_get_time(self.ptr, slot.into())
-        }
+    #[inline]
+    pub fn get_time(&self, slot: Model64AnimSlot) -> f32 {
+        unsafe { libdragon_sys::model64_anim_get_time(self.ptr, slot.into()) }
     }
 
     /// Set the current time of an animation in seconds.
-    /// 
+    ///
     /// See [`model64_anim_set_time`](libdragon_sys::model64_anim_set_time) for details.
-    #[inline] pub fn set_time(&mut self, slot: Model64AnimSlot, time: f32) {
+    #[inline]
+    pub fn set_time(&mut self, slot: Model64AnimSlot, time: f32) {
         unsafe {
             libdragon_sys::model64_anim_set_time(self.ptr, slot.into(), time);
         }
     }
 
     /// Set the playback speed of an animation
-    /// 
+    ///
     /// See [`model64_anim_set_speed`](libdragon_sys::model64_anim_set_speed) for details.
-    #[inline] pub fn set_speed(&mut self, slot: Model64AnimSlot, speed: f32) {
+    #[inline]
+    pub fn set_speed(&mut self, slot: Model64AnimSlot, speed: f32) {
         unsafe {
             libdragon_sys::model64_anim_set_speed(self.ptr, slot.into(), speed);
         }
     }
 
     /// Set the looping flag of an animation
-    /// 
+    ///
     /// See [`model64_anim_set_loop`](libdragon_sys::model64_anim_set_loop) for details.
-    #[inline] pub fn set_loop(&mut self, slot: Model64AnimSlot, loop_: bool) {
+    #[inline]
+    pub fn set_loop(&mut self, slot: Model64AnimSlot, loop_: bool) {
         unsafe {
             libdragon_sys::model64_anim_set_loop(self.ptr, slot.into(), loop_);
         }
     }
 
     /// Set the paused flag of an animation
-    /// 
+    ///
     /// See [`model64_anim_set_pause`](libdragon_sys::model64_anim_set_pause) for details.
-    #[inline] pub fn set_pause(&mut self, slot: Model64AnimSlot, pause: bool) {
+    #[inline]
+    pub fn set_pause(&mut self, slot: Model64AnimSlot, pause: bool) {
         unsafe {
             libdragon_sys::model64_anim_set_pause(self.ptr, slot.into(), pause);
         }
@@ -239,8 +253,9 @@ impl Model64<'_> {
     /// Update a model
     ///
     /// See [`model64_update`](libdragon_sys::model64_update) for details.
-    #[inline] pub fn update(&mut self, deltatime: f32) {
-        unsafe { 
+    #[inline]
+    pub fn update(&mut self, deltatime: f32) {
+        unsafe {
             libdragon_sys::model64_update(self.ptr, deltatime);
         }
     }
@@ -250,33 +265,43 @@ impl Drop for Model64<'_> {
     /// Free the Model64 memory
     ///
     /// See [`model64_free`](libdragon_sys::model64_free) for details.
-    fn drop(&mut self) { unsafe { libdragon_sys::model64_free(self.ptr); } }
+    fn drop(&mut self) {
+        unsafe {
+            libdragon_sys::model64_free(self.ptr);
+        }
+    }
 }
 
 impl Mesh<'_> {
     /// Return the number of primitives in this mesh.
     ///
     /// See [`model64_get_primitive_count`](libdragon_sys::model64_get_primitive_count) for details.
-    #[inline] pub fn get_primitive_count(&self) -> u32 { unsafe { libdragon_sys::model64_get_primitive_count(self.ptr) } }
+    #[inline]
+    pub fn get_primitive_count(&self) -> u32 {
+        unsafe { libdragon_sys::model64_get_primitive_count(self.ptr) }
+    }
 
     /// Return the primitive at the specified index.
     ///
     /// See [`model64_get_primitive`](libdragon_sys::model64_get_primitive) for details.
     #[inline]
     pub fn get_primitive<'a>(&'a self, primitive_index: u32) -> Primitive<'a> {
-        let ptr = unsafe {
-            libdragon_sys::model64_get_primitive(self.ptr, primitive_index)
-        };
+        let ptr = unsafe { libdragon_sys::model64_get_primitive(self.ptr, primitive_index) };
         Primitive {
-            ptr: ptr,
+            ptr,
             phantom: core::marker::PhantomData,
         }
     }
 
     /// Draw a single mesh
-    /// 
+    ///
     /// See [`model64_draw_mesh`](libdragon_sys::model64_draw_mesh) for details.
-    #[inline] pub fn draw(&self) { unsafe { libdragon_sys::model64_draw_mesh(self.ptr); } }
+    #[inline]
+    pub fn draw(&self) {
+        unsafe {
+            libdragon_sys::model64_draw_mesh(self.ptr);
+        }
+    }
 }
 
 impl Model64Node<'_> {
@@ -336,12 +361,22 @@ impl Model64Node<'_> {
     /// Draw a single node
     ///
     /// See [`model64_draw_node`](libdragon_sys::model64_draw_node) for details.
-    #[inline] pub fn draw(&self) { unsafe { libdragon_sys::model64_draw_node(self.model_ptr, self.ptr); } }
+    #[inline]
+    pub fn draw(&self) {
+        unsafe {
+            libdragon_sys::model64_draw_node(self.model_ptr, self.ptr);
+        }
+    }
 }
 
 impl Primitive<'_> {
     /// Draw a single primitive
     ///
     /// See [`model64_draw_primitive`](libdragon_sys::model64_draw_primitive) for details.
-    #[inline] pub fn draw(&self) { unsafe { libdragon_sys::model64_draw_primitive(self.ptr); } }
+    #[inline]
+    pub fn draw(&self) {
+        unsafe {
+            libdragon_sys::model64_draw_primitive(self.ptr);
+        }
+    }
 }

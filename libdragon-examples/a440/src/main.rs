@@ -17,7 +17,7 @@ extern "C" fn main() -> ! {
     console::set_debug(true);
 
     joypad::init();
-    
+
     audio::init(PLAYBACK_RATE, 4);
 
     let mut tsamps: u64 = 0;
@@ -28,9 +28,12 @@ extern "C" fn main() -> ! {
             audio::write(|buf| {
                 let to_write = buf.len() / 2;
                 for i in 0..to_write {
-                    let v = (vol*(i16::MAX as f32) * (2.0 * PI * freq * ((tsamps as f32) / (PLAYBACK_RATE as f32))).sin()) as i16;
-                    buf[2*i+0] = v;
-                    buf[2*i+1] = v;
+                    let v = (vol
+                        * (i16::MAX as f32)
+                        * (2.0 * PI * freq * ((tsamps as f32) / (PLAYBACK_RATE as f32))).sin())
+                        as i16;
+                    buf[2 * i + 0] = v;
+                    buf[2 * i + 1] = v;
                     tsamps += 1;
                 }
             });
@@ -65,4 +68,3 @@ extern "C" fn main() -> ! {
         }
     }
 }
-

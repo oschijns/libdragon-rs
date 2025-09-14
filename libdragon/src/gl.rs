@@ -38,13 +38,17 @@ pub const CURRENT_NORMAL: i32 = libdragon_sys::GL_CURRENT_NORMAL as i32;
 pub const CURRENT_TEXTURE_COORDS: i32 = libdragon_sys::GL_CURRENT_TEXTURE_COORDS as i32;
 pub const CURRENT_RASTER_COLOR: i32 = libdragon_sys::GL_CURRENT_RASTER_COLOR as i32;
 pub const CURRENT_RASTER_INDEX: i32 = libdragon_sys::GL_CURRENT_RASTER_INDEX as i32;
-pub const CURRENT_RASTER_TEXTURE_COORDS: i32 = libdragon_sys::GL_CURRENT_RASTER_TEXTURE_COORDS as i32;
+pub const CURRENT_RASTER_TEXTURE_COORDS: i32 =
+    libdragon_sys::GL_CURRENT_RASTER_TEXTURE_COORDS as i32;
 pub const CURRENT_RASTER_POSITION: i32 = libdragon_sys::GL_CURRENT_RASTER_POSITION as i32;
-pub const CURRENT_RASTER_POSITION_VALID: i32 = libdragon_sys::GL_CURRENT_RASTER_POSITION_VALID as i32;
+pub const CURRENT_RASTER_POSITION_VALID: i32 =
+    libdragon_sys::GL_CURRENT_RASTER_POSITION_VALID as i32;
 pub const CURRENT_RASTER_DISTANCE: i32 = libdragon_sys::GL_CURRENT_RASTER_DISTANCE as i32;
 pub const EDGE_FLAG: i32 = libdragon_sys::GL_EDGE_FLAG as i32;
-pub const VERTEX_HALF_FIXED_PRECISION_N64: i32 = libdragon_sys::GL_VERTEX_HALF_FIXED_PRECISION_N64 as i32;
-pub const TEXTURE_COORD_HALF_FIXED_PRECISION_N64: i32 = libdragon_sys::GL_TEXTURE_COORD_HALF_FIXED_PRECISION_N64 as i32;
+pub const VERTEX_HALF_FIXED_PRECISION_N64: i32 =
+    libdragon_sys::GL_VERTEX_HALF_FIXED_PRECISION_N64 as i32;
+pub const TEXTURE_COORD_HALF_FIXED_PRECISION_N64: i32 =
+    libdragon_sys::GL_TEXTURE_COORD_HALF_FIXED_PRECISION_N64 as i32;
 pub const VERTEX_ARRAY: i32 = libdragon_sys::GL_VERTEX_ARRAY as i32;
 pub const NORMAL_ARRAY: i32 = libdragon_sys::GL_NORMAL_ARRAY as i32;
 pub const COLOR_ARRAY: i32 = libdragon_sys::GL_COLOR_ARRAY as i32;
@@ -88,26 +92,38 @@ pub const EDGE_FLAG_ARRAY_POINTER: i32 = libdragon_sys::GL_EDGE_FLAG_ARRAY_POINT
 pub const ARRAY_BUFFER_ARB: i32 = libdragon_sys::GL_ARRAY_BUFFER_ARB as i32;
 pub const ELEMENT_ARRAY_BUFFER_ARB: i32 = libdragon_sys::GL_ELEMENT_ARRAY_BUFFER_ARB as i32;
 pub const ARRAY_BUFFER_BINDING_ARB: i32 = libdragon_sys::GL_ARRAY_BUFFER_BINDING_ARB as i32;
-pub const ELEMENT_ARRAY_BUFFER_BINDING_ARB: i32 = libdragon_sys::GL_ELEMENT_ARRAY_BUFFER_BINDING_ARB as i32;
-pub const VERTEX_ARRAY_BUFFER_BINDING_ARB: i32 = libdragon_sys::GL_VERTEX_ARRAY_BUFFER_BINDING_ARB as i32;
-pub const NORMAL_ARRAY_BUFFER_BINDING_ARB: i32 = libdragon_sys::GL_NORMAL_ARRAY_BUFFER_BINDING_ARB as i32;
-pub const COLOR_ARRAY_BUFFER_BINDING_ARB: i32 = libdragon_sys::GL_COLOR_ARRAY_BUFFER_BINDING_ARB as i32;
-pub const INDEX_ARRAY_BUFFER_BINDING_ARB: i32 = libdragon_sys::GL_INDEX_ARRAY_BUFFER_BINDING_ARB as i32;
-pub const TEXTURE_COORD_ARRAY_BUFFER_BINDING_ARB: i32 = libdragon_sys::GL_TEXTURE_COORD_ARRAY_BUFFER_BINDING_ARB as i32;
-pub const EDGE_FLAG_ARRAY_BUFFER_BINDING_ARB: i32 = libdragon_sys::GL_EDGE_FLAG_ARRAY_BUFFER_BINDING_ARB as i32;
-pub const MATRIX_INDEX_ARRAY_BUFFER_BINDING_ARB: i32 = libdragon_sys::GL_MATRIX_INDEX_ARRAY_BUFFER_BINDING_ARB as i32;
-pub const VERTEX_ATTRIB_ARRAY_BUFFER_BINDING_ARB: i32 = libdragon_sys::GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING_ARB as i32;
+pub const ELEMENT_ARRAY_BUFFER_BINDING_ARB: i32 =
+    libdragon_sys::GL_ELEMENT_ARRAY_BUFFER_BINDING_ARB as i32;
+pub const VERTEX_ARRAY_BUFFER_BINDING_ARB: i32 =
+    libdragon_sys::GL_VERTEX_ARRAY_BUFFER_BINDING_ARB as i32;
+pub const NORMAL_ARRAY_BUFFER_BINDING_ARB: i32 =
+    libdragon_sys::GL_NORMAL_ARRAY_BUFFER_BINDING_ARB as i32;
+pub const COLOR_ARRAY_BUFFER_BINDING_ARB: i32 =
+    libdragon_sys::GL_COLOR_ARRAY_BUFFER_BINDING_ARB as i32;
+pub const INDEX_ARRAY_BUFFER_BINDING_ARB: i32 =
+    libdragon_sys::GL_INDEX_ARRAY_BUFFER_BINDING_ARB as i32;
+pub const TEXTURE_COORD_ARRAY_BUFFER_BINDING_ARB: i32 =
+    libdragon_sys::GL_TEXTURE_COORD_ARRAY_BUFFER_BINDING_ARB as i32;
+pub const EDGE_FLAG_ARRAY_BUFFER_BINDING_ARB: i32 =
+    libdragon_sys::GL_EDGE_FLAG_ARRAY_BUFFER_BINDING_ARB as i32;
+pub const MATRIX_INDEX_ARRAY_BUFFER_BINDING_ARB: i32 =
+    libdragon_sys::GL_MATRIX_INDEX_ARRAY_BUFFER_BINDING_ARB as i32;
+pub const VERTEX_ATTRIB_ARRAY_BUFFER_BINDING_ARB: i32 =
+    libdragon_sys::GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING_ARB as i32;
 pub const VERTEX_ARRAY_BINDING: i32 = libdragon_sys::GL_VERTEX_ARRAY_BINDING as i32;
 pub const MATRIX_PALETTE_ARB: i32 = libdragon_sys::GL_MATRIX_PALETTE_ARB as i32;
-pub const MAX_MATRIX_PALETTE_STACK_DEPTH_ARB: i32 = libdragon_sys::GL_MAX_MATRIX_PALETTE_STACK_DEPTH_ARB as i32;
+pub const MAX_MATRIX_PALETTE_STACK_DEPTH_ARB: i32 =
+    libdragon_sys::GL_MAX_MATRIX_PALETTE_STACK_DEPTH_ARB as i32;
 pub const MAX_PALETTE_MATRICES_ARB: i32 = libdragon_sys::GL_MAX_PALETTE_MATRICES_ARB as i32;
 pub const CURRENT_PALETTE_MATRIX_ARB: i32 = libdragon_sys::GL_CURRENT_PALETTE_MATRIX_ARB as i32;
 pub const MATRIX_INDEX_ARRAY_ARB: i32 = libdragon_sys::GL_MATRIX_INDEX_ARRAY_ARB as i32;
 pub const CURRENT_MATRIX_INDEX_ARB: i32 = libdragon_sys::GL_CURRENT_MATRIX_INDEX_ARB as i32;
 pub const MATRIX_INDEX_ARRAY_SIZE_ARB: i32 = libdragon_sys::GL_MATRIX_INDEX_ARRAY_SIZE_ARB as i32;
 pub const MATRIX_INDEX_ARRAY_TYPE_ARB: i32 = libdragon_sys::GL_MATRIX_INDEX_ARRAY_TYPE_ARB as i32;
-pub const MATRIX_INDEX_ARRAY_STRIDE_ARB: i32 = libdragon_sys::GL_MATRIX_INDEX_ARRAY_STRIDE_ARB as i32;
-pub const MATRIX_INDEX_ARRAY_POINTER_ARB: i32 = libdragon_sys::GL_MATRIX_INDEX_ARRAY_POINTER_ARB as i32;
+pub const MATRIX_INDEX_ARRAY_STRIDE_ARB: i32 =
+    libdragon_sys::GL_MATRIX_INDEX_ARRAY_STRIDE_ARB as i32;
+pub const MATRIX_INDEX_ARRAY_POINTER_ARB: i32 =
+    libdragon_sys::GL_MATRIX_INDEX_ARRAY_POINTER_ARB as i32;
 pub const STREAM_DRAW_ARB: i32 = libdragon_sys::GL_STREAM_DRAW_ARB as i32;
 pub const STREAM_READ_ARB: i32 = libdragon_sys::GL_STREAM_READ_ARB as i32;
 pub const STREAM_COPY_ARB: i32 = libdragon_sys::GL_STREAM_COPY_ARB as i32;
@@ -586,7 +602,8 @@ pub const CLIENT_ALL_ATTRIB_BITS: i32 = libdragon_sys::GL_CLIENT_ALL_ATTRIB_BITS
 pub const ATTRIB_STACK_DEPTH: i32 = libdragon_sys::GL_ATTRIB_STACK_DEPTH as i32;
 pub const CLIENT_ATTRIB_STACK_DEPTH: i32 = libdragon_sys::GL_CLIENT_ATTRIB_STACK_DEPTH as i32;
 pub const MAX_ATTRIB_STACK_DEPTH: i32 = libdragon_sys::GL_MAX_ATTRIB_STACK_DEPTH as i32;
-pub const MAX_CLIENT_ATTRIB_STACK_DEPTH: i32 = libdragon_sys::GL_MAX_CLIENT_ATTRIB_STACK_DEPTH as i32;
+pub const MAX_CLIENT_ATTRIB_STACK_DEPTH: i32 =
+    libdragon_sys::GL_MAX_CLIENT_ATTRIB_STACK_DEPTH as i32;
 pub const VERSION_1_1: i32 = libdragon_sys::GL_VERSION_1_1 as i32;
 pub const ARB_multisample: i32 = libdragon_sys::GL_ARB_multisample as i32;
 pub const EXT_packed_pixels: i32 = libdragon_sys::GL_EXT_packed_pixels as i32;
@@ -646,7 +663,9 @@ pub fn Vertex4f(x: f32, y: f32, z: f32, w: f32) { unsafe { libdragon_sys::glVert
 #[inline(always)]
 pub fn Vertex4d(x: f64, y: f64, z: f64, w: f64) { unsafe { libdragon_sys::glVertex4d(x, y, z, w) } }
 #[inline(always)]
-pub fn Vertex4hxN64(x: i16, y: i16, z: i16, w: i16) { unsafe { libdragon_sys::glVertex4hxN64(x, y, z, w) } }
+pub fn Vertex4hxN64(x: i16, y: i16, z: i16, w: i16) {
+    unsafe { libdragon_sys::glVertex4hxN64(x, y, z, w) }
+}
 #[inline(always)]
 pub fn Vertex2sv(v: &[i16]) { unsafe { libdragon_sys::glVertex2sv(v.as_ptr()) } }
 #[inline(always)]
@@ -706,17 +725,29 @@ pub fn TexCoord3f(s: f32, t: f32, r: f32) { unsafe { libdragon_sys::glTexCoord3f
 #[inline(always)]
 pub fn TexCoord3d(s: f64, t: f64, r: f64) { unsafe { libdragon_sys::glTexCoord3d(s, t, r) } }
 #[inline(always)]
-pub fn TexCoord3hxN64(s: i16, t: i16, r: i16) { unsafe { libdragon_sys::glTexCoord3hxN64(s, t, r) } }
+pub fn TexCoord3hxN64(s: i16, t: i16, r: i16) {
+    unsafe { libdragon_sys::glTexCoord3hxN64(s, t, r) }
+}
 #[inline(always)]
-pub fn TexCoord4s(s: i16, t: i16, r: i16, q: i16) { unsafe { libdragon_sys::glTexCoord4s(s, t, r, q) } }
+pub fn TexCoord4s(s: i16, t: i16, r: i16, q: i16) {
+    unsafe { libdragon_sys::glTexCoord4s(s, t, r, q) }
+}
 #[inline(always)]
-pub fn TexCoord4i(s: i32, t: i32, r: i32, q: i32) { unsafe { libdragon_sys::glTexCoord4i(s, t, r, q) } }
+pub fn TexCoord4i(s: i32, t: i32, r: i32, q: i32) {
+    unsafe { libdragon_sys::glTexCoord4i(s, t, r, q) }
+}
 #[inline(always)]
-pub fn TexCoord4f(s: f32, t: f32, r: f32, q: f32) { unsafe { libdragon_sys::glTexCoord4f(s, t, r, q) } }
+pub fn TexCoord4f(s: f32, t: f32, r: f32, q: f32) {
+    unsafe { libdragon_sys::glTexCoord4f(s, t, r, q) }
+}
 #[inline(always)]
-pub fn TexCoord4d(s: f64, t: f64, r: f64, q: f64) { unsafe { libdragon_sys::glTexCoord4d(s, t, r, q) } }
+pub fn TexCoord4d(s: f64, t: f64, r: f64, q: f64) {
+    unsafe { libdragon_sys::glTexCoord4d(s, t, r, q) }
+}
 #[inline(always)]
-pub fn TexCoord4hxN64(s: i16, t: i16, r: i16, q: i16) { unsafe { libdragon_sys::glTexCoord4hxN64(s, t, r, q) } }
+pub fn TexCoord4hxN64(s: i16, t: i16, r: i16, q: i16) {
+    unsafe { libdragon_sys::glTexCoord4hxN64(s, t, r, q) }
+}
 #[inline(always)]
 pub fn TexCoord1sv(v: &[i16]) { unsafe { libdragon_sys::glTexCoord1sv(v.as_ptr()) } }
 #[inline(always)]
@@ -843,92 +874,240 @@ pub fn Color4usv(v: &[u16]) { unsafe { libdragon_sys::glColor4usv(v.as_ptr()) } 
 pub fn Color4uiv(v: &[u32]) { unsafe { libdragon_sys::glColor4uiv(v.as_ptr()) } }
 
 #[inline(always)]
-pub fn MatrixIndexubvARB(size: i32, v: &[u8]) { unsafe { libdragon_sys::glMatrixIndexubvARB(size, v.as_ptr()) } }
+pub fn MatrixIndexubvARB(size: i32, v: &[u8]) {
+    unsafe { libdragon_sys::glMatrixIndexubvARB(size, v.as_ptr()) }
+}
 #[inline(always)]
-pub fn MatrixIndexusvARB(size: i32, v: &[u16]) { unsafe { libdragon_sys::glMatrixIndexusvARB(size, v.as_ptr()) } }
+pub fn MatrixIndexusvARB(size: i32, v: &[u16]) {
+    unsafe { libdragon_sys::glMatrixIndexusvARB(size, v.as_ptr()) }
+}
 #[inline(always)]
-pub fn MatrixIndexuivARB(size: i32, v: &[u32]) { unsafe { libdragon_sys::glMatrixIndexuivARB(size, v.as_ptr()) } }
+pub fn MatrixIndexuivARB(size: i32, v: &[u32]) {
+    unsafe { libdragon_sys::glMatrixIndexuivARB(size, v.as_ptr()) }
+}
 
 #[inline(always)]
-pub fn VertexHalfFixedPrecisionN64(bits: u32) { unsafe { libdragon_sys::glVertexHalfFixedPrecisionN64(bits) } }
+pub fn VertexHalfFixedPrecisionN64(bits: u32) {
+    unsafe { libdragon_sys::glVertexHalfFixedPrecisionN64(bits) }
+}
 #[inline(always)]
-pub fn TexCoordHalfFixedPrecisionN64(bits: u32) { unsafe { libdragon_sys::glTexCoordHalfFixedPrecisionN64(bits) } }
+pub fn TexCoordHalfFixedPrecisionN64(bits: u32) {
+    unsafe { libdragon_sys::glTexCoordHalfFixedPrecisionN64(bits) }
+}
 
 #[inline(always)]
-pub fn VertexPointer<T>(size: i32, type_: i32, stride: usize, pointer: *const T) { unsafe { libdragon_sys::glVertexPointer(size, type_ as u32, stride as u32, pointer as *const ::core::ffi::c_void) } }
+pub fn VertexPointer<T>(size: i32, type_: i32, stride: usize, pointer: *const T) {
+    unsafe {
+        libdragon_sys::glVertexPointer(
+            size,
+            type_ as u32,
+            stride as u32,
+            pointer as *const ::core::ffi::c_void,
+        )
+    }
+}
 #[inline(always)]
-pub fn TexCoordPointer<T>(size: i32, type_: i32, stride: usize, pointer: *const T) { unsafe { libdragon_sys::glTexCoordPointer(size, type_ as u32, stride as u32, pointer as *const ::core::ffi::c_void) } }
+pub fn TexCoordPointer<T>(size: i32, type_: i32, stride: usize, pointer: *const T) {
+    unsafe {
+        libdragon_sys::glTexCoordPointer(
+            size,
+            type_ as u32,
+            stride as u32,
+            pointer as *const ::core::ffi::c_void,
+        )
+    }
+}
 #[inline(always)]
-pub fn NormalPointer<T>(type_: i32, stride: usize, pointer: *const T) { unsafe { libdragon_sys::glNormalPointer(type_ as u32, stride as u32, pointer as *const ::core::ffi::c_void) } }
+pub fn NormalPointer<T>(type_: i32, stride: usize, pointer: *const T) {
+    unsafe {
+        libdragon_sys::glNormalPointer(
+            type_ as u32,
+            stride as u32,
+            pointer as *const ::core::ffi::c_void,
+        )
+    }
+}
 #[inline(always)]
-pub fn ColorPointer<T>(size: i32, type_: i32, stride: usize, pointer: *const T) { unsafe { libdragon_sys::glColorPointer(size, type_ as u32, stride as u32, pointer as *const ::core::ffi::c_void) } }
+pub fn ColorPointer<T>(size: i32, type_: i32, stride: usize, pointer: *const T) {
+    unsafe {
+        libdragon_sys::glColorPointer(
+            size,
+            type_ as u32,
+            stride as u32,
+            pointer as *const ::core::ffi::c_void,
+        )
+    }
+}
 #[inline(always)]
-pub fn MatrixIndexPointerARB<T>(size: i32, type_: i32, stride: usize, pointer: *const T) { unsafe { libdragon_sys::glMatrixIndexPointerARB(size, type_ as u32, stride as u32, pointer as *const ::core::ffi::c_void) } }
+pub fn MatrixIndexPointerARB<T>(size: i32, type_: i32, stride: usize, pointer: *const T) {
+    unsafe {
+        libdragon_sys::glMatrixIndexPointerARB(
+            size,
+            type_ as u32,
+            stride as u32,
+            pointer as *const ::core::ffi::c_void,
+        )
+    }
+}
 
 #[inline(always)]
 pub fn EnableClientState(array: i32) { unsafe { libdragon_sys::glEnableClientState(array as u32) } }
 #[inline(always)]
-pub fn DisableClientState(array: i32) { unsafe { libdragon_sys::glEnableClientState(array as u32) } }
+pub fn DisableClientState(array: i32) {
+    unsafe { libdragon_sys::glEnableClientState(array as u32) }
+}
 
 #[inline(always)]
 pub fn ArrayElement(i: i32) { unsafe { libdragon_sys::glArrayElement(i) } }
 #[inline(always)]
-pub fn DrawArrays(mode: i32, first: i32, count: usize) { unsafe { libdragon_sys::glDrawArrays(mode as u32, first, count as u32) } }
+pub fn DrawArrays(mode: i32, first: i32, count: usize) {
+    unsafe { libdragon_sys::glDrawArrays(mode as u32, first, count as u32) }
+}
 #[inline(always)]
-pub fn DrawElements<T>(mode: i32, count: usize, type_: i32, pointer: *const T) { unsafe { libdragon_sys::glDrawElements(mode as u32, count as u32, type_ as u32, pointer as *const ::core::ffi::c_void) } }
+pub fn DrawElements<T>(mode: i32, count: usize, type_: i32, pointer: *const T) {
+    unsafe {
+        libdragon_sys::glDrawElements(
+            mode as u32,
+            count as u32,
+            type_ as u32,
+            pointer as *const ::core::ffi::c_void,
+        )
+    }
+}
 #[inline(always)]
-pub fn InterleavedArrays<T>(format: i32, stride: usize, pointer: *const T) { unsafe { libdragon_sys::glInterleavedArrays(format as u32, stride as u32, pointer as *const ::core::ffi::c_void) } }
+pub fn InterleavedArrays<T>(format: i32, stride: usize, pointer: *const T) {
+    unsafe {
+        libdragon_sys::glInterleavedArrays(
+            format as u32,
+            stride as u32,
+            pointer as *const ::core::ffi::c_void,
+        )
+    }
+}
 
 #[inline(always)]
-pub fn GenVertexArrays(arrays: &mut [u32]) { unsafe { libdragon_sys::glGenVertexArrays(arrays.len() as u32, arrays.as_mut_ptr()) } }
+pub fn GenVertexArrays(arrays: &mut [u32]) {
+    unsafe { libdragon_sys::glGenVertexArrays(arrays.len() as u32, arrays.as_mut_ptr()) }
+}
 #[inline(always)]
-pub fn DeleteVertexArrays(arrays: &[u32]) { unsafe { libdragon_sys::glDeleteVertexArrays(arrays.len() as u32, arrays.as_ptr()) } }
+pub fn DeleteVertexArrays(arrays: &[u32]) {
+    unsafe { libdragon_sys::glDeleteVertexArrays(arrays.len() as u32, arrays.as_ptr()) }
+}
 #[inline(always)]
 pub fn BindVertexArray(array: u32) { unsafe { libdragon_sys::glBindVertexArray(array) } }
 #[inline(always)]
 pub fn IsVertexArray(array: u32) -> bool { unsafe { libdragon_sys::glIsVertexArray(array) != 0 } }
 #[inline(always)]
-pub fn BindBufferARB(target: i32, buffer: u32) { unsafe { libdragon_sys::glBindBufferARB(target as u32, buffer) } }
+pub fn BindBufferARB(target: i32, buffer: u32) {
+    unsafe { libdragon_sys::glBindBufferARB(target as u32, buffer) }
+}
 #[inline(always)]
-pub fn DeletBuffersARB(buffers: &[u32]) { unsafe { libdragon_sys::glDeleteBuffersARB(buffers.len() as u32, buffers.as_ptr()) } }
+pub fn DeletBuffersARB(buffers: &[u32]) {
+    unsafe { libdragon_sys::glDeleteBuffersARB(buffers.len() as u32, buffers.as_ptr()) }
+}
 #[inline(always)]
-pub fn GenBuffersARB(buffers: &mut [u32]) { unsafe { libdragon_sys::glGenBuffersARB(buffers.len() as u32, buffers.as_mut_ptr()) } }
+pub fn GenBuffersARB(buffers: &mut [u32]) {
+    unsafe { libdragon_sys::glGenBuffersARB(buffers.len() as u32, buffers.as_mut_ptr()) }
+}
 #[inline(always)]
 pub fn IsBufferARB(buffer: u32) -> bool { unsafe { libdragon_sys::glIsBufferARB(buffer) != 0 } }
 #[inline(always)]
-pub fn BufferDataARB<T>(target: i32, size: usize, pointer: *const T, usage: i32) { unsafe { libdragon_sys::glBufferDataARB(target as u32, size, pointer as *const ::core::ffi::c_void, usage as u32) } }
+pub fn BufferDataARB<T>(target: i32, size: usize, pointer: *const T, usage: i32) {
+    unsafe {
+        libdragon_sys::glBufferDataARB(
+            target as u32,
+            size,
+            pointer as *const ::core::ffi::c_void,
+            usage as u32,
+        )
+    }
+}
 #[inline(always)]
-pub fn BufferSubDataARB<T>(target: i32, offset: isize, size: usize, data: *const T) { unsafe { libdragon_sys::glBufferSubDataARB(target as u32, offset, size, data as *const ::core::ffi::c_void) } }
+pub fn BufferSubDataARB<T>(target: i32, offset: isize, size: usize, data: *const T) {
+    unsafe {
+        libdragon_sys::glBufferSubDataARB(
+            target as u32,
+            offset,
+            size,
+            data as *const ::core::ffi::c_void,
+        )
+    }
+}
 #[inline(always)]
-pub fn GetBufferSubDataARB<T>(target: i32, offset: isize, size: usize, data: *mut T) { unsafe { libdragon_sys::glGetBufferSubDataARB(target as u32, offset, size, data as *mut ::core::ffi::c_void) } }
+pub fn GetBufferSubDataARB<T>(target: i32, offset: isize, size: usize, data: *mut T) {
+    unsafe {
+        libdragon_sys::glGetBufferSubDataARB(
+            target as u32,
+            offset,
+            size,
+            data as *mut ::core::ffi::c_void,
+        )
+    }
+}
 #[inline(always)]
-pub fn MapBufferARB<T>(target: i32, access: i32) -> *mut T { unsafe { libdragon_sys::glMapBufferARB(target as u32, access as u32) as *mut T } }
+pub fn MapBufferARB<T>(target: i32, access: i32) -> *mut T {
+    unsafe { libdragon_sys::glMapBufferARB(target as u32, access as u32) as *mut T }
+}
 #[inline(always)]
-pub fn UnmapBufferARB(target: i32) -> bool { unsafe { libdragon_sys::glUnmapBufferARB(target as u32) != 0 } }
+pub fn UnmapBufferARB(target: i32) -> bool {
+    unsafe { libdragon_sys::glUnmapBufferARB(target as u32) != 0 }
+}
 
 #[inline(always)]
-pub fn GetBufferParameterivARB<T>(target: i32, pname: i32, params: &mut [T]) { unsafe { libdragon_sys::glGetBufferParameterivARB(target as u32, pname as u32, params.as_mut_ptr() as *mut ::core::ffi::c_int) } }
+pub fn GetBufferParameterivARB<T>(target: i32, pname: i32, params: &mut [T]) {
+    unsafe {
+        libdragon_sys::glGetBufferParameterivARB(
+            target as u32,
+            pname as u32,
+            params.as_mut_ptr() as *mut ::core::ffi::c_int,
+        )
+    }
+}
 
 // This function needs some improvment
 #[inline(always)]
-pub fn GetBufferPointervARB<T>(target: i32, pname: i32, params: &mut [*mut T]) { unsafe { libdragon_sys::glGetBufferPointervARB(target as u32, pname as u32, params.as_mut_ptr() as *mut *mut ::core::ffi::c_void) } }
+pub fn GetBufferPointervARB<T>(target: i32, pname: i32, params: &mut [*mut T]) {
+    unsafe {
+        libdragon_sys::glGetBufferPointervARB(
+            target as u32,
+            pname as u32,
+            params.as_mut_ptr() as *mut *mut ::core::ffi::c_void,
+        )
+    }
+}
 
 #[inline(always)]
-pub fn Rects(x1: i16, y1: i16, x2: i16, y2: i16) { unsafe { libdragon_sys::glRects(x1, y1, x2, y2) } }
+pub fn Rects(x1: i16, y1: i16, x2: i16, y2: i16) {
+    unsafe { libdragon_sys::glRects(x1, y1, x2, y2) }
+}
 #[inline(always)]
-pub fn Recti(x1: i32, y1: i32, x2: i32, y2: i32) { unsafe { libdragon_sys::glRecti(x1, y1, x2, y2) } }
+pub fn Recti(x1: i32, y1: i32, x2: i32, y2: i32) {
+    unsafe { libdragon_sys::glRecti(x1, y1, x2, y2) }
+}
 #[inline(always)]
-pub fn Rectf(x1: f32, y1: f32, x2: f32, y2: f32) { unsafe { libdragon_sys::glRectf(x1, y1, x2, y2) } }
+pub fn Rectf(x1: f32, y1: f32, x2: f32, y2: f32) {
+    unsafe { libdragon_sys::glRectf(x1, y1, x2, y2) }
+}
 #[inline(always)]
-pub fn Rectd(x1: f64, y1: f64, x2: f64, y2: f64) { unsafe { libdragon_sys::glRectd(x1, y1, x2, y2) } }
+pub fn Rectd(x1: f64, y1: f64, x2: f64, y2: f64) {
+    unsafe { libdragon_sys::glRectd(x1, y1, x2, y2) }
+}
 #[inline(always)]
-pub fn Rectsv(v1: &[i16], v2: &[i16]) { unsafe { libdragon_sys::glRectsv(v1.as_ptr(), v2.as_ptr()) } }
+pub fn Rectsv(v1: &[i16], v2: &[i16]) {
+    unsafe { libdragon_sys::glRectsv(v1.as_ptr(), v2.as_ptr()) }
+}
 #[inline(always)]
-pub fn Rectiv(v1: &[i32], v2: &[i32]) { unsafe { libdragon_sys::glRectiv(v1.as_ptr(), v2.as_ptr()) } }
+pub fn Rectiv(v1: &[i32], v2: &[i32]) {
+    unsafe { libdragon_sys::glRectiv(v1.as_ptr(), v2.as_ptr()) }
+}
 #[inline(always)]
-pub fn Rectfv(v1: &[f32], v2: &[f32]) { unsafe { libdragon_sys::glRectfv(v1.as_ptr(), v2.as_ptr()) } }
+pub fn Rectfv(v1: &[f32], v2: &[f32]) {
+    unsafe { libdragon_sys::glRectfv(v1.as_ptr(), v2.as_ptr()) }
+}
 #[inline(always)]
-pub fn Rectdv(v1: &[f64], v2: &[f64]) { unsafe { libdragon_sys::glRectdv(v1.as_ptr(), v2.as_ptr()) } }
+pub fn Rectdv(v1: &[f64], v2: &[f64]) {
+    unsafe { libdragon_sys::glRectdv(v1.as_ptr(), v2.as_ptr()) }
+}
 
 #[inline(always)]
 pub fn DepthRange(n: f64, f: f64) { unsafe { libdragon_sys::glDepthRange(n, f) } }
@@ -949,9 +1128,13 @@ pub fn MultMatrixd(m: &[f64]) { unsafe { libdragon_sys::glMultMatrixd(m.as_ptr()
 #[inline(always)]
 pub fn LoadIdentity() { unsafe { libdragon_sys::glLoadIdentity() } }
 #[inline(always)]
-pub fn Rotatef(angle: f32, x: f32, y: f32, z: f32) { unsafe { libdragon_sys::glRotatef(angle, x, y, z) } }
+pub fn Rotatef(angle: f32, x: f32, y: f32, z: f32) {
+    unsafe { libdragon_sys::glRotatef(angle, x, y, z) }
+}
 #[inline(always)]
-pub fn Rotated(angle: f64, x: f64, y: f64, z: f64) { unsafe { libdragon_sys::glRotated(angle, x, y, z) } }
+pub fn Rotated(angle: f64, x: f64, y: f64, z: f64) {
+    unsafe { libdragon_sys::glRotated(angle, x, y, z) }
+}
 #[inline(always)]
 pub fn Translatef(x: f32, y: f32, z: f32) { unsafe { libdragon_sys::glTranslatef(x, y, z) } }
 #[inline(always)]
@@ -961,59 +1144,103 @@ pub fn Scalef(x: f32, y: f32, z: f32) { unsafe { libdragon_sys::glScalef(x, y, z
 #[inline(always)]
 pub fn Scaled(x: f64, y: f64, z: f64) { unsafe { libdragon_sys::glScaled(x, y, z) } }
 #[inline(always)]
-pub fn Frustum(l: f64, r: f64, b: f64, t: f64, n: f64, f: f64) { unsafe { libdragon_sys::glFrustum(l, r, b, t, n, f) } }
+pub fn Frustum(l: f64, r: f64, b: f64, t: f64, n: f64, f: f64) {
+    unsafe { libdragon_sys::glFrustum(l, r, b, t, n, f) }
+}
 #[inline(always)]
-pub fn Ortho(l: f64, r: f64, b: f64, t: f64, n: f64, f: f64) { unsafe { libdragon_sys::glOrtho(l, r, b, t, n, f) } }
+pub fn Ortho(l: f64, r: f64, b: f64, t: f64, n: f64, f: f64) {
+    unsafe { libdragon_sys::glOrtho(l, r, b, t, n, f) }
+}
 #[inline(always)]
 pub fn PushMatrix() { unsafe { libdragon_sys::glPushMatrix() } }
 #[inline(always)]
 pub fn PopMatrix() { unsafe { libdragon_sys::glPopMatrix() } }
 
 #[inline(always)]
-pub fn CurrentPaletteMatrixARB(index: i32) { unsafe { libdragon_sys::glCurrentPaletteMatrixARB(index) } }
+pub fn CurrentPaletteMatrixARB(index: i32) {
+    unsafe { libdragon_sys::glCurrentPaletteMatrixARB(index) }
+}
 #[inline(always)]
 pub fn CopyMatrixN64(source: i32) { unsafe { libdragon_sys::glCopyMatrixN64(source as u32) } }
 
 #[inline(always)]
-pub fn TexGeni(coord: i32, pname: i32, param: i32) { unsafe { libdragon_sys::glTexGeni(coord as u32, pname as u32, param) } }
+pub fn TexGeni(coord: i32, pname: i32, param: i32) {
+    unsafe { libdragon_sys::glTexGeni(coord as u32, pname as u32, param) }
+}
 #[inline(always)]
-pub fn TexGenf(coord: i32, pname: i32, param: f32) { unsafe { libdragon_sys::glTexGenf(coord as u32, pname as u32, param) } }
+pub fn TexGenf(coord: i32, pname: i32, param: f32) {
+    unsafe { libdragon_sys::glTexGenf(coord as u32, pname as u32, param) }
+}
 #[inline(always)]
-pub fn TexGend(coord: i32, pname: i32, param: f64) { unsafe { libdragon_sys::glTexGend(coord as u32, pname as u32, param) } }
+pub fn TexGend(coord: i32, pname: i32, param: f64) {
+    unsafe { libdragon_sys::glTexGend(coord as u32, pname as u32, param) }
+}
 
 #[inline(always)]
-pub fn TexGeniv(coord: i32, pname: i32, param: &[i32]) { unsafe { libdragon_sys::glTexGeniv(coord as u32, pname as u32, param.as_ptr()) } }
+pub fn TexGeniv(coord: i32, pname: i32, param: &[i32]) {
+    unsafe { libdragon_sys::glTexGeniv(coord as u32, pname as u32, param.as_ptr()) }
+}
 #[inline(always)]
-pub fn TexGenfv(coord: i32, pname: i32, param: &[f32]) { unsafe { libdragon_sys::glTexGenfv(coord as u32, pname as u32, param.as_ptr()) } }
+pub fn TexGenfv(coord: i32, pname: i32, param: &[f32]) {
+    unsafe { libdragon_sys::glTexGenfv(coord as u32, pname as u32, param.as_ptr()) }
+}
 #[inline(always)]
-pub fn TexGendv(coord: i32, pname: i32, param: &[f64]) { unsafe { libdragon_sys::glTexGendv(coord as u32, pname as u32, param.as_ptr()) } }
+pub fn TexGendv(coord: i32, pname: i32, param: &[f64]) {
+    unsafe { libdragon_sys::glTexGendv(coord as u32, pname as u32, param.as_ptr()) }
+}
 
 #[inline(always)]
-pub fn Materiali(face: i32, pname: i32, param: i32) { unsafe { libdragon_sys::glMateriali(face as u32, pname as u32, param) } }
+pub fn Materiali(face: i32, pname: i32, param: i32) {
+    unsafe { libdragon_sys::glMateriali(face as u32, pname as u32, param) }
+}
 #[inline(always)]
-pub fn Materialf(face: i32, pname: i32, param: f32) { unsafe { libdragon_sys::glMaterialf(face as u32, pname as u32, param) } }
+pub fn Materialf(face: i32, pname: i32, param: f32) {
+    unsafe { libdragon_sys::glMaterialf(face as u32, pname as u32, param) }
+}
 #[inline(always)]
-pub fn Materialiv(face: i32, pname: i32, param: &[i32]) { unsafe { libdragon_sys::glMaterialiv(face as u32, pname as u32, param.as_ptr()) } }
+pub fn Materialiv(face: i32, pname: i32, param: &[i32]) {
+    unsafe { libdragon_sys::glMaterialiv(face as u32, pname as u32, param.as_ptr()) }
+}
 #[inline(always)]
-pub fn Materialfv(face: i32, pname: i32, param: &[f32]) { unsafe { libdragon_sys::glMaterialfv(face as u32, pname as u32, param.as_ptr()) } }
+pub fn Materialfv(face: i32, pname: i32, param: &[f32]) {
+    unsafe { libdragon_sys::glMaterialfv(face as u32, pname as u32, param.as_ptr()) }
+}
 #[inline(always)]
-pub fn Lighti(light: i32, pname: i32, param: i32) { unsafe { libdragon_sys::glLighti(light as u32, pname as u32, param) } }
+pub fn Lighti(light: i32, pname: i32, param: i32) {
+    unsafe { libdragon_sys::glLighti(light as u32, pname as u32, param) }
+}
 #[inline(always)]
-pub fn Lightf(light: i32, pname: i32, param: f32) { unsafe { libdragon_sys::glLightf(light as u32, pname as u32, param) } }
+pub fn Lightf(light: i32, pname: i32, param: f32) {
+    unsafe { libdragon_sys::glLightf(light as u32, pname as u32, param) }
+}
 #[inline(always)]
-pub fn Lightiv(light: i32, pname: i32, param: &[i32]) { unsafe { libdragon_sys::glLightiv(light as u32, pname as u32, param.as_ptr()) } }
+pub fn Lightiv(light: i32, pname: i32, param: &[i32]) {
+    unsafe { libdragon_sys::glLightiv(light as u32, pname as u32, param.as_ptr()) }
+}
 #[inline(always)]
-pub fn Lightfv(light: i32, pname: i32, param: &[f32]) { unsafe { libdragon_sys::glLightfv(light as u32, pname as u32, param.as_ptr()) } }
+pub fn Lightfv(light: i32, pname: i32, param: &[f32]) {
+    unsafe { libdragon_sys::glLightfv(light as u32, pname as u32, param.as_ptr()) }
+}
 #[inline(always)]
-pub fn LightModeli(pname: i32, param: i32) { unsafe { libdragon_sys::glLightModeli(pname as u32, param) } }
+pub fn LightModeli(pname: i32, param: i32) {
+    unsafe { libdragon_sys::glLightModeli(pname as u32, param) }
+}
 #[inline(always)]
-pub fn LightModelf(pname: i32, param: f32) { unsafe { libdragon_sys::glLightModelf(pname as u32, param) } }
+pub fn LightModelf(pname: i32, param: f32) {
+    unsafe { libdragon_sys::glLightModelf(pname as u32, param) }
+}
 #[inline(always)]
-pub fn LightModeliv(pname: i32, param: &[i32]) { unsafe { libdragon_sys::glLightModeliv(pname as u32, param.as_ptr()) } }
+pub fn LightModeliv(pname: i32, param: &[i32]) {
+    unsafe { libdragon_sys::glLightModeliv(pname as u32, param.as_ptr()) }
+}
 #[inline(always)]
-pub fn LightModelfv(pname: i32, param: &[f32]) { unsafe { libdragon_sys::glLightModelfv(pname as u32, param.as_ptr()) } }
+pub fn LightModelfv(pname: i32, param: &[f32]) {
+    unsafe { libdragon_sys::glLightModelfv(pname as u32, param.as_ptr()) }
+}
 #[inline(always)]
-pub fn ColorMaterial(face: i32, mode: i32) { unsafe { libdragon_sys::glColorMaterial(face as u32, mode as u32) } }
+pub fn ColorMaterial(face: i32, mode: i32) {
+    unsafe { libdragon_sys::glColorMaterial(face as u32, mode as u32) }
+}
 #[inline(always)]
 pub fn ShadeModel(mode: i32) { unsafe { libdragon_sys::glShadeModel(mode as u32) } }
 
@@ -1027,110 +1254,228 @@ pub fn CullFace(mode: i32) { unsafe { libdragon_sys::glCullFace(mode as u32) } }
 #[inline(always)]
 pub fn FrontFace(dir: i32) { unsafe { libdragon_sys::glFrontFace(dir as u32) } }
 #[inline(always)]
-pub fn PolygonMode(face: i32, mode: i32) { unsafe { libdragon_sys::glPolygonMode(face as u32, mode as u32) } }
-
-#[inline(always)]
-pub fn PixelStorei(pname: i32, param: i32) { unsafe { libdragon_sys::glPixelStorei(pname as u32, param) } }
-#[inline(always)]
-pub fn PixelStoref(pname: i32, param: f32) { unsafe { libdragon_sys::glPixelStoref(pname as u32, param) } }
-#[inline(always)]
-pub fn PixelTransferi(pname: i32, value: i32) { unsafe { libdragon_sys::glPixelTransferi(pname as u32, value) } }
-#[inline(always)]
-pub fn PixelTransferf(pname: i32, value: f32) { unsafe { libdragon_sys::glPixelTransferf(pname as u32, value) } }
-#[inline(always)]
-pub fn PixelMapusv(map: i32, size: u32, values: &[u16]) { unsafe { libdragon_sys::glPixelMapusv(map as u32, size, values.as_ptr()) } }
-#[inline(always)]
-pub fn PixelMapuiv(map: i32, size: u32, values: &[u32]) { unsafe { libdragon_sys::glPixelMapuiv(map as u32, size, values.as_ptr()) } }
-#[inline(always)]
-pub fn PixelMapfv(map: i32, size: u32, values: &[f32]) { unsafe { libdragon_sys::glPixelMapfv(map as u32, size, values.as_ptr()) } }
-
-#[inline(always)]
-pub fn TexImage1D<T>(target: i32, level: i32, internalformat: i32, width: u32, border: i32, format: i32, type_: i32, data: &[T]) {
-    unsafe { libdragon_sys::glTexImage1D(target as u32, level, internalformat, width, border, format as u32, type_ as u32, data.as_ptr() as *const ::core::ffi::c_void) }
+pub fn PolygonMode(face: i32, mode: i32) {
+    unsafe { libdragon_sys::glPolygonMode(face as u32, mode as u32) }
 }
 
 #[inline(always)]
-pub fn TexImage2D<T>(target: i32, level: i32, internalformat: i32, width: u32, height: u32, border: i32, format: i32, type_: i32, data: &[T]) {
-    unsafe { libdragon_sys::glTexImage2D(target as u32, level, internalformat, width, height, border, format as u32, type_ as u32, data.as_ptr() as *const ::core::ffi::c_void) }
+pub fn PixelStorei(pname: i32, param: i32) {
+    unsafe { libdragon_sys::glPixelStorei(pname as u32, param) }
+}
+#[inline(always)]
+pub fn PixelStoref(pname: i32, param: f32) {
+    unsafe { libdragon_sys::glPixelStoref(pname as u32, param) }
+}
+#[inline(always)]
+pub fn PixelTransferi(pname: i32, value: i32) {
+    unsafe { libdragon_sys::glPixelTransferi(pname as u32, value) }
+}
+#[inline(always)]
+pub fn PixelTransferf(pname: i32, value: f32) {
+    unsafe { libdragon_sys::glPixelTransferf(pname as u32, value) }
+}
+#[inline(always)]
+pub fn PixelMapusv(map: i32, size: u32, values: &[u16]) {
+    unsafe { libdragon_sys::glPixelMapusv(map as u32, size, values.as_ptr()) }
+}
+#[inline(always)]
+pub fn PixelMapuiv(map: i32, size: u32, values: &[u32]) {
+    unsafe { libdragon_sys::glPixelMapuiv(map as u32, size, values.as_ptr()) }
+}
+#[inline(always)]
+pub fn PixelMapfv(map: i32, size: u32, values: &[f32]) {
+    unsafe { libdragon_sys::glPixelMapfv(map as u32, size, values.as_ptr()) }
 }
 
 #[inline(always)]
-pub fn SurfaceTexImageN64(target: i32, level: i32, surface: &surface::Surface, texparms: rdpq::TexParms) {
-    unsafe { libdragon_sys::glSurfaceTexImageN64(target as u32, level, surface.ptr, 
-                                                 &mut Into::<libdragon_sys::rdpq_texparms_t>::into(texparms) as *mut libdragon_sys::rdpq_texparms_t) }
+pub fn TexImage1D<T>(
+    target: i32,
+    level: i32,
+    internalformat: i32,
+    width: u32,
+    border: i32,
+    format: i32,
+    type_: i32,
+    data: &[T],
+) {
+    unsafe {
+        libdragon_sys::glTexImage1D(
+            target as u32,
+            level,
+            internalformat,
+            width,
+            border,
+            format as u32,
+            type_ as u32,
+            data.as_ptr() as *const ::core::ffi::c_void,
+        )
+    }
+}
+
+#[inline(always)]
+pub fn TexImage2D<T>(
+    target: i32,
+    level: i32,
+    internalformat: i32,
+    width: u32,
+    height: u32,
+    border: i32,
+    format: i32,
+    type_: i32,
+    data: &[T],
+) {
+    unsafe {
+        libdragon_sys::glTexImage2D(
+            target as u32,
+            level,
+            internalformat,
+            width,
+            height,
+            border,
+            format as u32,
+            type_ as u32,
+            data.as_ptr() as *const ::core::ffi::c_void,
+        )
+    }
+}
+
+#[inline(always)]
+pub fn SurfaceTexImageN64(
+    target: i32,
+    level: i32,
+    surface: &surface::Surface,
+    texparms: rdpq::TexParms,
+) {
+    unsafe {
+        libdragon_sys::glSurfaceTexImageN64(
+            target as u32,
+            level,
+            surface.ptr,
+            &mut Into::<libdragon_sys::rdpq_texparms_t>::into(texparms)
+                as *mut libdragon_sys::rdpq_texparms_t,
+        )
+    }
 }
 
 #[inline(always)]
 pub fn SpriteTextureN64(target: i32, sprite: &sprite::Sprite, texparms: rdpq::TexParms) {
     unsafe {
-        libdragon_sys::glSpriteTextureN64(target as u32, sprite.as_const_sprite_s() as *mut libdragon_sys::sprite_t, 
-                                          &mut Into::<libdragon_sys::rdpq_texparms_t>::into(texparms) as *mut libdragon_sys::rdpq_texparms_t)
+        libdragon_sys::glSpriteTextureN64(
+            target as u32,
+            sprite.as_const_sprite_s() as *mut libdragon_sys::sprite_t,
+            &mut Into::<libdragon_sys::rdpq_texparms_t>::into(texparms)
+                as *mut libdragon_sys::rdpq_texparms_t,
+        )
     }
 }
 
 #[inline(always)]
-pub fn TexParameteri(target: i32, pname: i32, param: i32) { unsafe { libdragon_sys::glTexParameteri(target as u32, pname as u32, param) } }
+pub fn TexParameteri(target: i32, pname: i32, param: i32) {
+    unsafe { libdragon_sys::glTexParameteri(target as u32, pname as u32, param) }
+}
 #[inline(always)]
-pub fn TexParameterf(target: i32, pname: i32, param: f32) { unsafe { libdragon_sys::glTexParameterf(target as u32, pname as u32, param) } }
+pub fn TexParameterf(target: i32, pname: i32, param: f32) {
+    unsafe { libdragon_sys::glTexParameterf(target as u32, pname as u32, param) }
+}
 #[inline(always)]
-pub fn TexParameteriv(target: i32, pname: i32, param: &[i32]) { unsafe { libdragon_sys::glTexParameteriv(target as u32, pname as u32, param.as_ptr()) } }
+pub fn TexParameteriv(target: i32, pname: i32, param: &[i32]) {
+    unsafe { libdragon_sys::glTexParameteriv(target as u32, pname as u32, param.as_ptr()) }
+}
 #[inline(always)]
-pub fn TexParameterfv(target: i32, pname: i32, param: &[f32]) { unsafe { libdragon_sys::glTexParameterfv(target as u32, pname as u32, param.as_ptr()) } }
-
-#[inline(always)]
-pub fn BindTexture(target: i32, texture: u32) { unsafe { libdragon_sys::glBindTexture(target as u32, texture) } }
-#[inline(always)]
-pub fn DeleteTextures(textures: &[u32]) { unsafe { libdragon_sys::glDeleteTextures(textures.len() as u32, textures.as_ptr()) } }
-#[inline(always)]
-pub fn GenTextures(textures: &mut [u32]) { unsafe { libdragon_sys::glGenTextures(textures.len() as u32, textures.as_mut_ptr()) } }
-
-#[inline(always)]
-pub fn AreTexturesResident(n: u32, textures: &[u32], residences: Option<&mut [u8]>) -> bool { 
-    unsafe { libdragon_sys::glAreTexturesResident(n, textures.as_ptr(), residences.map_or(::core::ptr::null_mut(), |r| r.as_mut_ptr())) != 0 }
+pub fn TexParameterfv(target: i32, pname: i32, param: &[f32]) {
+    unsafe { libdragon_sys::glTexParameterfv(target as u32, pname as u32, param.as_ptr()) }
 }
 
 #[inline(always)]
-pub fn PrioritizeTextures(n: u32, textures: &[u32], priorities: &[f32]) { unsafe { libdragon_sys::glPrioritizeTextures(n, textures.as_ptr(), priorities.as_ptr()) } }
+pub fn BindTexture(target: i32, texture: u32) {
+    unsafe { libdragon_sys::glBindTexture(target as u32, texture) }
+}
+#[inline(always)]
+pub fn DeleteTextures(textures: &[u32]) {
+    unsafe { libdragon_sys::glDeleteTextures(textures.len() as u32, textures.as_ptr()) }
+}
+#[inline(always)]
+pub fn GenTextures(textures: &mut [u32]) {
+    unsafe { libdragon_sys::glGenTextures(textures.len() as u32, textures.as_mut_ptr()) }
+}
 
 #[inline(always)]
-pub fn TexEnvi(target: i32, pname: i32, param: i32) { unsafe { libdragon_sys::glTexEnvi(target as u32, pname as u32, param) } }
+pub fn AreTexturesResident(n: u32, textures: &[u32], residences: Option<&mut [u8]>) -> bool {
+    unsafe {
+        libdragon_sys::glAreTexturesResident(
+            n,
+            textures.as_ptr(),
+            residences.map_or(::core::ptr::null_mut(), |r| r.as_mut_ptr()),
+        ) != 0
+    }
+}
+
 #[inline(always)]
-pub fn TexEnvf(target: i32, pname: i32, param: f32) { unsafe { libdragon_sys::glTexEnvf(target as u32, pname as u32, param) } }
+pub fn PrioritizeTextures(n: u32, textures: &[u32], priorities: &[f32]) {
+    unsafe { libdragon_sys::glPrioritizeTextures(n, textures.as_ptr(), priorities.as_ptr()) }
+}
+
 #[inline(always)]
-pub fn TexEnviv(target: i32, pname: i32, params: &[i32]) { unsafe { libdragon_sys::glTexEnviv(target as u32, pname as u32, params.as_ptr()) } }
+pub fn TexEnvi(target: i32, pname: i32, param: i32) {
+    unsafe { libdragon_sys::glTexEnvi(target as u32, pname as u32, param) }
+}
 #[inline(always)]
-pub fn TexEnvfv(target: i32, pname: i32, params: &[f32]) { unsafe { libdragon_sys::glTexEnvfv(target as u32, pname as u32, params.as_ptr()) } }
+pub fn TexEnvf(target: i32, pname: i32, param: f32) {
+    unsafe { libdragon_sys::glTexEnvf(target as u32, pname as u32, param) }
+}
+#[inline(always)]
+pub fn TexEnviv(target: i32, pname: i32, params: &[i32]) {
+    unsafe { libdragon_sys::glTexEnviv(target as u32, pname as u32, params.as_ptr()) }
+}
+#[inline(always)]
+pub fn TexEnvfv(target: i32, pname: i32, params: &[f32]) {
+    unsafe { libdragon_sys::glTexEnvfv(target as u32, pname as u32, params.as_ptr()) }
+}
 #[inline(always)]
 pub fn IsTexture(texture: u32) -> bool { unsafe { libdragon_sys::glIsTexture(texture) != 0 } }
 
 #[inline(always)]
-pub fn TexSizeN64(width: u16, height: u16) { unsafe { libdragon_sys::glTexSizeN64(width, height); } }
+pub fn TexSizeN64(width: u16, height: u16) {
+    unsafe {
+        libdragon_sys::glTexSizeN64(width, height);
+    }
+}
 
 #[inline(always)]
 pub fn Fogi(pname: i32, param: i32) { unsafe { libdragon_sys::glFogi(pname as u32, param) } }
 #[inline(always)]
 pub fn Fogf(pname: i32, param: f32) { unsafe { libdragon_sys::glFogf(pname as u32, param) } }
 #[inline(always)]
-pub fn Fogiv(pname: i32, param: &[i32]) { unsafe { libdragon_sys::glFogiv(pname as u32, param.as_ptr()) } }
+pub fn Fogiv(pname: i32, param: &[i32]) {
+    unsafe { libdragon_sys::glFogiv(pname as u32, param.as_ptr()) }
+}
 #[inline(always)]
-pub fn Fogfv(pname: i32, param: &[f32]) { unsafe { libdragon_sys::glFogfv(pname as u32, param.as_ptr()) } }
+pub fn Fogfv(pname: i32, param: &[f32]) {
+    unsafe { libdragon_sys::glFogfv(pname as u32, param.as_ptr()) }
+}
 
 #[inline(always)]
 pub fn DitherModeN64(mode: rdpq::Dither) { unsafe { libdragon_sys::glDitherModeN64(mode.into()) } }
 
 #[inline(always)]
-pub fn Scissor(left: i32, bottom: i32, width: u32, height: u32) { unsafe { libdragon_sys::glScissor(left, bottom, width, height) } }
+pub fn Scissor(left: i32, bottom: i32, width: u32, height: u32) {
+    unsafe { libdragon_sys::glScissor(left, bottom, width, height) }
+}
 
 #[inline(always)]
 pub fn AlphaFunc(func: i32, ref_: f32) { unsafe { libdragon_sys::glAlphaFunc(func as u32, ref_) } }
 #[inline(always)]
 pub fn DepthFunc(func: i32) { unsafe { libdragon_sys::glDepthFunc(func as u32) } }
 #[inline(always)]
-pub fn BlendFunc(src: i32, dst: i32) { unsafe { libdragon_sys::glBlendFunc(src as u32, dst as u32) } }
+pub fn BlendFunc(src: i32, dst: i32) {
+    unsafe { libdragon_sys::glBlendFunc(src as u32, dst as u32) }
+}
 #[inline(always)]
 pub fn DepthMask(mask: i32) { unsafe { libdragon_sys::glDepthMask(mask as u8) } }
 #[inline(always)]
-pub fn ClearColor(r: f32, g: f32, b: f32, a: f32) { unsafe { libdragon_sys::glClearColor(r, g, b, a) } }
+pub fn ClearColor(r: f32, g: f32, b: f32, a: f32) {
+    unsafe { libdragon_sys::glClearColor(r, g, b, a) }
+}
 #[inline(always)]
 pub fn Clear(buf: i32) { unsafe { libdragon_sys::glClear(buf as u32) } }
 #[inline(always)]
@@ -1143,7 +1488,15 @@ pub fn EndList() { unsafe { libdragon_sys::glEndList() } }
 #[inline(always)]
 pub fn CallList(n: u32) { unsafe { libdragon_sys::glCallList(n) } }
 #[inline(always)]
-pub fn CallLists(n: u32, type_: i32, lists: &[u32]) { unsafe { libdragon_sys::glCallLists(n, type_ as u32, lists.as_ptr() as *const ::core::ffi::c_void) } }
+pub fn CallLists(n: u32, type_: i32, lists: &[u32]) {
+    unsafe {
+        libdragon_sys::glCallLists(
+            n,
+            type_ as u32,
+            lists.as_ptr() as *const ::core::ffi::c_void,
+        )
+    }
+}
 #[inline(always)]
 pub fn ListBase(base: u32) { unsafe { libdragon_sys::glListBase(base) } }
 #[inline(always)]
@@ -1151,7 +1504,9 @@ pub fn GenLists(s: usize) -> u32 { unsafe { libdragon_sys::glGenLists(s as u32) 
 #[inline(always)]
 pub fn IsList(list: u32) -> bool { unsafe { libdragon_sys::glIsList(list) != 0 } }
 #[inline(always)]
-pub fn DeleteLists(list: u32, range: usize) { unsafe { libdragon_sys::glDeleteLists(list, range as u32) } }
+pub fn DeleteLists(list: u32, range: usize) {
+    unsafe { libdragon_sys::glDeleteLists(list, range as u32) }
+}
 
 #[inline(always)]
 pub fn Flush() { unsafe { libdragon_sys::glFlush() } }
@@ -1162,22 +1517,37 @@ pub fn Finish() { unsafe { libdragon_sys::glFinish() } }
 pub fn Hint(target: i32, hint: i32) { unsafe { libdragon_sys::glHint(target as u32, hint as u32) } }
 
 #[inline(always)]
-pub fn GetBooleanv(value: i32, data: &mut [u8]) { unsafe { libdragon_sys::glGetBooleanv(value as u32, data.as_mut_ptr()) } }
+pub fn GetBooleanv(value: i32, data: &mut [u8]) {
+    unsafe { libdragon_sys::glGetBooleanv(value as u32, data.as_mut_ptr()) }
+}
 #[inline(always)]
-pub fn GetIntegerv(value: i32, data: &mut [i32]) { unsafe { libdragon_sys::glGetIntegerv(value as u32, data.as_mut_ptr()) } }
+pub fn GetIntegerv(value: i32, data: &mut [i32]) {
+    unsafe { libdragon_sys::glGetIntegerv(value as u32, data.as_mut_ptr()) }
+}
 #[inline(always)]
-pub fn GetFloatv(value: i32, data: &mut [f32]) { unsafe { libdragon_sys::glGetFloatv(value as u32, data.as_mut_ptr()) } }
+pub fn GetFloatv(value: i32, data: &mut [f32]) {
+    unsafe { libdragon_sys::glGetFloatv(value as u32, data.as_mut_ptr()) }
+}
 #[inline(always)]
-pub fn GetDoublev(value: i32, data: &mut [f64]) { unsafe { libdragon_sys::glGetDoublev(value as u32, data.as_mut_ptr()) } }
+pub fn GetDoublev(value: i32, data: &mut [f64]) {
+    unsafe { libdragon_sys::glGetDoublev(value as u32, data.as_mut_ptr()) }
+}
 
 #[inline(always)]
 pub fn IsEnabled(value: i32) -> bool { unsafe { libdragon_sys::glIsEnabled(value as u32) != 0 } }
 
 #[inline(always)]
-pub fn GetPointerv<T>(pname: i32, params: &mut [*mut T]) { unsafe { libdragon_sys::glGetPointerv(pname as u32, params.as_mut_ptr() as *mut *mut ::core::ffi::c_void) } }
+pub fn GetPointerv<T>(pname: i32, params: &mut [*mut T]) {
+    unsafe {
+        libdragon_sys::glGetPointerv(
+            pname as u32,
+            params.as_mut_ptr() as *mut *mut ::core::ffi::c_void,
+        )
+    }
+}
 
 #[inline(always)]
-pub fn GetString(name: i32) -> String { 
+pub fn GetString(name: i32) -> String {
     let c_str = unsafe { CStr::from_ptr(libdragon_sys::glGetString(name as u32) as *const i8) };
     String::from_utf8_lossy(c_str.to_bytes()).to_string()
 }
@@ -1206,5 +1576,3 @@ pub fn context_end() {
         libdragon_sys::gl_context_end();
     }
 }
-
-

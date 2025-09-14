@@ -1,4 +1,3 @@
-
 use crate::*;
 
 /// Waveform mixer
@@ -13,7 +12,7 @@ pub mod xm64;
 pub mod ym64;
 
 /// Initialize the audio subsystem
-/// 
+///
 /// See [`audio_init`](libdragon_sys::audio_init) for details.
 pub fn init(freq: i32, numbuffers: usize) {
     unsafe {
@@ -43,16 +42,14 @@ extern "C" fn fill_buffer_callback_rust(buffer: *mut ::core::ffi::c_short, numsa
         match FILL_BUFFER_CALLBACK.as_mut() {
             Some(cb) => {
                 cb(buf);
-            },
-            None => {
-                buf.fill(0)
             }
+            None => buf.fill(0),
         }
     }
 }
 
 /// Install an audio callback to fill the audio buffer when required.
-/// 
+///
 /// See [`audio_set_buffer_callback`](libdragon_sys::audio_set_buffer_callback) for details.
 pub fn set_buffer_callback(cb: FillBufferCallback) {
     unsafe {
@@ -73,11 +70,7 @@ pub fn pause(pause: bool) {
 /// Return whether there is an empty buffer to write to
 ///
 /// See [`audio_can_write`](libdragon_sys::audio_can_write) for details.
-pub fn can_write() -> bool {
-    unsafe {
-        libdragon_sys::audio_can_write() != 0
-    }
-}
+pub fn can_write() -> bool { unsafe { libdragon_sys::audio_can_write() != 0 } }
 
 /// Write a chunk of silence
 ///
@@ -91,33 +84,25 @@ pub fn write_silence() {
 /// Return actual frequency of audio playback
 ///
 /// See [`audio_get_frequency`](libdragon_sys::audio_get_frequency) for details.
-pub fn get_frequency() -> i32 {
-    unsafe {
-        libdragon_sys::audio_get_frequency()
-    }
-}
+pub fn get_frequency() -> i32 { unsafe { libdragon_sys::audio_get_frequency() } }
 
 /// Get the number of stereo samples that fit into an allocated buffer
 ///
 /// See [`audio_get_buffer_length`](libdragon_sys::audio_get_buffer_length) for details.
-pub fn get_buffer_length() -> usize {
-    unsafe {
-        libdragon_sys::audio_get_buffer_length() as usize
-    }
-}
+pub fn get_buffer_length() -> usize { unsafe { libdragon_sys::audio_get_buffer_length() as usize } }
 
 /// Write to the first free internal buffer.
 ///
-/// Rust-specific: this function is a wrapper around 
+/// Rust-specific: this function is a wrapper around
 /// [`audio_write_begin`](libdragon_sys::audio_write_begin)
 /// and [`audio_write_end`](libdragon_sys::audio_write_end).  
 ///
 /// This function will call `audio_write_begin`, which may block,
-/// and then call the provided `cb` callback with a buffer slice to write to. The size 
+/// and then call the provided `cb` callback with a buffer slice to write to. The size
 /// of the provided slice is the number of *samples* to write - one per channel.  A slice of,
 /// for example length 16, is for 8 stereo samples.
 ///
-/// See [`audio_write_begin`](libdragon_sys::audio_write_begin) and 
+/// See [`audio_write_begin`](libdragon_sys::audio_write_begin) and
 /// [`audio_write_end`](libdragon_sys::audio_write_end) for details.
 pub fn write<F: FnMut(&mut [i16]) -> ()>(mut cb: F) {
     let size = get_buffer_length() * 2;
@@ -135,7 +120,5 @@ pub fn write<F: FnMut(&mut [i16]) -> ()>(mut cb: F) {
 ///
 /// See [`audio_push`](libdragon_sys::audio_push) for details.
 pub fn push(buffer: &[i16], nsamples: i32, blocking: bool) -> i32 {
-    unsafe {
-        libdragon_sys::audio_push(buffer.as_ptr(), nsamples, blocking)
-    }
+    unsafe { libdragon_sys::audio_push(buffer.as_ptr(), nsamples, blocking) }
 }

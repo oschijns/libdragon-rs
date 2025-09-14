@@ -1,14 +1,12 @@
-
-use libdragon::*;
-
 use crate::Vertex;
-
 use ::core::ptr::addr_of;
+use libdragon::*;
 
 pub struct Cube;
 
 static CUBE_SIZE: f32 = 3.0;
 
+#[rustfmt::skip]
 static VERTICES: [Vertex; 24] = [
     Vertex { position: [ CUBE_SIZE, -CUBE_SIZE, -CUBE_SIZE], texcoord: [0.0, 0.0], normal: [ 1.0,  0.0,  0.0], color: 0xFF0000FF },
     Vertex { position: [ CUBE_SIZE,  CUBE_SIZE, -CUBE_SIZE], texcoord: [1.0, 0.0], normal: [ 1.0,  0.0,  0.0], color: 0xFF0000FF },
@@ -46,6 +44,7 @@ static VERTICES: [Vertex; 24] = [
     Vertex { position: [ CUBE_SIZE, -CUBE_SIZE, -CUBE_SIZE], texcoord: [1.0, 0.0], normal: [ 0.0,  0.0, -1.0], color: 0xFFFF00FF },
 ];
 
+#[rustfmt::skip]
 static INDICES: [u16; 36] = [
      0,  1,  2,  0,  2,  3,
      4,  5,  6,  4,  6,  7,
@@ -56,10 +55,7 @@ static INDICES: [u16; 36] = [
 ];
 
 impl Cube {
-    pub fn new() -> Self {
-        Self {
-        }
-    }
+    pub fn new() -> Self { Self {} }
 
     fn draw(&self) {
         gl::EnableClientState(gl::VERTEX_ARRAY);
@@ -72,7 +68,12 @@ impl Cube {
         gl::TexCoordPointer(2, gl::FLOAT, stride, addr_of!(VERTICES[0].texcoord));
         gl::NormalPointer(gl::FLOAT, stride, addr_of!(VERTICES[0].normal));
         gl::ColorPointer(4, gl::UNSIGNED_BYTE, stride, addr_of!(VERTICES[0].color));
-        gl::DrawElements(gl::TRIANGLES, INDICES.len(), gl::UNSIGNED_SHORT, addr_of!(INDICES[0]));
+        gl::DrawElements(
+            gl::TRIANGLES,
+            INDICES.len(),
+            gl::UNSIGNED_SHORT,
+            addr_of!(INDICES[0]),
+        );
 
         gl::DisableClientState(gl::VERTEX_ARRAY);
         gl::DisableClientState(gl::TEXTURE_COORD_ARRAY);
@@ -83,7 +84,7 @@ impl Cube {
     pub fn render(&self) {
         rdpq::debug_log_msg("Cube");
         gl::PushMatrix();
-        gl::Translatef(0.0 ,-1.0, 0.0);
+        gl::Translatef(0.0, -1.0, 0.0);
 
         // Apply vertex color as material color.
         // Because the cube has colors set per vertex, we can color each face seperately
@@ -93,11 +94,9 @@ impl Cube {
         gl::ColorMaterial(gl::FRONT_AND_BACK, gl::AMBIENT_AND_DIFFUSE);
 
         self.draw();
-        
+
         gl::Disable(gl::COLOR_MATERIAL);
 
         gl::PopMatrix();
     }
 }
-
-

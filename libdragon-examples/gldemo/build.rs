@@ -1,4 +1,4 @@
-use libdragon_build::{Result, Build};
+use libdragon_build::{Build, Result};
 
 fn main() -> Result<()> {
     Build::new()

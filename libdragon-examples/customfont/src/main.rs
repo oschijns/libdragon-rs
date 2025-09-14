@@ -4,7 +4,7 @@
 #[allow(unused_imports)]
 use libdragon::*;
 
-use display::{Resolution, BitDepth, Gamma, FilterOptions};
+use display::{BitDepth, FilterOptions, Gamma, Resolution};
 use graphics::Graphics;
 use sprite::Sprite;
 
@@ -14,12 +14,18 @@ extern "C" fn main() -> ! {
     debug::init(debug::FEATURE_LOG_ISVIEWER | debug::FEATURE_LOG_USB);
 
     // Initialize peripherals
-    display::init(Resolution::_320x240, BitDepth::Bpp16, 2, Gamma::None, FilterOptions::Resample);
+    display::init(
+        Resolution::_320x240,
+        BitDepth::Bpp16,
+        2,
+        Gamma::None,
+        FilterOptions::Resample,
+    );
     dfs::init(None).unwrap_or_else(|e| panic!("Could not initialize filesystem: {:?}", e));
     rdpq::init();
     joypad::init();
     timer::init();
-    
+
     // Read in the custom font
     let custom_font = Sprite::load(dfs::PathBuf::from("rom:/libdragon-font.sprite")).unwrap();
 
@@ -44,4 +50,3 @@ extern "C" fn main() -> ! {
     // Wait forever
     loop {}
 }
-

@@ -16,13 +16,9 @@ impl Backtrace {
     #[inline]
     pub fn new(size: usize) -> Self {
         let mut ret = Vec::with_capacity(size);
-        let r = unsafe {
-            libdragon_sys::backtrace(ret.as_mut_ptr(), size as i32)
-        };
+        let r = unsafe { libdragon_sys::backtrace(ret.as_mut_ptr(), size as i32) };
         ret.truncate(r as usize);
-        Self {
-            call_stack: ret,
-        }
+        Self { call_stack: ret }
     }
 
     /// Translate the [Backtrace] to a set of [Symbols].
@@ -31,9 +27,8 @@ impl Backtrace {
     pub fn symbols<'a>(&'a mut self, size: Option<usize>) -> Symbols<'a> {
         let size = core::cmp::min(size.unwrap_or(self.call_stack.len()), self.call_stack.len());
 
-        let ptrs = unsafe {
-            libdragon_sys::backtrace_symbols(self.call_stack.as_mut_ptr(), size as i32)
-        };
+        let ptrs =
+            unsafe { libdragon_sys::backtrace_symbols(self.call_stack.as_mut_ptr(), size as i32) };
 
         Symbols {
             symbols: unsafe { core::slice::from_raw_parts_mut(ptrs, size) },
@@ -47,12 +42,20 @@ impl Backtrace {
     /// frames.
     ///
     /// See [`backtrace_symbols_cb`](libdragon_sys::backtrace_symbols_cb) for details.
-    pub fn symbols_cb<T: FnMut(BacktraceFrame) -> ()>(&mut self, size: Option<usize>, _flags: Option<()>, cb: T) -> bool {
+    pub fn symbols_cb<T: FnMut(BacktraceFrame) -> ()>(
+        &mut self,
+        size: Option<usize>,
+        _flags: Option<()>,
+        cb: T,
+    ) -> bool {
         let size = core::cmp::min(size.unwrap_or(self.call_stack.len()), self.call_stack.len());
 
         let cb = Box::new(cb);
 
-        extern "C" fn internal_callback<T: FnMut(BacktraceFrame) -> ()>(ctx: *mut ::core::ffi::c_void, backtrace: *mut libdragon_sys::backtrace_frame_t) {
+        extern "C" fn internal_callback<T: FnMut(BacktraceFrame) -> ()>(
+            ctx: *mut ::core::ffi::c_void,
+            backtrace: *mut libdragon_sys::backtrace_frame_t,
+        ) {
             let mut cb = unsafe { Box::<T>::from_raw(ctx as *mut _) };
             (cb.as_mut())(BacktraceFrame { ptr: backtrace });
             let _ = Box::leak(cb);
@@ -60,7 +63,13 @@ impl Backtrace {
 
         unsafe {
             let ctx: *mut _ = Box::leak(cb);
-            libdragon_sys::backtrace_symbols_cb(self.call_stack.as_mut_ptr(), size as i32, 0u32, Some(internal_callback::<T>), ctx as *mut ::core::ffi::c_void)
+            libdragon_sys::backtrace_symbols_cb(
+                self.call_stack.as_mut_ptr(),
+                size as i32,
+                0u32,
+                Some(internal_callback::<T>),
+                ctx as *mut ::core::ffi::c_void,
+            )
         }
     }
 
@@ -77,7 +86,8 @@ pub struct Symbols<'a> {
 }
 
 impl Symbols<'_> {
-    #[inline] pub fn len(&self) -> usize { self.symbols.len() }
+    #[inline]
+    pub fn len(&self) -> usize { self.symbols.len() }
 
     #[inline]
     pub fn symbol(&self, i: usize) -> Result<&str> {
@@ -119,21 +129,27 @@ impl BacktraceFrame {
     }
 
     /// Access [`backtrace_frame_t.addr`](libdragon_sys::backtrace_frame_t::addr)
-    #[inline] pub fn addr(&self) -> u32 { unsafe { (*self.ptr).addr } }
+    #[inline]
+    pub fn addr(&self) -> u32 { unsafe { (*self.ptr).addr } }
     /// Access [`backtrace_frame_t.func`](libdragon_sys::backtrace_frame_t::func)
-    #[inline] pub fn func(&self) -> Result<&str> { 
+    #[inline]
+    pub fn func(&self) -> Result<&str> {
         let c_func = unsafe { CStr::from_ptr((*self.ptr).func) };
         Ok(c_func.to_str()?)
     }
     /// Access [`backtrace_frame_t.func_offset`](libdragon_sys::backtrace_frame_t::func_offset)
-    #[inline] pub fn func_offset(&self) -> u32 { unsafe { (*self.ptr).func_offset } }
+    #[inline]
+    pub fn func_offset(&self) -> u32 { unsafe { (*self.ptr).func_offset } }
     /// Access [`backtrace_frame_t.source_file`](libdragon_sys::backtrace_frame_t::source_file)
-    #[inline] pub fn source_file(&self) -> Result<&str> { 
+    #[inline]
+    pub fn source_file(&self) -> Result<&str> {
         let c_source_file = unsafe { CStr::from_ptr((*self.ptr).source_file) };
         Ok(c_source_file.to_str()?)
     }
     /// Access [`backtrace_frame_t.source_line`](libdragon_sys::backtrace_frame_t::source_line)
-    #[inline] pub fn source_line(&self) -> u32 { unsafe { (*self.ptr).source_line as u32 } }
+    #[inline]
+    pub fn source_line(&self) -> u32 { unsafe { (*self.ptr).source_line as u32 } }
     /// Access [`backtrace_frame_t.is_inline`](libdragon_sys::backtrace_frame_t::is_inline)
-    #[inline] pub fn is_inline(&self) -> bool { unsafe { (*self.ptr).is_inline } }
+    #[inline]
+    pub fn is_inline(&self) -> bool { unsafe { (*self.ptr).is_inline } }
 }

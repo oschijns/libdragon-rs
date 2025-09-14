@@ -1,20 +1,20 @@
 use crate::*;
 
-use audio::mixer::{WaveformReadCallback};
+use audio::mixer::WaveformReadCallback;
 
 /// Internal structure used to keep track of WaveformReadCallback
 struct WaveformReadInternal {
     user_callback: WaveformReadCallback,
 }
 
-/// `SampleBuffer` is a wrapper around LibDragon's `samplebuffer_s`. 
+/// `SampleBuffer` is a wrapper around LibDragon's `samplebuffer_s`.
 ///
 /// See [`struct samplebuffer_s`](libdragon_sys::samplebuffer_s) for details.
 pub struct SampleBuffer {
-    ptr: *mut libdragon_sys::samplebuffer_s,
+    ptr:              *mut libdragon_sys::samplebuffer_s,
     backing_instance: Option<core::pin::Pin<Box<libdragon_sys::samplebuffer_s>>>,
-    owned_memory: Option<*mut u8>,
-    waveform_read: Option<*mut WaveformReadInternal>,
+    owned_memory:     Option<*mut u8>,
+    waveform_read:    Option<*mut WaveformReadInternal>,
 }
 
 impl SampleBuffer {
@@ -24,10 +24,10 @@ impl SampleBuffer {
         let sbuf = core::mem::MaybeUninit::<libdragon_sys::samplebuffer_s>::zeroed();
         let mut backing_instance = Box::pin(unsafe { sbuf.assume_init() });
         Self {
-            ptr: backing_instance.as_mut().get_mut(),
+            ptr:              backing_instance.as_mut().get_mut(),
             backing_instance: Some(backing_instance),
-            owned_memory: None,
-            waveform_read: None,
+            owned_memory:     None,
+            waveform_read:    None,
         }
     }
 
@@ -48,14 +48,18 @@ impl SampleBuffer {
         });
 
         unsafe {
-            libdragon_sys::samplebuffer_init(backing_instance.as_mut().get_mut() as *mut _, buf.as_mut_ptr(), size as i32);
+            libdragon_sys::samplebuffer_init(
+                backing_instance.as_mut().get_mut() as *mut _,
+                buf.as_mut_ptr(),
+                size as i32,
+            );
         }
 
         Self {
-            ptr: backing_instance.as_mut().get_mut(),
+            ptr:              backing_instance.as_mut().get_mut(),
             backing_instance: Some(backing_instance),
-            owned_memory: Some(buf.as_mut_ptr() as *mut _),
-            waveform_read: None,
+            owned_memory:     Some(buf.as_mut_ptr() as *mut _),
+            waveform_read:    None,
         }
     }
 
@@ -73,7 +77,11 @@ impl SampleBuffer {
         }
 
         unsafe {
-            libdragon_sys::samplebuffer_init(self.ptr, uncached_mem.as_mut_ptr(), uncached_mem.len() as i32);
+            libdragon_sys::samplebuffer_init(
+                self.ptr,
+                uncached_mem.as_mut_ptr(),
+                uncached_mem.len() as i32,
+            );
         }
     }
 
@@ -87,15 +95,20 @@ impl SampleBuffer {
     }
 
     /// Internal wrapper for C-to-Rust callbacks
-    extern "C" fn waveform_read_callback(ctx: *mut ::core::ffi::c_void, sbufptr: *mut libdragon_sys::samplebuffer_t, 
-                                         wpos: i32, wlen: i32, seeking: bool) {
+    extern "C" fn waveform_read_callback(
+        ctx: *mut ::core::ffi::c_void,
+        sbufptr: *mut libdragon_sys::samplebuffer_t,
+        wpos: i32,
+        wlen: i32,
+        seeking: bool,
+    ) {
         // create an ephemeral instance of SampleBuffer
         // without concrete instances, dropping this doesn't free any memory
         let mut sbuf = SampleBuffer {
-            ptr: sbufptr,
+            ptr:              sbufptr,
             backing_instance: None,
-            owned_memory: None,
-            waveform_read: None,
+            owned_memory:     None,
+            waveform_read:    None,
         };
 
         // obtain the WaveformReadInternal struct
@@ -123,8 +136,11 @@ impl SampleBuffer {
         let ctx = unsafe {
             let ctx: *mut WaveformReadInternal = Box::leak(cb); // Leak the function callback to prevent
                                                                 // memory from being freed
-            libdragon_sys::samplebuffer_set_waveform(self.ptr, Some(Self::waveform_read_callback), 
-                                                     ctx as *mut ::core::ffi::c_void);
+            libdragon_sys::samplebuffer_set_waveform(
+                self.ptr,
+                Some(Self::waveform_read_callback),
+                ctx as *mut ::core::ffi::c_void,
+            );
             ctx
         };
 
@@ -134,11 +150,11 @@ impl SampleBuffer {
     /// Get a pointer to specific set of samples in the buffer (zero-copy)
     ///
     /// Rust-only: you must tell the compiler the size of a sample by providing
-    /// the type of the slice elements. `wlen` is not mutable, as the length 
+    /// the type of the slice elements. `wlen` is not mutable, as the length
     /// of the returned slice provides that information.
     ///
     /// See [`samplebuffer_get`](libdragon_sys::samplebuffer_get) for details.
-    pub fn get<'a,T>(&'a self, wpos: usize, wlen: usize) -> &'a [T] {
+    pub fn get<'a, T>(&'a self, wpos: usize, wlen: usize) -> &'a [T] {
         unsafe {
             let mut i: i32 = wlen as i32;
             let ptr = libdragon_sys::samplebuffer_get(self.ptr, wpos as i32, &mut i as *mut _);
@@ -149,7 +165,7 @@ impl SampleBuffer {
     /// Append samples into the buffer (zero-copy).
     ///
     /// See [`samplebuffer_append`](libdragon_sys::samplebuffer_append) for details.
-    pub fn append<'a,T>(&'a mut self, wlen: usize) -> &'a mut [T] {
+    pub fn append<'a, T>(&'a mut self, wlen: usize) -> &'a mut [T] {
         unsafe {
             let ptr = libdragon_sys::samplebuffer_append(self.ptr, wlen as i32);
             core::slice::from_raw_parts_mut(ptr as *mut _, wlen)
@@ -174,7 +190,7 @@ impl SampleBuffer {
             libdragon_sys::samplebuffer_discard(self.ptr, wpos as i32);
         }
     }
-    
+
     /// Flush (reset) the sample buffer to empty status, discarding all samples.
     ///
     /// See [`samplebuffer_flush`](libdragon_sys::samplebuffer_flush) for details.
@@ -197,10 +213,10 @@ impl SampleBuffer {
     }
 
     /// See [`struct samplebuffer_s`](libdragon_sys::samplebuffer_s) for details.
-    pub fn size (&self) -> usize { unsafe { (*self.ptr).size  as usize } }
-    pub fn wpos (&self) -> usize { unsafe { (*self.ptr).wpos  as usize } }
-    pub fn widx (&self) -> usize { unsafe { (*self.ptr).widx  as usize } }
-    pub fn ridx (&self) -> usize { unsafe { (*self.ptr).ridx  as usize } }
+    pub fn size(&self) -> usize { unsafe { (*self.ptr).size as usize } }
+    pub fn wpos(&self) -> usize { unsafe { (*self.ptr).wpos as usize } }
+    pub fn widx(&self) -> usize { unsafe { (*self.ptr).widx as usize } }
+    pub fn ridx(&self) -> usize { unsafe { (*self.ptr).ridx as usize } }
     pub fn wnext(&self) -> isize { unsafe { (*self.ptr).wnext as isize } }
 }
 

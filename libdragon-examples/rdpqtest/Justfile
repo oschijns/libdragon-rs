@@ -4,15 +4,14 @@ import? '.libdragon-just'
 default:
     @echo Nothing to do
 
-build: 
+build:
     cargo build
     @just lb-finish-rom
 
-build-release: 
+build-release:
     cargo build --release
     @just lb-finish-rom
 
-build-release-verbose: 
+build-release-verbose:
     cargo build --release --verbose
     @just lb-finish-rom
-

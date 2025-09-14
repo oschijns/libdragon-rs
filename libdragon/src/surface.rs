@@ -30,6 +30,7 @@ pub enum TexFormat {
 }
 
 impl From<libdragon_sys::tex_format_t> for TexFormat {
+    #[rustfmt::skip]
     fn from(value: libdragon_sys::tex_format_t) -> Self {
         match value {
             libdragon_sys::tex_format_t_FMT_NONE   => TexFormat::None,
@@ -49,6 +50,7 @@ impl From<libdragon_sys::tex_format_t> for TexFormat {
 }
 
 impl From<TexFormat> for libdragon_sys::tex_format_t {
+    #[rustfmt::skip]
     fn from(v: TexFormat) -> Self {
         match v {
             TexFormat::None   => libdragon_sys::tex_format_t_FMT_NONE,
@@ -91,7 +93,7 @@ impl TexFormat {
     /// Return the name of the texture format as a string (for debugging purposes)
     ///
     /// Rust note: the enum derives [Debug], but this yields the C formatted enum name
-    pub fn name(self) -> String { 
+    pub fn name(self) -> String {
         let fmt = Into::<libdragon_sys::tex_format_t>::into(self);
         let ptr = unsafe { libdragon_sys::tex_format_name(fmt) };
         let c_str = unsafe { CStr::from_ptr(ptr as *const i8) };
@@ -103,48 +105,54 @@ impl TexFormat {
 ///
 /// See [`surface_t`](libdragon_sys::surface_t)
 pub struct Surface<'a> {
-    pub(crate) ptr: *mut libdragon_sys::surface_t,
+    pub(crate) ptr:               *mut libdragon_sys::surface_t,
     pub(crate) _backing_instance: Option<core::pin::Pin<Box<libdragon_sys::surface_t>>>,
-    pub(crate) needs_free: bool,
-    pub(crate) is_const: bool,
-    pub(crate) phantom: core::marker::PhantomData<&'a u8>,
+    pub(crate) needs_free:        bool,
+    pub(crate) is_const:          bool,
+    pub(crate) phantom:           core::marker::PhantomData<&'a u8>,
 }
 
 impl<'a> Surface<'a> {
     pub(crate) fn from_ptr(ptr: *mut libdragon_sys::surface_t) -> Self {
         Self {
-            ptr: ptr,
+            ptr,
             _backing_instance: None,
-            needs_free: false,
-            is_const: false,
-            phantom: core::marker::PhantomData,
+            needs_free:        false,
+            is_const:          false,
+            phantom:           core::marker::PhantomData,
         }
     }
 
     // For LibDragon functions that return a reference to constant surfaces
     pub(crate) fn from_const_ptr(ptr: *const libdragon_sys::surface_t) -> Self {
         Self {
-            ptr: ptr as *mut libdragon_sys::surface_t,
+            ptr:               ptr as *mut libdragon_sys::surface_t,
             _backing_instance: None,
-            needs_free: false,
-            is_const: true,
-            phantom: core::marker::PhantomData,
+            needs_free:        false,
+            is_const:          true,
+            phantom:           core::marker::PhantomData,
         }
     }
 
     /// Initialize a Surface with the provided buffer
     ///
-    /// ex. 
+    /// ex.
     /// ```rust
     /// let mut buffer = [0u8; 1024];
     /// let surf = surface::Surface::make(&mut buffer, surface::TexFormat::Rgba16, 32, 32, 32);
     /// ```
     ///
     /// See [`surface_make`](libdragon_sys::surface_make) for details.
-    pub fn make<'b, T>(buffer: &'b mut [T], format: TexFormat, width: u32, height: u32, stride: u32) -> Surface<'b> {
+    pub fn make<'b, T>(
+        buffer: &'b mut [T],
+        format: TexFormat,
+        width: u32,
+        height: u32,
+        stride: u32,
+    ) -> Surface<'b> {
         let surf = libdragon_sys::surface_t {
-            flags: Into::<libdragon_sys::tex_format_t>::into(format) as u16,
-            width: width as u16,
+            flags:  Into::<libdragon_sys::tex_format_t>::into(format) as u16,
+            width:  width as u16,
             height: height as u16,
             stride: stride as u16,
             buffer: buffer.as_ptr() as *mut _,
@@ -153,28 +161,45 @@ impl<'a> Surface<'a> {
         let mut backing_instance = Box::pin(surf);
 
         Surface {
-            ptr: backing_instance.as_mut().get_mut(),
+            ptr:               backing_instance.as_mut().get_mut(),
             _backing_instance: Some(backing_instance),
-            needs_free: false,
-            is_const: false,
-            phantom: core::marker::PhantomData,
+            needs_free:        false,
+            is_const:          false,
+            phantom:           core::marker::PhantomData,
         }
     }
 
     /// Initialize a Surface with the provided linear buffer
     ///
     /// See [`surface_make_linear`](libdragon_sys::surface_make_linear) for details.
-    pub fn make_linear<'b, T>(buffer: &'b mut [T], format: TexFormat, width: u32, height: u32) -> Surface<'b> {
-        Self::make(buffer, format, width, height, format.pix2bytes(width as i32) as u32)
+    pub fn make_linear<'b, T>(
+        buffer: &'b mut [T],
+        format: TexFormat,
+        width: u32,
+        height: u32,
+    ) -> Surface<'b> {
+        Self::make(
+            buffer,
+            format,
+            width,
+            height,
+            format.pix2bytes(width as i32) as u32,
+        )
     }
- 
+
     /// Initialize a Surface, pointing to a rectangular portion of this surface
     ///
     /// See [`surface_make_sub`](libdragon_sys::surface_make_sub) for details.
     pub fn make_sub(&self, x0: u32, y0: u32, width: u32, height: u32) -> Self {
         extern "C" {
-            fn surface_make_sub_r(ret: *mut libdragon_sys::surface_t, parent: *const libdragon_sys::surface_t, 
-                                  x0: u32, y0: u32, width: u32, height: u32);
+            fn surface_make_sub_r(
+                ret: *mut libdragon_sys::surface_t,
+                parent: *const libdragon_sys::surface_t,
+                x0: u32,
+                y0: u32,
+                width: u32,
+                height: u32,
+            );
         }
 
         let mut backing_surface = Box::pin(unsafe {
@@ -182,15 +207,22 @@ impl<'a> Surface<'a> {
         });
 
         unsafe {
-            surface_make_sub_r(backing_surface.as_mut().get_mut() as *mut _, self.ptr, x0, y0, width, height);
+            surface_make_sub_r(
+                backing_surface.as_mut().get_mut() as *mut _,
+                self.ptr,
+                x0,
+                y0,
+                width,
+                height,
+            );
         }
 
         Self {
-            ptr: backing_surface.as_mut().get_mut(),
+            ptr:               backing_surface.as_mut().get_mut(),
             _backing_instance: Some(backing_surface),
-            needs_free: false,
-            is_const: false,
-            phantom: core::marker::PhantomData,
+            needs_free:        false,
+            is_const:          false,
+            phantom:           core::marker::PhantomData,
         }
     }
 
@@ -202,7 +234,12 @@ impl<'a> Surface<'a> {
     /// See [`surface_alloc`](libdragon_sys::surface_alloc)
     pub fn alloc(format: TexFormat, width: u32, height: u32) -> Self {
         extern "C" {
-            fn surface_alloc_r(surface: *mut libdragon_sys::surface_t, format: libdragon_sys::tex_format_t, width: u32, height: u32);
+            fn surface_alloc_r(
+                surface: *mut libdragon_sys::surface_t,
+                format: libdragon_sys::tex_format_t,
+                width: u32,
+                height: u32,
+            );
         }
 
         let mut backing_surface = Box::pin(unsafe {
@@ -210,25 +247,37 @@ impl<'a> Surface<'a> {
         });
 
         unsafe {
-            surface_alloc_r(backing_surface.as_mut().get_mut() as *mut _, format.into(), width, height);
+            surface_alloc_r(
+                backing_surface.as_mut().get_mut() as *mut _,
+                format.into(),
+                width,
+                height,
+            );
         }
 
         Self {
-            ptr: backing_surface.as_mut().get_mut(),
+            ptr:               backing_surface.as_mut().get_mut(),
             _backing_instance: Some(backing_surface),
-            needs_free: true,
-            is_const: false,
-            phantom: core::marker::PhantomData,
+            needs_free:        true,
+            is_const:          false,
+            phantom:           core::marker::PhantomData,
         }
     }
 
     /// Create a placeholder surface, that can be used during rdpq block recording.
     ///
     /// See [`surface_make_placeholder`](libdragon_sys::surface_make_placeholder)
-    pub fn make_placeholder<'b>(index: i32, format: TexFormat, width: u32, height: u32, stride: u32) -> Surface<'b> {
+    pub fn make_placeholder<'b>(
+        index: i32,
+        format: TexFormat,
+        width: u32,
+        height: u32,
+        stride: u32,
+    ) -> Surface<'b> {
         let surf = libdragon_sys::surface_t {
-            flags: (Into::<libdragon_sys::tex_format_t>::into(format) as u16) | ((index as u16) << 8),
-            width: width as u16,
+            flags:  (Into::<libdragon_sys::tex_format_t>::into(format) as u16)
+                | ((index as u16) << 8),
+            width:  width as u16,
             height: height as u16,
             stride: stride as u16,
             buffer: ::core::ptr::null_mut() as *mut _,
@@ -237,30 +286,43 @@ impl<'a> Surface<'a> {
         let mut backing_instance = Box::pin(surf);
 
         Surface {
-            ptr: backing_instance.as_mut().get_mut(),
+            ptr:               backing_instance.as_mut().get_mut(),
             _backing_instance: Some(backing_instance),
-            needs_free: false,
-            is_const: false,
-            phantom: core::marker::PhantomData,
+            needs_free:        false,
+            is_const:          false,
+            phantom:           core::marker::PhantomData,
         }
     }
 
     /// Create a linear placeholder surface, that can be used during rdpq block recording.
     ///
     /// See [`surface_make_placeholder_linear`](libdragon_sys::surface_make_placeholder_linear) for details.
-    pub fn make_placeholder_linear<'b, T>(index: i32, format: TexFormat, width: u32, height: u32) -> Surface<'b> {
-        Self::make_placeholder(index, format, width, height, format.pix2bytes(width as i32) as u32)
+    pub fn make_placeholder_linear<'b, T>(
+        index: i32,
+        format: TexFormat,
+        width: u32,
+        height: u32,
+    ) -> Surface<'b> {
+        Self::make_placeholder(
+            index,
+            format,
+            width,
+            height,
+            format.pix2bytes(width as i32) as u32,
+        )
     }
 
     /// Returns the pixel format of a surface
     ///
     /// See [`surface_get_format`](libdragon_sys::surface_get_format)
-    pub fn get_format(&self) -> TexFormat { ((self.flags() & 0x1F) as libdragon_sys::tex_format_t).into() }
+    pub fn get_format(&self) -> TexFormat {
+        ((self.flags() & 0x1F) as libdragon_sys::tex_format_t).into()
+    }
 
     /// Checks whether this surface owns the buffer that it contains
     ///
     /// See [`surface_has_owned_buffer`](libdragon_sys::surface_has_owned_buffer)
-    pub fn has_owned_buffer(&self) -> bool { 
+    pub fn has_owned_buffer(&self) -> bool {
         let valid_buf = unsafe { self.buffer::<u8>() != ::core::ptr::null_mut() };
         valid_buf && (self.flags() & 0x20) != 0
     }
@@ -279,14 +341,21 @@ impl<'a> Surface<'a> {
     /// Access [`surface_t.stride`](libdragon_sys::surface_t::stride)
     pub fn stride(&self) -> u16 { unsafe { (*self.ptr).stride } }
     /// Unsafe access to [`surface_t.buffer`](libdragon_sys::surface_t::buffer)
-    pub unsafe fn buffer_mut<T>(&mut self) -> *mut T { assert!(!self.is_const, "immutable const surface"); unsafe { (*self.ptr).buffer as *mut _ } }
+    pub unsafe fn buffer_mut<T>(&mut self) -> *mut T {
+        assert!(!self.is_const, "immutable const surface");
+        unsafe { (*self.ptr).buffer as *mut _ }
+    }
     /// Unsafe access to [`surface_t.buffer`](libdragon_sys::surface_t::buffer)
     pub unsafe fn buffer<T>(&self) -> *const T { unsafe { (*self.ptr).buffer as *const _ } }
 
     /// Display a buffer on the screen
     ///
     /// See [`display_show`](libdragon_sys::display_show)
-    pub fn show(&self) { unsafe { libdragon_sys::display_show(self.ptr); } }
+    pub fn show(&self) {
+        unsafe {
+            libdragon_sys::display_show(self.ptr);
+        }
+    }
 }
 
 impl<'a> Drop for Surface<'a> {

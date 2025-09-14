@@ -2,12 +2,12 @@
 #![no_main]
 #![feature(offset_of)]
 
-use libdragon::*;
-
-use libdragon::display::{Resolution, BitDepth, Gamma, FilterOptions};
-use libdragon::sprite::Sprite;
-use libdragon::surface::{TexFormat, Surface};
-use libdragon::rdpq::{TexParms, TexParmsST};
+use libdragon::{
+    display::{BitDepth, FilterOptions, Gamma, Resolution},
+    rdpq::{TexParms, TexParmsST},
+    sprite::Sprite,
+    *,
+};
 
 mod camera;
 use camera::Camera;
@@ -36,13 +36,13 @@ use core_maths::*;
 struct Vertex {
     position: [f32; 3],
     texcoord: [f32; 2],
-    normal  : [f32; 3],
-    color   : u32,
+    normal:   [f32; 3],
+    color:    u32,
 }
-
 
 static ENVIRONMENT_COLOR: [f32; 4] = [0.1, 0.03, 0.2, 1.0];
 
+#[rustfmt::skip]
 static LIGHT_POS: [[f32; 4]; 8] = [
     [  1.0, 0.0,  0.0, 0.0 ],
     [ -1.0, 0.0,  0.0, 0.0 ],
@@ -54,6 +54,7 @@ static LIGHT_POS: [[f32; 4]; 8] = [
     [  0.0, 3.0, -8.0, 1.0 ],
 ];
 
+#[rustfmt::skip]
 static LIGHT_DIFFUSE: [[f32; 4]; 8] = [
     [ 1.0, 0.0, 0.0, 1.0 ],
     [ 0.0, 1.0, 0.0, 1.0 ],
@@ -65,21 +66,19 @@ static LIGHT_DIFFUSE: [[f32; 4]; 8] = [
     [ 1.0, 1.0, 1.0, 1.0 ],
 ];
 
-
 struct App<'a> {
-    camera: Camera,
-    sprites: [Sprite<'a>; 4],
-    textures: [u32; 4],
+    camera:        Camera,
+    sprites:       [Sprite<'a>; 4],
+    textures:      [u32; 4],
     texture_index: usize,
-    frames: u64,
-    animation: u32,
-
-    sphere: Sphere,
-    cube: Cube,
-    plane: Plane,
-    decal: Decal,
-    skinned: Skinned,
-    prim_test: PrimTest,
+    frames:        u64,
+    animation:     u32,
+    sphere:        Sphere,
+    cube:          Cube,
+    plane:         Plane,
+    decal:         Decal,
+    skinned:       Skinned,
+    prim_test:     PrimTest,
 }
 
 impl<'a> App<'a> {
@@ -104,7 +103,14 @@ impl<'a> App<'a> {
 
         gl::MatrixMode(gl::PROJECTION);
         gl::LoadIdentity();
-        gl::Frustum(-near_plane*aspect_ratio, near_plane*aspect_ratio, -near_plane, near_plane, near_plane, far_plane);
+        gl::Frustum(
+            -near_plane * aspect_ratio,
+            near_plane * aspect_ratio,
+            -near_plane,
+            near_plane,
+            near_plane,
+            far_plane,
+        );
 
         gl::MatrixMode(gl::MODELVIEW);
         gl::LoadIdentity();
@@ -117,7 +123,11 @@ impl<'a> App<'a> {
             gl::Enable(gl::LIGHT0 + i);
             gl::Lightfv(gl::LIGHT0 + i, gl::DIFFUSE, &LIGHT_DIFFUSE[i as usize]);
             gl::Lightf(gl::LIGHT0 + i, gl::LINEAR_ATTENUATION, 2.0 / light_radius);
-            gl::Lightf(gl::LIGHT0 + i, gl::QUADRATIC_ATTENUATION, 1.0 / (light_radius * light_radius));
+            gl::Lightf(
+                gl::LIGHT0 + i,
+                gl::QUADRATIC_ATTENUATION,
+                1.0 / (light_radius * light_radius),
+            );
         }
 
         let mat_diffuse = [1.0, 1.0, 1.0, 1.0];
@@ -139,44 +149,47 @@ impl<'a> App<'a> {
             gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST);
             gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, min_filter);
 
-            gl::SpriteTextureN64(gl::TEXTURE_2D, &sprites[i], TexParms {
-                s: TexParmsST {
-                    repeats: rdpq::REPEAT_INFINITE,
+            gl::SpriteTextureN64(
+                gl::TEXTURE_2D,
+                &sprites[i],
+                TexParms {
+                    s: TexParmsST {
+                        repeats: rdpq::REPEAT_INFINITE,
+                        ..Default::default()
+                    },
+                    t: TexParmsST {
+                        repeats: rdpq::REPEAT_INFINITE,
+                        ..Default::default()
+                    },
                     ..Default::default()
                 },
-                t: TexParmsST {
-                    repeats: rdpq::REPEAT_INFINITE,
-                    ..Default::default()
-                },
-                ..Default::default()
-            });
+            );
         }
 
         rspq::profile_start();
 
         Self {
-            camera: Camera {
+            camera:        Camera {
                 distance: -10.0,
                 rotation: 0.0,
             },
-            sprites: sprites, // can't let sprites memory be dropped, as they contain the texture data
-            textures: textures,
+            sprites, // can't let sprites memory be dropped, as they contain the texture data
+            textures,
             texture_index: 0,
-            frames: 0,
-            animation: 3283,
-
-            sphere: sphere,
-            cube: cube,
-            plane: plane,
-            decal: Decal::new(),
-            skinned: Skinned::new(),
-            prim_test: PrimTest::new(),
+            frames:        0,
+            animation:     3283,
+            sphere,
+            cube,
+            plane,
+            decal:         Decal::new(),
+            skinned:       Skinned::new(),
+            prim_test:     PrimTest::new(),
         }
     }
 
     fn set_light_positions(&self, rotation: f32) {
         gl::PushMatrix();
-        gl::Rotatef(rotation*5.43, 0.0, 1.0, 0.0);
+        gl::Rotatef(rotation * 5.43, 0.0, 1.0, 0.0);
         for i in 0..8 as i32 {
             gl::Lightfv(gl::LIGHT0 + i, gl::POSITION, &LIGHT_POS[i as usize]);
         }
@@ -190,7 +203,12 @@ impl<'a> App<'a> {
 
         gl::context_begin();
 
-        gl::ClearColor(ENVIRONMENT_COLOR[0], ENVIRONMENT_COLOR[1], ENVIRONMENT_COLOR[2], ENVIRONMENT_COLOR[3]);
+        gl::ClearColor(
+            ENVIRONMENT_COLOR[0],
+            ENVIRONMENT_COLOR[1],
+            ENVIRONMENT_COLOR[2],
+            ENVIRONMENT_COLOR[3],
+        );
         gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
         gl::MatrixMode(gl::MODELVIEW);
@@ -212,7 +230,10 @@ impl<'a> App<'a> {
         self.cube.render();
         self.skinned.render(&self.camera, self.animation as f32);
 
-        gl::BindTexture(gl::TEXTURE_2D, self.textures[(self.texture_index + 1) % self.textures.len()]);
+        gl::BindTexture(
+            gl::TEXTURE_2D,
+            self.textures[(self.texture_index + 1) % self.textures.len()],
+        );
         self.sphere.render(rotation);
 
         gl::Disable(gl::TEXTURE_2D);
@@ -228,26 +249,36 @@ impl<'a> App<'a> {
         // determine these. Here we set the tile size to be 32x32 and we apply an offset
         // since we are using bilinear texture filtering
         gl::TexSizeN64(32, 32);
-        rdpq::sprite_upload(rdpq::Tile(0), &self.sprites[0], rdpq::TexParms {
-            s: rdpq::TexParmsST { repeats: rdpq::REPEAT_INFINITE, ..Default::default() },
-            t: rdpq::TexParmsST { repeats: rdpq::REPEAT_INFINITE, ..Default::default() },
-            ..Default::default()
-        });
+        rdpq::sprite_upload(
+            rdpq::Tile(0),
+            &self.sprites[0],
+            rdpq::TexParms {
+                s: rdpq::TexParmsST {
+                    repeats: rdpq::REPEAT_INFINITE,
+                    ..Default::default()
+                },
+                t: rdpq::TexParmsST {
+                    repeats: rdpq::REPEAT_INFINITE,
+                    ..Default::default()
+                },
+                ..Default::default()
+            },
+        );
         rdpq::set_mode_standard();
         rdpq::mode_filter(rdpq::Filter::Bilinear);
 
         gl::Begin(gl::TRIANGLE_FAN);
-            gl::TexCoord2f(0.0, 0.0);
-            gl::Vertex3f(-5.5, 1.0, -1.0);
+        gl::TexCoord2f(0.0, 0.0);
+        gl::Vertex3f(-5.5, 1.0, -1.0);
 
-            gl::TexCoord2f(0.0, 1.0);
-            gl::Vertex3f(-5.5, 1.0, 1.0);
+        gl::TexCoord2f(0.0, 1.0);
+        gl::Vertex3f(-5.5, 1.0, 1.0);
 
-            gl::TexCoord2f(1.0, 1.0);
-            gl::Vertex3f(-3.5, 1.0, 1.0);
+        gl::TexCoord2f(1.0, 1.0);
+        gl::Vertex3f(-3.5, 1.0, 1.0);
 
-            gl::TexCoord2f(1.0, 0.0);
-            gl::Vertex3f(-3.5, 1.0, -1.0);
+        gl::TexCoord2f(1.0, 0.0);
+        gl::Vertex3f(-3.5, 1.0, -1.0);
         gl::End();
 
         gl::Disable(gl::RDPQ_TEXTURING_N64);
@@ -274,7 +305,13 @@ extern "C" fn main() -> ! {
 
     dfs::init(None).unwrap_or_else(|e| panic!("Could not initialize filesystem: {:?}", e));
 
-    display::init(Resolution::_320x240, BitDepth::Bpp16, 3, Gamma::None, FilterOptions::ResampleAntialiasDedither);
+    display::init(
+        Resolution::_320x240,
+        BitDepth::Bpp16,
+        3,
+        Gamma::None,
+        FilterOptions::ResampleAntialiasDedither,
+    );
 
     rdpq::init();
     gl::init();
@@ -292,8 +329,8 @@ extern "C" fn main() -> ! {
         joypad::poll();
         let port = joypad::Port::get_port_1();
         let pressed = port.get_buttons_pressed();
-        let held    = port.get_buttons_held();
-        let inputs  = port.get_inputs();
+        let held = port.get_buttons_held();
+        let inputs = port.get_inputs();
 
         if held.a {
             app.animation += 1;
@@ -308,13 +345,21 @@ extern "C" fn main() -> ! {
         }
 
         if pressed.r {
-            shade_model = if shade_model == gl::SMOOTH { gl::FLAT } else { gl::SMOOTH };
+            shade_model = if shade_model == gl::SMOOTH {
+                gl::FLAT
+            } else {
+                gl::SMOOTH
+            };
             gl::ShadeModel(shade_model);
         }
 
         if pressed.l {
             fog_enabled = !fog_enabled;
-            if fog_enabled { gl::Enable(gl::FOG) } else { gl::Disable(gl::FOG) }
+            if fog_enabled {
+                gl::Enable(gl::FOG)
+            } else {
+                gl::Disable(gl::FOG)
+            }
         }
 
         if pressed.c_up {
@@ -335,7 +380,7 @@ extern "C" fn main() -> ! {
 
         let y = (inputs.stick_y as f32) / 128.0;
         let x = (inputs.stick_x as f32) / 128.0;
-        let mag = x*x + y*y;
+        let mag = x * x + y * y;
 
         if mag.abs() > 0.01 {
             app.camera.distance += y * 0.2;
@@ -345,4 +390,3 @@ extern "C" fn main() -> ! {
         app.render();
     }
 }
-

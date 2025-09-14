@@ -1,13 +1,12 @@
-
 /// Count of Joypad ports
 pub const JOYPAD_PORT_COUNT: usize = libdragon_sys::JOYPAD_PORT_COUNT as usize;
 
 /// Maximum range of a Nintendo 64 controller analog stick
-pub const JOYPAD_RANGE_N64_STICK_MAX  : u32 = libdragon_sys::JOYPAD_RANGE_N64_STICK_MAX;
+pub const JOYPAD_RANGE_N64_STICK_MAX: u32 = libdragon_sys::JOYPAD_RANGE_N64_STICK_MAX;
 /// Maximum range of a GameCube controller analog stick
-pub const JOYPAD_RANGE_GCN_STICK_MAX  : u32 = libdragon_sys::JOYPAD_RANGE_GCN_STICK_MAX;
+pub const JOYPAD_RANGE_GCN_STICK_MAX: u32 = libdragon_sys::JOYPAD_RANGE_GCN_STICK_MAX;
 /// Maximum range of a GameCube controller analog C-stick
-pub const JOYPAD_RANGE_GCN_CSTICK_MAX : u32 = libdragon_sys::JOYPAD_RANGE_GCN_CSTICK_MAX;
+pub const JOYPAD_RANGE_GCN_CSTICK_MAX: u32 = libdragon_sys::JOYPAD_RANGE_GCN_CSTICK_MAX;
 /// Maximum range of a GameCube controller analog trigger
 pub const JOYPAD_RANGE_GCN_TRIGGER_MAX: u32 = libdragon_sys::JOYPAD_RANGE_GCN_TRIGGER_MAX;
 
@@ -50,6 +49,7 @@ pub enum Axis {
 }
 
 impl From<Axis> for libdragon_sys::joypad_axis_t {
+    #[rustfmt::skip]
     fn from(v: Axis) -> Self {
         match v {
             Axis::StickX  => libdragon_sys::joypad_axis_t_JOYPAD_AXIS_STICK_X,
@@ -82,6 +82,7 @@ pub enum TwoD {
 }
 
 impl From<TwoD> for libdragon_sys::joypad_2d_t {
+    #[rustfmt::skip]
     fn from(v: TwoD) -> Self {
         match v {
             TwoD::Stick     => libdragon_sys::joypad_2d_t_JOYPAD_2D_STICK,
@@ -118,6 +119,7 @@ pub enum EightWay {
 }
 
 impl From<libdragon_sys::joypad_8way_t> for EightWay {
+    #[rustfmt::skip]
     fn from(value: libdragon_sys::joypad_8way_t) -> Self {
         match value {
             libdragon_sys::joypad_8way_t_JOYPAD_8WAY_NONE       => EightWay::None,
@@ -137,17 +139,29 @@ impl From<libdragon_sys::joypad_8way_t> for EightWay {
 /// Initialize the Joypad subsystem.
 ///
 /// See [`joypad_init`](libdragon_sys::joypad_init) for details.
-pub fn init() { unsafe { libdragon_sys::joypad_init(); } }
+pub fn init() {
+    unsafe {
+        libdragon_sys::joypad_init();
+    }
+}
 
 /// Close the Joypad subsystem.
 ///
 /// See [`joypad_close`](libdragon_sys::joypad_close) for details.
-pub fn close() { unsafe { libdragon_sys::joypad_close(); } }
+pub fn close() {
+    unsafe {
+        libdragon_sys::joypad_close();
+    }
+}
 
 /// Fetch the current Joypad input state.
 ///
 /// See [`joypad_poll`](libdragon_sys::joypad_poll) for details.
-pub fn poll() { unsafe { libdragon_sys::joypad_poll(); } }
+pub fn poll() {
+    unsafe {
+        libdragon_sys::joypad_poll();
+    }
+}
 
 /// Rust-specific: convenience function to iterate through all Joypad ports
 ///
@@ -162,49 +176,49 @@ pub fn foreach(cb: impl Fn(Port) -> ()) {
 #[derive(Debug, Clone, Copy, Default)]
 pub struct Buttons {
     /// State of the A button
-    pub a      : bool,
+    pub a:       bool,
     /// State of the B button
-    pub b      : bool,
+    pub b:       bool,
     /// State of the Z button
-    pub z      : bool,
+    pub z:       bool,
     /// State of the Start button
-    pub start  : bool,
+    pub start:   bool,
     /// State of the D-Pad Up button
-    pub d_up   : bool,
+    pub d_up:    bool,
     /// State of the D-Pad Down button
-    pub d_down : bool,
+    pub d_down:  bool,
     /// State of the D-Pad Left button
-    pub d_left : bool,
+    pub d_left:  bool,
     /// State of the D-Pad Right button
     pub d_right: bool,
 
     /// State of the Y button (GCN only)
-    pub y      : bool,
+    pub y: bool,
     /// State of the X button (GCN only)
-    pub x      : bool,
+    pub x: bool,
 
     /// State of the L button
-    pub l      : bool,
+    pub l: bool,
     /// State of the R button
-    pub r      : bool,
+    pub r: bool,
 
     /// State of the C-Up button.
     ///
     /// For GameCube controllers, the value will be
     /// emulated based on the C-Stick Y axis position.
-    pub c_up   : bool,
+    pub c_up: bool,
 
     /// State of the C-Down button.
     ///
     /// For GameCube controllers, the value will be
     /// emulated based on the C-Stick Y axis position.
-    pub c_down : bool,
+    pub c_down: bool,
 
     /// State of the C-Left button.
     ///
     /// For GameCube controllers, the value will be
     /// emulated based on the C-Stick X axis position.
-    pub c_left : bool,
+    pub c_left: bool,
 
     /// State of the C-Right button.
     ///
@@ -219,7 +233,7 @@ pub struct Buttons {
 #[derive(Debug, Clone, Copy, Default)]
 pub struct Inputs {
     /// Structure containing digital button inputs state.
-    pub btn    : Buttons,
+    pub btn: Buttons,
 
     /// Position of the analog joystick X axis. (-127, +127)
     ///
@@ -253,6 +267,7 @@ pub struct Inputs {
 }
 
 impl From<libdragon_sys::joypad_buttons_t> for Buttons {
+    #[rustfmt::skip]
     fn from(value: libdragon_sys::joypad_buttons_t) -> Self {
         let btns = unsafe { &value.__bindgen_anon_1 };
         Self {
@@ -279,13 +294,13 @@ impl From<libdragon_sys::joypad_buttons_t> for Buttons {
 impl From<libdragon_sys::joypad_inputs_t> for Inputs {
     fn from(value: libdragon_sys::joypad_inputs_t) -> Self {
         Self {
-            stick_x    : value.stick_x,
-            stick_y    : value.stick_y,
-            cstick_x   : value.cstick_x,
-            cstick_y   : value.cstick_y,
-            analog_l   : value.analog_l,
-            analog_r   : value.analog_r,
-            btn        : value.btn.into(),
+            stick_x:  value.stick_x,
+            stick_y:  value.stick_y,
+            cstick_x: value.cstick_x,
+            cstick_y: value.cstick_y,
+            analog_l: value.analog_l,
+            analog_r: value.analog_r,
+            btn:      value.btn.into(),
         }
     }
 }
@@ -299,7 +314,7 @@ pub type Identifier = libdragon_sys::joybus_identifier_t;
 /// First, get a Port instance with [Port::get] or [Port::get_port_1] through [Port::get_port_4].
 /// Then, the remainder of the functions in the struct map directly to LibDragon functions.
 pub struct Port {
-    pub port: usize
+    pub port: usize,
 }
 
 impl Port {
@@ -307,9 +322,7 @@ impl Port {
     pub fn get(port: usize) -> Self {
         assert!(port < JOYPAD_PORT_COUNT);
 
-        Self {
-            port: port
-        }
+        Self { port }
     }
 
     /// Convenience functions
@@ -322,9 +335,7 @@ impl Port {
     ///
     /// See [`joypad_is_connected`](libdragon_sys::joypad_is_connected)
     pub fn is_connected(&self) -> bool {
-        unsafe {
-            libdragon_sys::joypad_is_connected(self.port as libdragon_sys::joypad_port_t)
-        }
+        unsafe { libdragon_sys::joypad_is_connected(self.port as libdragon_sys::joypad_port_t) }
     }
 
     /// Get the Joybus device identifier for a Joypad port.
@@ -332,13 +343,15 @@ impl Port {
     /// See [`joypad_get_identifier`](libdragon_sys::joypad_get_identifier)
     pub fn get_identifier(&self) -> Identifier {
         unsafe {
-            libdragon_sys::joypad_get_identifier(self.port as libdragon_sys::joypad_port_t) as Identifier
+            libdragon_sys::joypad_get_identifier(self.port as libdragon_sys::joypad_port_t)
+                as Identifier
         }
     }
 
     /// Get the Joypad style for a Joypad port.
     ///
     /// See [`joypad_get_style`](libdragon_sys::joypad_get_style)
+    #[rustfmt::skip]
     pub fn get_style(&self) -> Style {
         let s = unsafe {
             libdragon_sys::joypad_get_style(self.port as libdragon_sys::joypad_port_t)
@@ -376,7 +389,10 @@ impl Port {
     /// See [`joypad_set_rumble_active`](libdragon_sys::joypad_set_rumble_active)
     pub fn set_rumble_active(&self, active: bool) {
         unsafe {
-            libdragon_sys::joypad_set_rumble_active(self.port as libdragon_sys::joypad_port_t, active);
+            libdragon_sys::joypad_set_rumble_active(
+                self.port as libdragon_sys::joypad_port_t,
+                active,
+            );
         }
     }
 
@@ -404,7 +420,8 @@ impl Port {
     /// See [`joypad_get_buttons_pressed`](libdragon_sys::joypad_get_buttons_pressed)
     pub fn get_buttons_pressed(&self) -> Buttons {
         unsafe {
-            libdragon_sys::joypad_get_buttons_pressed(self.port as libdragon_sys::joypad_port_t).into()
+            libdragon_sys::joypad_get_buttons_pressed(self.port as libdragon_sys::joypad_port_t)
+                .into()
         }
     }
 
@@ -414,7 +431,8 @@ impl Port {
     /// See [`joypad_get_buttons_released`](libdragon_sys::joypad_get_buttons_released)
     pub fn get_buttons_released(&self) -> Buttons {
         unsafe {
-            libdragon_sys::joypad_get_buttons_released(self.port as libdragon_sys::joypad_port_t).into()
+            libdragon_sys::joypad_get_buttons_released(self.port as libdragon_sys::joypad_port_t)
+                .into()
         }
     }
 
@@ -427,13 +445,17 @@ impl Port {
             libdragon_sys::joypad_get_buttons_held(self.port as libdragon_sys::joypad_port_t).into()
         }
     }
-    
+
     /// Get the 8-way direction for a Joypad port's direction axes.
     ///
     /// See [`joypad_get_direction`](libdragon_sys::joypad_get_direction)
     pub fn get_direction(&self, axes: TwoD) -> EightWay {
         unsafe {
-            libdragon_sys::joypad_get_direction(self.port as libdragon_sys::joypad_port_t, axes.into()).into()
+            libdragon_sys::joypad_get_direction(
+                self.port as libdragon_sys::joypad_port_t,
+                axes.into(),
+            )
+            .into()
         }
     }
 
@@ -442,7 +464,10 @@ impl Port {
     /// See [`joypad_get_axis_pressed`](libdragon_sys::joypad_get_axis_pressed)
     pub fn get_axis_pressed(&self, axis: Axis) -> i32 {
         unsafe {
-            libdragon_sys::joypad_get_axis_pressed(self.port as libdragon_sys::joypad_port_t, axis.into()) as i32
+            libdragon_sys::joypad_get_axis_pressed(
+                self.port as libdragon_sys::joypad_port_t,
+                axis.into(),
+            ) as i32
         }
     }
 
@@ -451,7 +476,10 @@ impl Port {
     /// See [`joypad_get_axis_released`](libdragon_sys::joypad_get_axis_released)
     pub fn get_axis_released(&self, axis: Axis) -> i32 {
         unsafe {
-            libdragon_sys::joypad_get_axis_released(self.port as libdragon_sys::joypad_port_t, axis.into()) as i32
+            libdragon_sys::joypad_get_axis_released(
+                self.port as libdragon_sys::joypad_port_t,
+                axis.into(),
+            ) as i32
         }
     }
 
@@ -460,7 +488,10 @@ impl Port {
     /// See [`joypad_get_axis_held`](libdragon_sys::joypad_get_axis_held)
     pub fn get_axis_held(&self, axis: Axis) -> i32 {
         unsafe {
-            libdragon_sys::joypad_get_axis_held(self.port as libdragon_sys::joypad_port_t, axis.into()) as i32
+            libdragon_sys::joypad_get_axis_held(
+                self.port as libdragon_sys::joypad_port_t,
+                axis.into(),
+            ) as i32
         }
     }
 }

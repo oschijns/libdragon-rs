@@ -728,6 +728,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "importglb"
+version = "0.1.0"
+dependencies = [
+ "core_maths",
+ "libdragon",
+ "libdragon-build",
+]
+
+[[package]]
 name = "indexmap"
 version = "2.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"

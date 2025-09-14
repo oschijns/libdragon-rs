@@ -3,8 +3,7 @@
 
 use libdragon::*;
 
-use libdragon::console::RenderMode;
-use libdragon::dfs::Read;
+use libdragon::{console::RenderMode, dfs::Read};
 
 const MAX_LIST: usize = 20;
 
@@ -16,14 +15,14 @@ struct Entry {
 
 struct DemoDir {
     current_path: String,
-    entries: Vec<Entry>,
+    entries:      Vec<Entry>,
 }
 
 impl DemoDir {
     fn new() -> Self {
         let mut ret = Self {
             current_path: String::from("rom://"),
-            entries: Vec::new(),
+            entries:      Vec::new(),
         };
 
         ret.populate();
@@ -41,7 +40,10 @@ impl DemoDir {
 
         let dir = dfs::Dir::findfirst(&self.current_path);
         if let Err(e) = dir {
-            println!("Could not read directory {} (err {:?})", self.current_path, e);
+            println!(
+                "Could not read directory {} (err {:?})",
+                self.current_path, e
+            );
             return;
         }
 
@@ -57,7 +59,7 @@ impl DemoDir {
                     println!("Error reading directory: {:?}", e);
                     break;
                 }
-                _ => {}, // continue scanning
+                _ => {} // continue scanning
             }
         }
 
@@ -66,9 +68,13 @@ impl DemoDir {
 
     fn sort(&mut self) {
         self.entries.sort_by(|a, b| {
-            if a.filetype == dfs::EntryType::Directory && b.filetype != dfs::EntryType::Directory { return core::cmp::Ordering::Less; }
-            if a.filetype != dfs::EntryType::Directory && b.filetype == dfs::EntryType::Directory { return core::cmp::Ordering::Greater; }
-            return a.filename.partial_cmp(&b.filename).unwrap()
+            if a.filetype == dfs::EntryType::Directory && b.filetype != dfs::EntryType::Directory {
+                return core::cmp::Ordering::Less;
+            }
+            if a.filetype != dfs::EntryType::Directory && b.filetype == dfs::EntryType::Directory {
+                return core::cmp::Ordering::Greater;
+            }
+            return a.filename.partial_cmp(&b.filename).unwrap();
         })
     }
 
@@ -93,13 +99,13 @@ impl DemoDir {
             match entry.filetype {
                 dfs::EntryType::Directory => {
                     println!("[{}]", entry.filename.display());
-                },
+                }
                 dfs::EntryType::File => {
                     println!("{}", entry.filename.display());
-                },
+                }
 
                 // shouldn't show up with dir_findfirst
-                dfs::EntryType::Eof => {},
+                dfs::EntryType::Eof => {}
             }
         }
     }
@@ -119,7 +125,7 @@ impl DemoDir {
             page
         };
 
-        return (cursor, page)
+        return (cursor, page);
     }
 }
 
@@ -134,7 +140,7 @@ extern "C" fn main() -> ! {
     console::set_render_mode(RenderMode::Manual);
 
     joypad::init();
-    
+
     let _ = dfs::init(None).unwrap_or_else(|e| panic!("Filesystem failed to start: {:?}", e));
 
     // io::Read and io::Seek are implemented on dfs::File ->
@@ -177,7 +183,7 @@ extern "C" fn main() -> ! {
 
         if keys.c_right && dir.entries[cursor].filetype == dfs::EntryType::File {
             let path = dfs::PathBuf::from(dir.current_path.clone())
-                                     .join(dir.entries[cursor].filename.clone());
+                .join(dir.entries[cursor].filename.clone());
             let res = dfs::File::open(&path, "r");
             match res {
                 Err(e) => {
@@ -189,7 +195,9 @@ extern "C" fn main() -> ! {
                     loop {
                         match file.read(buf.as_mut_slice()) {
                             Ok(nread) => {
-                                if nread == 0 { break; }
+                                if nread == 0 {
+                                    break;
+                                }
                                 let s = String::from_utf8((&buf[0..nread]).to_vec()).unwrap();
                                 let lines = s.split("\n");
                                 for line in lines {
@@ -238,7 +246,7 @@ extern "C" fn main() -> ! {
 
         if keys.a && dir.entries[cursor].filetype == dfs::EntryType::Directory {
             let path = dfs::PathBuf::from(dir.current_path.clone())
-                                     .join(dir.entries[cursor].filename.clone());
+                .join(dir.entries[cursor].filename.clone());
             dir.change_directory(path.to_str().unwrap());
             page = 0;
             cursor = 0;
@@ -251,7 +259,7 @@ extern "C" fn main() -> ! {
                 let mut s = String::from(path.to_str().unwrap());
                 if s == "rom:" || s == "sd:" {
                     s.push_str("//");
-                } 
+                }
 
                 // if we popped too high, don't change directory
                 if s != "" {
@@ -263,4 +271,3 @@ extern "C" fn main() -> ! {
         }
     }
 }
-

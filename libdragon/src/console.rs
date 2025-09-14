@@ -1,30 +1,29 @@
-
 /// Console Render Modes
 #[derive(Copy, Clone, Debug)]
 pub enum RenderMode {
     /// Manual Rendering
-    Manual = 0,
+    Manual    = 0,
     /// Automatic Rendering
     Automatic = 1,
 }
 
 /// The console width in characters
-pub const CONSOLE_WIDTH     : u32 = libdragon_sys::CONSOLE_WIDTH;
+pub const CONSOLE_WIDTH: u32 = libdragon_sys::CONSOLE_WIDTH;
 /// The console height in characters
-pub const CONSOLE_HEIGHT    : u32 = libdragon_sys::CONSOLE_HEIGHT;
+pub const CONSOLE_HEIGHT: u32 = libdragon_sys::CONSOLE_HEIGHT;
 /// Tab width
-pub const TAB_WIDTH         : u32 = libdragon_sys::TAB_WIDTH;
+pub const TAB_WIDTH: u32 = libdragon_sys::TAB_WIDTH;
 /// Padding from the left and right ends of the screen in pixels
 pub const HORIZONTAL_PADDING: u32 = libdragon_sys::HORIZONTAL_PADDING;
 /// Padding from the top and bottom ends of the screen in pixels
-pub const VERTICAL_PADDING  : u32 = libdragon_sys::VERTICAL_PADDING;
+pub const VERTICAL_PADDING: u32 = libdragon_sys::VERTICAL_PADDING;
 
 /// Initialize the console
 ///
 /// See [`console_init`](libdragon_sys::console_init) for details.
 pub fn init() {
     unsafe {
-        libdragon_sys::console_init();        
+        libdragon_sys::console_init();
     }
 }
 
@@ -58,6 +57,14 @@ pub fn set_render_mode(mode: RenderMode) {
 /// Clear the console
 ///
 /// See [`console_clear`](libdragon_sys::console_clear) for details.
-pub fn clear() { unsafe { libdragon_sys::console_clear(); } }
+pub fn clear() {
+    unsafe {
+        libdragon_sys::console_clear();
+    }
+}
 
-pub fn render() { unsafe { libdragon_sys::console_render(); } }
+pub fn render() {
+    unsafe {
+        libdragon_sys::console_render();
+    }
+}

@@ -7,16 +7,16 @@ pub type EffectCallback = Box<dyn FnMut(&mut Xm64, u8, u8, u8) + 'static + Sync 
 
 struct EffectInternal {
     user_callback: EffectCallback,
-    ptr: *mut libdragon_sys::xm64player_t,
+    ptr:           *mut libdragon_sys::xm64player_t,
 }
 
 /// Xm64 structure. This is a wrapper around LibDragon's `xm64player_t`.
 ///
 /// See [`struct xm64player_t`](libdragon_sys::xm64player_t) for details.
 pub struct Xm64 {
-    ptr: *mut libdragon_sys::xm64player_t,
+    ptr:              *mut libdragon_sys::xm64player_t,
     backing_instance: Option<core::pin::Pin<Box<libdragon_sys::xm64player_t>>>,
-    effect_callback: Option<*mut EffectInternal>,
+    effect_callback:  Option<*mut EffectInternal>,
 }
 
 impl Xm64 {
@@ -36,9 +36,9 @@ impl Xm64 {
         }
 
         Ok(Self {
-            ptr: backing_instance.as_mut().get_mut(),
+            ptr:              backing_instance.as_mut().get_mut(),
             backing_instance: Some(backing_instance),
-            effect_callback: None,
+            effect_callback:  None,
         })
     }
 
@@ -46,9 +46,7 @@ impl Xm64 {
     ///
     /// See [`xm64player_num_channels`](libdragon_sys::xm64player_num_channels) for details.
     pub fn num_channels(&self) -> i32 {
-        unsafe {
-            libdragon_sys::xm64player_num_channels(self.ptr)
-        }
+        unsafe { libdragon_sys::xm64player_num_channels(self.ptr) }
     }
 
     /// Configure a Xm64 file for looping.
@@ -83,7 +81,12 @@ impl Xm64 {
     /// See [`xm64player_tell`](libdragon_sys::xm64player_tell) for details.
     pub fn tell(&self, patidx: &mut i32, row: &mut i32, secs: &mut f32) {
         unsafe {
-            libdragon_sys::xm64player_tell(self.ptr, patidx as *mut _, row as *mut _, secs as *mut _);
+            libdragon_sys::xm64player_tell(
+                self.ptr,
+                patidx as *mut _,
+                row as *mut _,
+                secs as *mut _,
+            );
         }
     }
 
@@ -116,9 +119,9 @@ impl Xm64 {
         // create an ephemeral instance of Xm64
         // without concrete instances, dropping this doesn't free any memory
         let mut xm64 = Self {
-            ptr: cb.ptr,
+            ptr:              cb.ptr,
             backing_instance: None,
-            effect_callback: None,
+            effect_callback:  None,
         };
 
         // call user code
@@ -140,12 +143,18 @@ impl Xm64 {
             panic!("cannot set effect callback on ephemeral instance");
         }
 
-        let cb = Box::new(EffectInternal { user_callback: cb, ptr: self.ptr });
+        let cb = Box::new(EffectInternal {
+            user_callback: cb,
+            ptr:           self.ptr,
+        });
         let ctx = unsafe {
             let ctx: *mut EffectInternal = Box::leak(cb); // Leak the function callback to prevent
                                                           // memory from being freed
-            libdragon_sys::xm64player_set_effect_callback(self.ptr, Some(Self::effect_callback), 
-                                                          ctx as *mut ::core::ffi::c_void);
+            libdragon_sys::xm64player_set_effect_callback(
+                self.ptr,
+                Some(Self::effect_callback),
+                ctx as *mut ::core::ffi::c_void,
+            );
             ctx
         };
 
@@ -155,17 +164,14 @@ impl Xm64 {
     /// Access the libxm context
     ///
     /// See [`struct xm64player_t`](libdragon_sys::xm64player_t) for details.
-    pub fn ctx(&mut self) -> *mut libdragon_sys::xm_context_t {
-        todo!("need an XmContext wrapper")
-    }
+    pub fn ctx(&mut self) -> *mut libdragon_sys::xm_context_t { todo!("need an XmContext wrapper") }
 
     /// Access the [Waveform](crate::audio::mixer::Waveform) for this Xm64.
     ///
     /// See [`struct xm64player_t`](libdragon_sys::xm64player_t::waves) for details.
     pub fn wave(&mut self, idx: usize) -> audio::mixer::Waveform {
-        let waves: &mut [libdragon_sys::waveform_t] = unsafe {
-            core::slice::from_raw_parts_mut((*self.ptr).waves, self.nwaves())
-        };
+        let waves: &mut [libdragon_sys::waveform_t] =
+            unsafe { core::slice::from_raw_parts_mut((*self.ptr).waves, self.nwaves()) };
 
         audio::mixer::Waveform::from_ptr(&mut waves[idx] as *mut _)
     }

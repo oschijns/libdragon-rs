@@ -15,9 +15,15 @@ impl Mpeg2 {
         let path_bytes: &[u8] = path.as_ref().as_bytes();
         let cpath = CString::new(path_bytes).unwrap();
 
-        let mut tmp: core::mem::MaybeUninit<libdragon_sys::mpeg2_t> = core::mem::MaybeUninit::uninit();
+        let mut tmp: core::mem::MaybeUninit<libdragon_sys::mpeg2_t> =
+            core::mem::MaybeUninit::uninit();
         unsafe {
-            libdragon_sys::mpeg2_open(tmp.as_mut_ptr(), cpath.as_ptr() as *const _, output_width as i32, output_height as i32);
+            libdragon_sys::mpeg2_open(
+                tmp.as_mut_ptr(),
+                cpath.as_ptr() as *const _,
+                output_width as i32,
+                output_height as i32,
+            );
         }
 
         Self {
@@ -26,19 +32,31 @@ impl Mpeg2 {
     }
 
     /// See [`mpeg2_get_framerate`](libdragon_sys::mpeg2_get_framerate) for details.
-    #[inline] pub fn get_framerate(&mut self) -> f32 { unsafe { libdragon_sys::mpeg2_get_framerate(&mut self.m as *mut _) } }
+    #[inline]
+    pub fn get_framerate(&mut self) -> f32 {
+        unsafe { libdragon_sys::mpeg2_get_framerate(&mut self.m as *mut _) }
+    }
     /// See [`mpeg2_next_frame`](libdragon_sys::mpeg2_next_frame) for details.
-    #[inline] pub fn next_frame(&mut self) -> bool { unsafe { libdragon_sys::mpeg2_next_frame(&mut self.m as *mut _) } }
+    #[inline]
+    pub fn next_frame(&mut self) -> bool {
+        unsafe { libdragon_sys::mpeg2_next_frame(&mut self.m as *mut _) }
+    }
     /// See [`mpeg2_draw_frame`](libdragon_sys::mpeg2_draw_frame) for details.
-    #[inline] pub fn draw_frame(&mut self, surface: &mut Surface) { unsafe { libdragon_sys::mpeg2_draw_frame(&mut self.m as *mut _, surface.ptr) } }
+    #[inline]
+    pub fn draw_frame(&mut self, surface: &mut Surface) {
+        unsafe { libdragon_sys::mpeg2_draw_frame(&mut self.m as *mut _, surface.ptr) }
+    }
     /// See [`mpeg2_rewind`](libdragon_sys::mpeg2_rewind) for details.
-    #[inline] pub fn rewind(&mut self) { unsafe { libdragon_sys::mpeg2_rewind(&mut self.m as *mut _) } }
+    #[inline]
+    pub fn rewind(&mut self) { unsafe { libdragon_sys::mpeg2_rewind(&mut self.m as *mut _) } }
 }
 
 impl Drop for Mpeg2 {
     /// See [`mpeg2_close`](libdragon_sys::mpeg2_close) for details.
     #[inline]
     fn drop(&mut self) {
-        unsafe { libdragon_sys::mpeg2_close(&mut self.m as *mut _); }
+        unsafe {
+            libdragon_sys::mpeg2_close(&mut self.m as *mut _);
+        }
     }
 }

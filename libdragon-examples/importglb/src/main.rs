@@ -4,16 +4,18 @@
 
 use libdragon::*;
 
-use libdragon::display::{BitDepth, FilterOptions, Gamma, Resolution};
-use libdragon::model64::*;
+use libdragon::{
+    display::{BitDepth, FilterOptions, Gamma, Resolution},
+    model64::*,
+};
 
 use core_maths::*;
 
 struct App<'a> {
-    camera: Camera,
-    frames: u64,
+    camera:    Camera,
+    frames:    u64,
     animation: u32,
-    model: Model64<'a>,
+    model:     Model64<'a>,
 }
 
 impl<'a> App<'a> {

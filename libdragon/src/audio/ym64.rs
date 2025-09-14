@@ -1,13 +1,12 @@
-
 use crate::*;
 
 /// Ym64 structure. This is a wrapper around LibDragon's `ym64player_t`.
 ///
 /// See [`struct ym64player_t`](libdragon_sys::ym64player_t) for details.
 pub struct Ym64 {
-    ptr: *mut libdragon_sys::ym64player_t,
+    ptr:              *mut libdragon_sys::ym64player_t,
     backing_instance: Option<core::pin::Pin<Box<libdragon_sys::ym64player_t>>>,
-    song_info: Box<libdragon_sys::ym64player_songinfo_t>,
+    song_info:        Box<libdragon_sys::ym64player_songinfo_t>,
 }
 
 impl Ym64 {
@@ -18,23 +17,26 @@ impl Ym64 {
         let path_bytes: &[u8] = path.as_ref().as_bytes();
         let cpath = CString::new(path_bytes).unwrap();
 
-        let mut backing_instance = Box::pin(unsafe { 
-            core::mem::MaybeUninit::<libdragon_sys::ym64player_t>::zeroed().assume_init() 
+        let mut backing_instance = Box::pin(unsafe {
+            core::mem::MaybeUninit::<libdragon_sys::ym64player_t>::zeroed().assume_init()
         });
 
-        let mut info = Box::new(unsafe { 
-            core::mem::MaybeUninit::<libdragon_sys::ym64player_songinfo_t>::zeroed().assume_init() 
+        let mut info = Box::new(unsafe {
+            core::mem::MaybeUninit::<libdragon_sys::ym64player_songinfo_t>::zeroed().assume_init()
         });
 
         unsafe {
-            libdragon_sys::ym64player_open(backing_instance.as_mut().get_mut() as *mut _, cpath.as_ptr(), 
-                                           info.as_mut() as *mut _);
+            libdragon_sys::ym64player_open(
+                backing_instance.as_mut().get_mut() as *mut _,
+                cpath.as_ptr(),
+                info.as_mut() as *mut _,
+            );
         }
 
         Ok(Self {
-            ptr: backing_instance.as_mut().get_mut(),
+            ptr:              backing_instance.as_mut().get_mut(),
             backing_instance: Some(backing_instance),
-            song_info: info,
+            song_info:        info,
         })
     }
 
@@ -42,9 +44,7 @@ impl Ym64 {
     ///
     /// See [`ym64player_num_channels`](libdragon_sys::ym64player_num_channels) for details.
     pub fn num_channels(&self) -> i32 {
-        unsafe {
-            libdragon_sys::ym64player_num_channels(self.ptr)
-        }
+        unsafe { libdragon_sys::ym64player_num_channels(self.ptr) }
     }
 
     /// Start playback of a YM file
@@ -87,17 +87,13 @@ impl Ym64 {
     ///
     /// See [`ym64player_seek`](libdragon_sys::ym64player_seek) for details.
     pub fn seek(&mut self, pos: i32) -> bool {
-        unsafe {
-            libdragon_sys::ym64player_seek(self.ptr, pos)
-        }
+        unsafe { libdragon_sys::ym64player_seek(self.ptr, pos) }
     }
 
     /// Access the libxm context
     ///
     /// See [`struct ym64player_t`](libdragon_sys::ym64player_t) for details.
-    pub fn ctx(&mut self) -> *mut libdragon_sys::xm_context_t {
-        todo!("need an XmContext wrapper")
-    }
+    pub fn ctx(&mut self) -> *mut libdragon_sys::xm_context_t { todo!("need an XmContext wrapper") }
 
     /// Access the [Waveform](crate::audio::mixer::Waveform) for this Ym64.
     ///
@@ -113,23 +109,17 @@ impl Ym64 {
 
     /// See [`string ym64player_songinfo_t`](libdragon_sys::ym64player_songinfo_t)
     pub fn name(&self) -> Result<&str> {
-        let name_str = unsafe {
-            CStr::from_ptr(self.song_info.name.as_ptr() as *const i8)
-        };
+        let name_str = unsafe { CStr::from_ptr(self.song_info.name.as_ptr() as *const i8) };
         Ok(name_str.to_str()?)
     }
 
     pub fn author(&self) -> Result<&str> {
-        let author_str = unsafe {
-            CStr::from_ptr(self.song_info.author.as_ptr() as *const i8)
-        };
+        let author_str = unsafe { CStr::from_ptr(self.song_info.author.as_ptr() as *const i8) };
         Ok(author_str.to_str()?)
     }
-    
+
     pub fn comment(&self) -> Result<&str> {
-        let comment_str = unsafe {
-            CStr::from_ptr(self.song_info.comment.as_ptr() as *const i8)
-        };
+        let comment_str = unsafe { CStr::from_ptr(self.song_info.comment.as_ptr() as *const i8) };
         Ok(comment_str.to_str()?)
     }
 }

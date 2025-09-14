@@ -12,16 +12,16 @@ pub enum Cart {
     None,
     _64Drive,
     EverDrive,
-    Sc64
+    Sc64,
 }
 
 impl From<u32> for Cart {
     fn from(val: u32) -> Cart {
         match val {
-            libdragon_sys::CART_NONE      => Cart::None,
-            libdragon_sys::CART_64DRIVE   => Cart::_64Drive,
+            libdragon_sys::CART_NONE => Cart::None,
+            libdragon_sys::CART_64DRIVE => Cart::_64Drive,
             libdragon_sys::CART_EVERDRIVE => Cart::EverDrive,
-            libdragon_sys::CART_SC64      => Cart::Sc64,
+            libdragon_sys::CART_SC64 => Cart::Sc64,
             _ => panic!("invalid value"),
         }
     }
@@ -40,12 +40,12 @@ pub enum DataType {
 impl From<u32> for DataType {
     fn from(val: u32) -> DataType {
         match val {
-            libdragon_sys::DATATYPE_TEXT        => DataType::Text,
-            libdragon_sys::DATATYPE_RAWBINARY   => DataType::RawBinary,
-            libdragon_sys::DATATYPE_HEADER      => DataType::Header,
-            libdragon_sys::DATATYPE_SCREENSHOT  => DataType::Screenshot,
-            libdragon_sys::DATATYPE_HEARTBEAT   => DataType::Heartbeat,
-            libdragon_sys::DATATYPE_RDBPACKET   => DataType::RdbPacket,
+            libdragon_sys::DATATYPE_TEXT => DataType::Text,
+            libdragon_sys::DATATYPE_RAWBINARY => DataType::RawBinary,
+            libdragon_sys::DATATYPE_HEADER => DataType::Header,
+            libdragon_sys::DATATYPE_SCREENSHOT => DataType::Screenshot,
+            libdragon_sys::DATATYPE_HEARTBEAT => DataType::Heartbeat,
+            libdragon_sys::DATATYPE_RDBPACKET => DataType::RdbPacket,
             _ => panic!("invalid value"),
         }
     }
@@ -54,12 +54,12 @@ impl From<u32> for DataType {
 impl From<DataType> for u32 {
     fn from(v: DataType) -> Self {
         match v {
-            DataType::Text          => libdragon_sys::DATATYPE_TEXT,
-            DataType::RawBinary     => libdragon_sys::DATATYPE_RAWBINARY,
-            DataType::Header        => libdragon_sys::DATATYPE_HEADER,
-            DataType::Screenshot    => libdragon_sys::DATATYPE_SCREENSHOT,
-            DataType::Heartbeat     => libdragon_sys::DATATYPE_HEARTBEAT,
-            DataType::RdbPacket     => libdragon_sys::DATATYPE_RDBPACKET,
+            DataType::Text => libdragon_sys::DATATYPE_TEXT,
+            DataType::RawBinary => libdragon_sys::DATATYPE_RAWBINARY,
+            DataType::Header => libdragon_sys::DATATYPE_HEADER,
+            DataType::Screenshot => libdragon_sys::DATATYPE_SCREENSHOT,
+            DataType::Heartbeat => libdragon_sys::DATATYPE_HEARTBEAT,
+            DataType::RdbPacket => libdragon_sys::DATATYPE_RDBPACKET,
         }
     }
 }
@@ -68,9 +68,11 @@ impl From<DataType> for u32 {
 ///
 /// See [`usb_initialize`](libdragon_sys::usb_initialize) for details.
 #[inline]
-pub fn initialize() -> Result<()> { 
+pub fn initialize() -> Result<()> {
     let v = unsafe { libdragon_sys::usb_initialize() };
-    if v != 1 { return Err(LibDragonError::UsbError { code: v }) }
+    if v != 1 {
+        return Err(LibDragonError::UsbError { code: v });
+    }
     Ok(())
 }
 
@@ -84,10 +86,10 @@ pub fn getcart() -> Cart { unsafe { libdragon_sys::usb_getcart() as u32 }.into()
 ///
 /// See [`usb_write`](libdragon_sys::usb_write) for details.
 #[inline]
-pub fn write<T>(datatype: DataType, t: &T) { 
+pub fn write<T>(datatype: DataType, t: &T) {
     let size = ::core::mem::size_of::<T>();
     let datatype: u32 = datatype.into();
-    unsafe { 
+    unsafe {
         libdragon_sys::usb_write(datatype as i32, t as *const T as *const _, size as i32);
     }
 }
@@ -102,9 +104,9 @@ pub fn poll() -> u32 { unsafe { libdragon_sys::usb_poll() } }
 ///
 /// See [`usb_read`](libdragon_sys::usb_read) for details.
 #[inline]
-pub fn read<T>(buffer: &mut [T]) { 
+pub fn read<T>(buffer: &mut [T]) {
     let size = buffer.len() * ::core::mem::size_of::<T>();
-    unsafe { 
+    unsafe {
         libdragon_sys::usb_read(buffer.as_mut_ptr() as *mut _, size as i32);
     }
 }
@@ -113,13 +115,21 @@ pub fn read<T>(buffer: &mut [T]) {
 ///
 /// See [`usb_skip`](libdragon_sys::usb_skip) for details.
 #[inline]
-pub fn skip(nbytes: usize) { unsafe { libdragon_sys::usb_skip(nbytes as i32); } }
+pub fn skip(nbytes: usize) {
+    unsafe {
+        libdragon_sys::usb_skip(nbytes as i32);
+    }
+}
 
 /// Rewinds a USB read by the specified amount of bytes
 ///
 /// See [`usb_rewind`](libdragon_sys::usb_rewind) for details.
 #[inline]
-pub fn rewind(nbytes: usize) { unsafe { libdragon_sys::usb_rewind(nbytes as i32); } }
+pub fn rewind(nbytes: usize) {
+    unsafe {
+        libdragon_sys::usb_rewind(nbytes as i32);
+    }
+}
 
 /// Purges the incoming USB data
 ///
@@ -137,5 +147,8 @@ pub fn timedout() -> bool { unsafe { libdragon_sys::usb_timedout() != 0 } }
 ///
 /// See [`usb_sendheartbeat`](libdragon_sys::usb_sendheartbeat) for details.
 #[inline]
-pub fn sendheartbeat() { unsafe { libdragon_sys::usb_sendheartbeat(); } }
-
+pub fn sendheartbeat() {
+    unsafe {
+        libdragon_sys::usb_sendheartbeat();
+    }
+}

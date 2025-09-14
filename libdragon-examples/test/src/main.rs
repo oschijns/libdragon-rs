@@ -4,7 +4,7 @@
 use libdragon::*;
 
 use dfs::Read;
-use display::{Resolution, BitDepth, Gamma, FilterOptions};
+use display::{BitDepth, FilterOptions, Gamma, Resolution};
 use graphics::{make_color, Graphics};
 use sprite::Sprite;
 
@@ -46,13 +46,21 @@ extern "C" fn main() -> ! {
     let blue16 = read_sprite("rom://blue16.sprite");
 
     joypad::init();
-    
+
     loop {
         let mut g = Graphics::new(display::get());
 
         g.fill_screen(0);
-        g.draw_text(20, 20, &format!("Video mode: {}", unsafe { *(0x8000_0300 as *const u32) }));
-        g.draw_text(20, 30, &format!("Status: {:08X}", unsafe { *(0xA440_0000 as *const u32) }));
+        g.draw_text(
+            20,
+            20,
+            &format!("Video mode: {}", unsafe { *(0x8000_0300 as *const u32) }),
+        );
+        g.draw_text(
+            20,
+            30,
+            &format!("Status: {:08X}", unsafe { *(0xA440_0000 as *const u32) }),
+        );
 
         /* Full bright color */
         g.draw_box(20, 40, 20, 20, make_color(255, 0, 0, 255));
@@ -80,7 +88,7 @@ extern "C" fn main() -> ! {
         /* Display sprite (16bpp ones will only display in 16bpp mode, same with 32bpp) */
         g.draw_sprite(20, 150, &mario);
         g.draw_sprite_trans(150, 150, &mariotrans);
-        
+
         g.draw_sprite(20, 150, &mario16);
         g.draw_sprite_trans(150, 150, &mariotrans16);
 
@@ -121,4 +129,3 @@ extern "C" fn main() -> ! {
         }
     }
 }
-

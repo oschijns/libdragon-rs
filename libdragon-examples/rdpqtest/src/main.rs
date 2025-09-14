@@ -5,31 +5,33 @@ use core::sync::atomic::{AtomicBool, Ordering};
 
 use libdragon::*;
 
-use libdragon::display::{Resolution, BitDepth, Gamma, FilterOptions};
-use libdragon::sprite::Sprite;
-use libdragon::surface::TexFormat;
-use libdragon::timer::Timer;
+use libdragon::{
+    display::{BitDepth, FilterOptions, Gamma, Resolution},
+    sprite::Sprite,
+    surface::TexFormat,
+    timer::Timer,
+};
 
 use core_maths::*;
 use rand_mt::Mt64;
 
 struct Object {
-    x: i32,
-    y: i32,
-    dx: i32,
-    dy: i32,
+    x:            i32,
+    y:            i32,
+    dx:           i32,
+    dy:           i32,
     scale_factor: f32,
 }
 
 const NUM_OBJECTS: usize = 64;
 
 struct App<'a> {
-    brew_sprite: Sprite<'a>,
+    brew_sprite:   Sprite<'a>,
     _tiles_sprite: Sprite<'a>,
-    tiles_block: rspq::Block,
-    objects: Vec<Object>,
-    num_objects: usize,
-    cur_tick: u64,
+    tiles_block:   rspq::Block,
+    objects:       Vec<Object>,
+    num_objects:   usize,
+    cur_tick:      u64,
 }
 
 impl<'a> App<'a> {
@@ -46,10 +48,10 @@ impl<'a> App<'a> {
         let mut objects = Vec::new();
         for _ in 0..NUM_OBJECTS {
             objects.push(Object {
-                x: (rng.next_u32() % obj_max_x) as i32,
-                y: (rng.next_u32() % obj_max_y) as i32,
-                dx: -3 + (rng.next_u32() % 7) as i32,
-                dy: -3 + (rng.next_u32() % 7) as i32,
+                x:            (rng.next_u32() % obj_max_x) as i32,
+                y:            (rng.next_u32() % obj_max_y) as i32,
+                dx:           -3 + (rng.next_u32() % 7) as i32,
+                dy:           -3 + (rng.next_u32() % 7) as i32,
                 scale_factor: 1.0,
             });
         }
@@ -85,22 +87,40 @@ impl<'a> App<'a> {
                 for tx in (0..display_width).step_by(tile_width as usize) {
                     let s = (rng.next_u32() % 2) * 32;
                     let t = (rng.next_u32() % 2) * 32;
-                    rdpq::tex_upload_sub(rdpq::Tile(0), &tiles_surf, None, s as i32, t as i32, (s+32) as i32, (t+32) as i32);
-                    rdpq::texture_rectangle(rdpq::Tile(0), tx as i32, ty as i32, (tx+32) as i32, (ty+32) as i32, s as i32, t as i32);
+                    rdpq::tex_upload_sub(
+                        rdpq::Tile(0),
+                        &tiles_surf,
+                        None,
+                        s as i32,
+                        t as i32,
+                        (s + 32) as i32,
+                        (t + 32) as i32,
+                    );
+                    rdpq::texture_rectangle(
+                        rdpq::Tile(0),
+                        tx as i32,
+                        ty as i32,
+                        (tx + 32) as i32,
+                        (ty + 32) as i32,
+                        s as i32,
+                        t as i32,
+                    );
                 }
             }
         }
 
-        if tlut { rdpq::mode_pop(); }
+        if tlut {
+            rdpq::mode_pop();
+        }
         let tiles_block = rspq::Block::end();
 
         Self {
-            brew_sprite: brew_sprite,
+            brew_sprite,
             _tiles_sprite: tiles_sprite, // can't drop this memory
-            tiles_block: tiles_block,
-            objects: objects,
-            num_objects: 1,
-            cur_tick: 0,
+            tiles_block,
+            objects,
+            num_objects:   1,
+            cur_tick:      0,
         }
     }
 
@@ -113,10 +133,18 @@ impl<'a> App<'a> {
             let mut x = obj.x + obj.dx;
             let mut y = obj.y + obj.dy;
 
-            if x >= obj_max_x { x -= obj_max_x; }
-            if x < 0 { x += obj_max_x; }
-            if y >= obj_max_y { y -= obj_max_y; }
-            if y < 0 { y += obj_max_y; }
+            if x >= obj_max_x {
+                x -= obj_max_x;
+            }
+            if x < 0 {
+                x += obj_max_x;
+            }
+            if y >= obj_max_y {
+                y -= obj_max_y;
+            }
+            if y < 0 {
+                y += obj_max_y;
+            }
 
             obj.x = x;
             obj.y = y;
@@ -150,11 +178,16 @@ impl<'a> App<'a> {
 
         for i in 0..self.num_objects {
             let obj = &self.objects[i];
-            rdpq::sprite_blit(&self.brew_sprite, obj.x as f32, obj.y as f32, rdpq::BlitParms {
-                scale_x: obj.scale_factor,
-                scale_y: obj.scale_factor,
-                ..Default::default()
-            });
+            rdpq::sprite_blit(
+                &self.brew_sprite,
+                obj.x as f32,
+                obj.y as f32,
+                rdpq::BlitParms {
+                    scale_x: obj.scale_factor,
+                    scale_y: obj.scale_factor,
+                    ..Default::default()
+                },
+            );
         }
 
         rdpq::detach_show();
@@ -165,7 +198,13 @@ impl<'a> App<'a> {
 extern "C" fn main() -> ! {
     debug::init(debug::FEATURE_LOG_ISVIEWER | debug::FEATURE_LOG_USB);
 
-    display::init(Resolution::_320x240, BitDepth::Bpp16, 3, Gamma::None, FilterOptions::Resample);
+    display::init(
+        Resolution::_320x240,
+        BitDepth::Bpp16,
+        3,
+        Gamma::None,
+        FilterOptions::Resample,
+    );
 
     joypad::init();
     timer::init();
@@ -180,12 +219,17 @@ extern "C" fn main() -> ! {
 
     let do_update = Arc::new(AtomicBool::new(false));
     let do_update_clone = do_update.clone();
-    let _timer = Timer::new(timer::make_ticks(1000000 / 60), timer::Mode::Continuous, Box::new(move |_| {
-        do_update_clone.store(true, Ordering::SeqCst);
-    }));
+    let _timer = Timer::new(
+        timer::make_ticks(1000000 / 60),
+        timer::Mode::Continuous,
+        Box::new(move |_| {
+            do_update_clone.store(true, Ordering::SeqCst);
+        }),
+    );
 
     loop {
-        if let Ok(_) = do_update.compare_exchange(true, false, Ordering::SeqCst, Ordering::Acquire) {
+        if let Ok(_) = do_update.compare_exchange(true, false, Ordering::SeqCst, Ordering::Acquire)
+        {
             app.update();
         }
         app.render();
@@ -201,4 +245,3 @@ extern "C" fn main() -> ! {
         }
     }
 }
-

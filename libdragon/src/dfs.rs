@@ -82,12 +82,12 @@ impl embedded_io::Error for DfsError {
 impl From<i32> for DfsError {
     fn from(val: i32) -> DfsError {
         match val {
-            DFS_EBADINPUT  => DfsError::InvalidInput,
-            DFS_ENOFILE    => DfsError::NotFound,
-            DFS_EBADFS     => DfsError::NoFS,
-            DFS_ENFILE     => DfsError::NumFiles,
+            DFS_EBADINPUT => DfsError::InvalidInput,
+            DFS_ENOFILE => DfsError::NotFound,
+            DFS_EBADFS => DfsError::NoFS,
+            DFS_ENFILE => DfsError::NumFiles,
             DFS_EBADHANDLE => DfsError::BadHandle,
-            _              => panic!("invalid DFS error {}", val),
+            _ => panic!("invalid DFS error {}", val),
         }
     }
 }
@@ -115,9 +115,7 @@ pub fn init(base_fs_loc: Option<u32>) -> Result<()> {
 pub fn chdir(path: &PathBuf) -> Result<()> {
     let path_bytes: &[u8] = path.as_bytes();
     let cpath = CString::new(path_bytes).unwrap();
-    let err = unsafe {
-        libdragon_sys::dfs_chdir(cpath.as_ptr())
-    };
+    let err = unsafe { libdragon_sys::dfs_chdir(cpath.as_ptr()) };
     if err < 0 {
         Err(LibDragonError::DfsError { error: err.into() })
     } else {
@@ -130,16 +128,16 @@ pub struct DirEntry {
     /// Type of the current entry, which may be [EntryType::Eof]
     pub entry_type: EntryType,
     /// File name (not full path) of the current entry, which may be empty in the case of Eof.
-    pub name: PathBuf,
+    pub name:       PathBuf,
 }
 
 impl From<i32> for EntryType {
     fn from(val: i32) -> EntryType {
         match val {
             FLAGS_FILE => EntryType::File,
-            FLAGS_DIR  => EntryType::Directory,
-            FLAGS_EOF  => EntryType::Eof,
-            _          => panic!("invalid value for EntryType {}", val),
+            FLAGS_DIR => EntryType::Directory,
+            FLAGS_EOF => EntryType::Eof,
+            _ => panic!("invalid value for EntryType {}", val),
         }
     }
 }
@@ -152,16 +150,15 @@ pub fn dir_findfirst(path: &PathBuf) -> Result<DirEntry> {
     let path_bytes: &[u8] = path.as_bytes();
     let cpath = CString::new(path_bytes).unwrap();
     let mut namebuf = [0u8; MAX_FILENAME_LEN];
-    let ret = unsafe {
-        libdragon_sys::dfs_dir_findfirst(cpath.as_ptr(), namebuf.as_mut_ptr() as *mut _)
-    };
+    let ret =
+        unsafe { libdragon_sys::dfs_dir_findfirst(cpath.as_ptr(), namebuf.as_mut_ptr() as *mut _) };
     if ret < 0 {
         Err(LibDragonError::DfsError { error: ret.into() })
     } else {
         let c_str = unsafe { CStr::from_ptr(namebuf.as_ptr() as *const i8) };
         Ok(DirEntry {
             entry_type: ret.into(),
-            name: PathBuf::from(c_str.to_str()?),
+            name:       PathBuf::from(c_str.to_str()?),
         })
     }
 }
@@ -172,23 +169,21 @@ pub fn dir_findfirst(path: &PathBuf) -> Result<DirEntry> {
 #[deprecated]
 pub fn dir_findnext() -> Result<DirEntry> {
     let mut namebuf = [0u8; MAX_FILENAME_LEN];
-    let ret = unsafe {
-        libdragon_sys::dfs_dir_findnext(namebuf.as_mut_ptr() as *mut _)
-    };
+    let ret = unsafe { libdragon_sys::dfs_dir_findnext(namebuf.as_mut_ptr() as *mut _) };
     if ret < 0 {
         Err(LibDragonError::DfsError { error: ret.into() })
     } else {
         let c_str = unsafe { CStr::from_ptr(namebuf.as_ptr() as *const i8) };
         Ok(DirEntry {
             entry_type: ret.into(),
-            name: PathBuf::from(c_str.to_str()?),
+            name:       PathBuf::from(c_str.to_str()?),
         })
     }
 }
 
 /// Wrapper around file handles to be used exclusively with dfs_* calls
 ///
-/// An important distinction between [DfsFileHandle] and [File] is that 
+/// An important distinction between [DfsFileHandle] and [File] is that
 /// [DfsFileHandle] calls LibDragon's `dfs_*` functions directly
 /// rather than interfacing with the C standard library file functions.
 ///
@@ -201,9 +196,7 @@ pub struct DfsFileHandle(Option<u32>);
 pub fn open<T: AsRef<Path>>(path: T) -> Result<DfsFileHandle> {
     let path_bytes: &[u8] = path.as_ref().as_bytes();
     let cpath = CString::new(path_bytes).unwrap();
-    let ret = unsafe {
-        libdragon_sys::dfs_open(cpath.as_ptr())
-    };
+    let ret = unsafe { libdragon_sys::dfs_open(cpath.as_ptr()) };
     if ret < 0 {
         Err(LibDragonError::DfsError { error: ret.into() })
     } else {
@@ -217,7 +210,7 @@ impl DfsFileHandle {
     /// See [`dfs_close`](libdragon_sys::dfs_close)
     pub fn close(&mut self) {
         if let Some(fp) = core::mem::replace(&mut self.0, None) {
-            unsafe { 
+            unsafe {
                 libdragon_sys::dfs_close(fp);
             }
         }
@@ -230,12 +223,16 @@ impl DfsFileHandle {
         if let Some(ref fp) = self.0 {
             let r = unsafe { libdragon_sys::dfs_tell(*fp) };
             if r < 0 {
-                Err(LibDragonError::DfsError { error: DfsError::BadHandle })
+                Err(LibDragonError::DfsError {
+                    error: DfsError::BadHandle,
+                })
             } else {
                 Ok(r as u32)
             }
         } else {
-            Err(LibDragonError::DfsError { error: DfsError::InvalidInput })
+            Err(LibDragonError::DfsError {
+                error: DfsError::InvalidInput,
+            })
         }
     }
 
@@ -244,16 +241,18 @@ impl DfsFileHandle {
     /// See [`dfs_eof`](libdragon_sys::dfs_eof)
     pub fn eof(&self) -> Result<bool> {
         if let Some(ref fp) = self.0 {
-            let r = unsafe {
-                libdragon_sys::dfs_eof(*fp)
-            };
+            let r = unsafe { libdragon_sys::dfs_eof(*fp) };
             if r < 0 {
-                Err(LibDragonError::DfsError { error: DfsError::BadHandle })
+                Err(LibDragonError::DfsError {
+                    error: DfsError::BadHandle,
+                })
             } else {
                 Ok(r != 0)
             }
         } else {
-            Err(LibDragonError::DfsError { error: DfsError::InvalidInput })
+            Err(LibDragonError::DfsError {
+                error: DfsError::InvalidInput,
+            })
         }
     }
 
@@ -262,16 +261,18 @@ impl DfsFileHandle {
     /// See [`dfs_size`](libdragon_sys::dfs_size)
     pub fn size(&self) -> Result<usize> {
         if let Some(ref fp) = self.0 {
-            let r = unsafe {
-                libdragon_sys::dfs_size(*fp)
-            };
+            let r = unsafe { libdragon_sys::dfs_size(*fp) };
             if r < 0 {
-                Err(LibDragonError::DfsError { error: DfsError::BadHandle })
+                Err(LibDragonError::DfsError {
+                    error: DfsError::BadHandle,
+                })
             } else {
                 Ok(r as usize)
             }
         } else {
-            Err(LibDragonError::DfsError { error: DfsError::InvalidInput })
+            Err(LibDragonError::DfsError {
+                error: DfsError::InvalidInput,
+            })
         }
     }
 }
@@ -291,7 +292,7 @@ impl embedded_io::Read for DfsFileHandle {
     fn read(&mut self, buf: &mut [u8]) -> core::result::Result<usize, Self::Error> {
         if let Some(ref fp) = self.0 {
             let max_size = buf.len() as i32;
-            let read_size = unsafe { 
+            let read_size = unsafe {
                 let buf_ptr = buf.as_mut_ptr() as *mut ::core::ffi::c_void;
                 libdragon_sys::dfs_read(buf_ptr, 1, max_size, *fp)
             };
@@ -313,12 +314,16 @@ impl embedded_io::Seek for DfsFileHandle {
     fn seek(&mut self, pos: embedded_io::SeekFrom) -> core::result::Result<u64, Self::Error> {
         if let Some(ref fp) = self.0 {
             let (seek_pos, offset) = match pos {
-                embedded_io::SeekFrom::Start(n)   => (libdragon_sys::SEEK_SET, n as i64),
-                embedded_io::SeekFrom::End(n)     => (libdragon_sys::SEEK_END, n),
+                embedded_io::SeekFrom::Start(n) => (libdragon_sys::SEEK_SET, n as i64),
+                embedded_io::SeekFrom::End(n) => (libdragon_sys::SEEK_END, n),
                 embedded_io::SeekFrom::Current(n) => (libdragon_sys::SEEK_CUR, n),
             };
             let r = unsafe {
-                libdragon_sys::dfs_seek(*fp, offset as ::core::ffi::c_long, seek_pos as ::core::ffi::c_int)
+                libdragon_sys::dfs_seek(
+                    *fp,
+                    offset as ::core::ffi::c_long,
+                    seek_pos as ::core::ffi::c_int,
+                )
             };
             if r < 0 {
                 Err(DfsError::BadHandle)
@@ -336,9 +341,7 @@ impl embedded_io::Seek for DfsFileHandle {
 /// See [`dfs_rom_addr`](libdragon_sys::dfs_rom_addr) for details.
 pub fn rom_addr(path: &str) -> u32 {
     let cpath = CString::new(path).unwrap();
-    unsafe {
-        libdragon_sys::dfs_rom_addr(cpath.as_ptr())
-    }
+    unsafe { libdragon_sys::dfs_rom_addr(cpath.as_ptr()) }
 }
 
 /// File is a wrapper over the C standard library [FILE](libdragon_sys::FILE) object
@@ -356,12 +359,12 @@ impl File {
         let path_bytes: &[u8] = path.as_ref().as_bytes();
         let cpath = CString::new(path_bytes).unwrap();
         let cmode = CString::new(mode).unwrap();
-        let fp = unsafe {
-            libdragon_sys::fopen(cpath.as_ptr(), cmode.as_ptr())
-        };
-    
+        let fp = unsafe { libdragon_sys::fopen(cpath.as_ptr(), cmode.as_ptr()) };
+
         if fp == core::ptr::null_mut() {
-            Err(LibDragonError::DfsError { error: DfsError::NotFound })
+            Err(LibDragonError::DfsError {
+                error: DfsError::NotFound,
+            })
         } else {
             Ok(File { fp: Some(fp) })
         }
@@ -370,7 +373,7 @@ impl File {
     /// Closes a [FILE](libdragon_sys::FILE) using [fclose](libdragon_sys::fclose) and invalidates this [File] wrapper object.
     pub fn close(&mut self) {
         if let Some(fp) = core::mem::replace(&mut self.fp, None) {
-            unsafe { 
+            unsafe {
                 libdragon_sys::fclose(fp);
             }
         }
@@ -381,53 +384,61 @@ impl File {
         if let Some(ref fp) = self.fp {
             let r = unsafe { libdragon_sys::ftell(*fp) };
             if r < 0 {
-                Err(LibDragonError::DfsError { error: DfsError::BadHandle })
+                Err(LibDragonError::DfsError {
+                    error: DfsError::BadHandle,
+                })
             } else {
                 Ok(r as u64)
             }
         } else {
-            Err(LibDragonError::DfsError { error: DfsError::InvalidInput })
+            Err(LibDragonError::DfsError {
+                error: DfsError::InvalidInput,
+            })
         }
     }
 
     /// Check if the [FILE](libdragon_sys::FILE) has reached EOF using [feof](libdragon_sys::feof).
     pub fn eof(&self) -> Result<bool> {
         if let Some(ref fp) = self.fp {
-            let r = unsafe {
-                libdragon_sys::feof(*fp)
-            };
+            let r = unsafe { libdragon_sys::feof(*fp) };
             if r < 0 {
-                Err(LibDragonError::DfsError { error: DfsError::BadHandle })
+                Err(LibDragonError::DfsError {
+                    error: DfsError::BadHandle,
+                })
             } else {
                 Ok(r != 0)
             }
         } else {
-            Err(LibDragonError::DfsError { error: DfsError::InvalidInput })
+            Err(LibDragonError::DfsError {
+                error: DfsError::InvalidInput,
+            })
         }
     }
 
     /// Return the file size of the [FILE](libdragon_sys::FILE) using [fstat](libdragon_sys::fstat)
     pub fn size(&self) -> Result<usize> {
         if let Some(ref fp) = self.fp {
-            let mut stat_data: core::mem::MaybeUninit<libdragon_sys::stat> = core::mem::MaybeUninit::uninit();
-            let r = unsafe {
-                libdragon_sys::fstat(libdragon_sys::fileno(*fp), stat_data.as_mut_ptr())
-            };
+            let mut stat_data: core::mem::MaybeUninit<libdragon_sys::stat> =
+                core::mem::MaybeUninit::uninit();
+            let r =
+                unsafe { libdragon_sys::fstat(libdragon_sys::fileno(*fp), stat_data.as_mut_ptr()) };
             if r < 0 {
-                Err(LibDragonError::DfsError { error: DfsError::BadHandle })
+                Err(LibDragonError::DfsError {
+                    error: DfsError::BadHandle,
+                })
             } else {
                 Ok(unsafe { stat_data.assume_init() }.st_size as usize)
             }
         } else {
-            Err(LibDragonError::DfsError { error: DfsError::InvalidInput })
+            Err(LibDragonError::DfsError {
+                error: DfsError::InvalidInput,
+            })
         }
     }
 }
 
 impl Drop for File {
-    fn drop(&mut self) {
-        self.close();
-    }
+    fn drop(&mut self) { self.close(); }
 }
 
 // Because we implement embedded_io::Read and Seek, we need to specify the errortype this object uses
@@ -443,7 +454,7 @@ impl embedded_io::Read for File {
     fn read(&mut self, buf: &mut [u8]) -> core::result::Result<usize, Self::Error> {
         if let Some(ref fp) = self.fp {
             let max_size = buf.len() as u32;
-            let read_size = unsafe { 
+            let read_size = unsafe {
                 let buf_ptr = buf.as_mut_ptr() as *mut ::core::ffi::c_void;
                 libdragon_sys::fread(buf_ptr, 1, max_size, *fp)
             };
@@ -466,12 +477,16 @@ impl embedded_io::Seek for File {
     fn seek(&mut self, pos: embedded_io::SeekFrom) -> core::result::Result<u64, Self::Error> {
         if let Some(ref fp) = self.fp {
             let (seek_pos, offset) = match pos {
-                embedded_io::SeekFrom::Start(n)   => (libdragon_sys::SEEK_SET, n as i64),
-                embedded_io::SeekFrom::End(n)     => (libdragon_sys::SEEK_END, n),
+                embedded_io::SeekFrom::Start(n) => (libdragon_sys::SEEK_SET, n as i64),
+                embedded_io::SeekFrom::End(n) => (libdragon_sys::SEEK_END, n),
                 embedded_io::SeekFrom::Current(n) => (libdragon_sys::SEEK_CUR, n),
             };
             let r = unsafe {
-                libdragon_sys::fseek(*fp, offset as ::core::ffi::c_long, seek_pos as ::core::ffi::c_int)
+                libdragon_sys::fseek(
+                    *fp,
+                    offset as ::core::ffi::c_long,
+                    seek_pos as ::core::ffi::c_int,
+                )
             };
             if r < 0 {
                 Err(DfsError::BadHandle)
@@ -495,29 +510,30 @@ pub enum EntryType {
     /// The current type is a Directory
     Directory,
     /// The current type an end-of-list marker. This is not used with C stdlib `dir_findfirst`/`next`.
-    Eof
+    Eof,
 }
 
 /// Dir is a wrapper over the C standard library [dir_t](libdragon_sys::dir_t) object
 pub struct Dir<'a> {
     path: &'a str,
-    dir: libdragon_sys::dir_t,
+    dir:  libdragon_sys::dir_t,
 }
 
 impl<'a> Dir<'a> {
     /// Create a new [Dir] object by calling [dir_findfirst](libdragon_sys::dir_findfirst).
     pub fn findfirst(path: &'a str) -> Result<Self> {
         let cpath = CString::new(path).unwrap();
-        let mut dir: core::mem::MaybeUninit<libdragon_sys::dir_t> = core::mem::MaybeUninit::uninit();
-        let s = unsafe {
-            libdragon_sys::dir_findfirst(cpath.as_ptr(), dir.as_mut_ptr())
-        };
+        let mut dir: core::mem::MaybeUninit<libdragon_sys::dir_t> =
+            core::mem::MaybeUninit::uninit();
+        let s = unsafe { libdragon_sys::dir_findfirst(cpath.as_ptr(), dir.as_mut_ptr()) };
         if s < 0 {
-            Err(LibDragonError::DfsError { error: DfsError::NotFound })
+            Err(LibDragonError::DfsError {
+                error: DfsError::NotFound,
+            })
         } else {
             Ok(Self {
-                path: path,
-                dir: unsafe { dir.assume_init() }
+                path,
+                dir:  unsafe { dir.assume_init() },
             })
         }
     }
@@ -526,14 +542,17 @@ impl<'a> Dir<'a> {
     pub fn findnext(&mut self) -> Result<()> {
         let cpath = CString::new(self.path).unwrap();
         let s = unsafe {
-            libdragon_sys::dir_findnext(cpath.as_ptr(), (&mut self.dir) as *mut libdragon_sys::dir_t)
+            libdragon_sys::dir_findnext(
+                cpath.as_ptr(),
+                (&mut self.dir) as *mut libdragon_sys::dir_t,
+            )
         };
         if s < 0 {
             match get_errno() {
-                libdragon_sys::ENOENT => Err(LibDragonError::DfsError { error: DfsError::NotFound }),
-                errno @ _ => Err(LibDragonError::ErrnoError {
-                    errno: errno
+                libdragon_sys::ENOENT => Err(LibDragonError::DfsError {
+                    error: DfsError::NotFound,
                 }),
+                errno @ _ => Err(LibDragonError::ErrnoError { errno }),
             }
         } else {
             Ok(())
@@ -554,13 +573,13 @@ impl<'a> Dir<'a> {
         match self.dir.d_type {
             DT_REG => Ok(EntryType::File),
             DT_DIR => Ok(EntryType::Directory),
-            _ => Err(LibDragonError::DfsError { error: DfsError::NotFound }),
+            _ => Err(LibDragonError::DfsError {
+                error: DfsError::NotFound,
+            }),
         }
     }
 
     /// Size of the file
     /// See [dir_t](libdragon_sys::dir_t) for more information.
-    pub fn d_size(&self) -> i64 {
-        self.dir.d_size as i64
-    }
+    pub fn d_size(&self) -> i64 { self.dir.d_size as i64 }
 }

@@ -4,7 +4,7 @@ use crate::*;
 ///
 /// See [`struct wav64_t`](libdragon_sys::wav64_t) for details.
 pub struct Wav64 {
-    ptr: *mut libdragon_sys::wav64_t,
+    ptr:              *mut libdragon_sys::wav64_t,
     backing_instance: Option<core::pin::Pin<Box<libdragon_sys::wav64_t>>>,
 }
 
@@ -20,11 +20,14 @@ impl Wav64 {
             core::mem::MaybeUninit::<libdragon_sys::wav64_t>::zeroed().assume_init()
         });
         unsafe {
-            libdragon_sys::wav64_open(backing_instance.as_mut().get_mut() as *mut _, cpath.as_ptr());
+            libdragon_sys::wav64_open(
+                backing_instance.as_mut().get_mut() as *mut _,
+                cpath.as_ptr(),
+            );
         }
 
         Ok(Self {
-            ptr: backing_instance.as_mut().get_mut(),
+            ptr:              backing_instance.as_mut().get_mut(),
             backing_instance: Some(backing_instance),
         })
     }
@@ -50,11 +53,7 @@ impl Wav64 {
     /// Get the (possibly compressed) bitrate of the Wav64 file
     ///
     /// See [`wav64_get_bitrate`](libdragon_sys::wav64_get_bitrate) for details.
-    pub fn get_bitrate(&mut self) -> i32 {
-        unsafe {
-            libdragon_sys::wav64_get_bitrate(self.ptr)
-        }
-    }
+    pub fn get_bitrate(&mut self) -> i32 { unsafe { libdragon_sys::wav64_get_bitrate(self.ptr) } }
 
     /// Access the [Waveform](crate::audio::mixer::Waveform) for this Wav64.
     ///

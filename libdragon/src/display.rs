@@ -14,13 +14,13 @@ pub enum InterlaceMode {
     /// Video output is interlaced and buffer is swapped on odd and even fields
     Half,
     /// Video output is interlaced and buffer is swapped only on even fields
-    Full
+    Full,
 }
 
 impl From<InterlaceMode> for libdragon_sys::interlace_mode_t {
     fn from(mode: InterlaceMode) -> Self {
         match mode {
-            InterlaceMode::Off  => libdragon_sys::interlace_mode_t_INTERLACE_OFF,
+            InterlaceMode::Off => libdragon_sys::interlace_mode_t_INTERLACE_OFF,
             InterlaceMode::Half => libdragon_sys::interlace_mode_t_INTERLACE_HALF,
             InterlaceMode::Full => libdragon_sys::interlace_mode_t_INTERLACE_FULL,
         }
@@ -28,12 +28,18 @@ impl From<InterlaceMode> for libdragon_sys::interlace_mode_t {
 }
 
 // Private import of the resolution structures from LibDragon
-static RESOLUTION_256x240: &libdragon_sys::resolution_t = unsafe { &libdragon_sys::RESOLUTION_256x240 };
-static RESOLUTION_320x240: &libdragon_sys::resolution_t = unsafe { &libdragon_sys::RESOLUTION_320x240 };
-static RESOLUTION_512x240: &libdragon_sys::resolution_t = unsafe { &libdragon_sys::RESOLUTION_512x240 };
-static RESOLUTION_640x240: &libdragon_sys::resolution_t = unsafe { &libdragon_sys::RESOLUTION_640x240 };
-static RESOLUTION_512x480: &libdragon_sys::resolution_t = unsafe { &libdragon_sys::RESOLUTION_512x480 };
-static RESOLUTION_640x480: &libdragon_sys::resolution_t = unsafe { &libdragon_sys::RESOLUTION_640x480 };
+static RESOLUTION_256x240: &libdragon_sys::resolution_t =
+    unsafe { &libdragon_sys::RESOLUTION_256x240 };
+static RESOLUTION_320x240: &libdragon_sys::resolution_t =
+    unsafe { &libdragon_sys::RESOLUTION_320x240 };
+static RESOLUTION_512x240: &libdragon_sys::resolution_t =
+    unsafe { &libdragon_sys::RESOLUTION_512x240 };
+static RESOLUTION_640x240: &libdragon_sys::resolution_t =
+    unsafe { &libdragon_sys::RESOLUTION_640x240 };
+static RESOLUTION_512x480: &libdragon_sys::resolution_t =
+    unsafe { &libdragon_sys::RESOLUTION_512x480 };
+static RESOLUTION_640x480: &libdragon_sys::resolution_t =
+    unsafe { &libdragon_sys::RESOLUTION_640x480 };
 
 /// Video resolutions
 ///
@@ -54,7 +60,7 @@ pub enum Resolution {
     /// 640x480 mode
     _640x480,
     /// User-defined mode
-    /// 
+    ///
     /// First parameter is width, second is height, third is the [InterlaceMode]
     Custom(u32, u32, InterlaceMode),
 }
@@ -68,13 +74,11 @@ impl From<Resolution> for libdragon_sys::resolution_t {
             Resolution::_640x240 => *RESOLUTION_640x240,
             Resolution::_512x480 => *RESOLUTION_512x480,
             Resolution::_640x480 => *RESOLUTION_640x480,
-            Resolution::Custom(w, h, i) => {
-                libdragon_sys::resolution_t {
-                    width: w as i32,
-                    height: h as i32,
-                    interlaced: i.into(),
-                }
-            }
+            Resolution::Custom(w, h, i) => libdragon_sys::resolution_t {
+                width:      w as i32,
+                height:     h as i32,
+                interlaced: i.into(),
+            },
         }
     }
 }
@@ -120,7 +124,7 @@ pub enum Gamma {
     /// only when assets have been produced in linear color space and accurate blending is important
     Correct,
     /// Corrected gamma with hardware dithered output
-    CorrectDither
+    CorrectDither,
 }
 
 impl From<Gamma> for libdragon_sys::gamma_t {
@@ -166,8 +170,12 @@ impl From<FilterOptions> for libdragon_sys::filter_options_t {
             FilterOptions::Disabled => libdragon_sys::filter_options_t_FILTERS_DISABLED,
             FilterOptions::Resample => libdragon_sys::filter_options_t_FILTERS_RESAMPLE,
             FilterOptions::Dedither => libdragon_sys::filter_options_t_FILTERS_DEDITHER,
-            FilterOptions::ResampleAntialias => libdragon_sys::filter_options_t_FILTERS_RESAMPLE_ANTIALIAS,
-            FilterOptions::ResampleAntialiasDedither => libdragon_sys::filter_options_t_FILTERS_RESAMPLE_ANTIALIAS_DEDITHER,
+            FilterOptions::ResampleAntialias => {
+                libdragon_sys::filter_options_t_FILTERS_RESAMPLE_ANTIALIAS
+            }
+            FilterOptions::ResampleAntialiasDedither => {
+                libdragon_sys::filter_options_t_FILTERS_RESAMPLE_ANTIALIAS_DEDITHER
+            }
         }
     }
 }
@@ -178,23 +186,39 @@ extern "C" {
         bit: libdragon_sys::bitdepth_t,
         num_buffers: u32,
         gamma: libdragon_sys::gamma_t,
-        filters: libdragon_sys::filter_options_t);
+        filters: libdragon_sys::filter_options_t,
+    );
 }
 
 /// Initialize the display to a particular resolution and bit depth
 ///
 /// See [`display_init`](libdragon_sys::display_init) for details.
-pub fn init(resolution: Resolution, depth: BitDepth, num_buffers: u32, gamma: Gamma, filter: FilterOptions) {
+pub fn init(
+    resolution: Resolution,
+    depth: BitDepth,
+    num_buffers: u32,
+    gamma: Gamma,
+    filter: FilterOptions,
+) {
     unsafe {
-        display_init_r(&resolution.into() as *const libdragon_sys::resolution_t, 
-                       depth.into(), num_buffers, gamma.into(), filter.into())
+        display_init_r(
+            &resolution.into() as *const libdragon_sys::resolution_t,
+            depth.into(),
+            num_buffers,
+            gamma.into(),
+            filter.into(),
+        )
     }
 }
 
 /// Close the display
 ///
 /// See [`display_close`](libdragon_sys::display_close) for details.
-pub fn close() { unsafe { libdragon_sys::display_close(); } }
+pub fn close() {
+    unsafe {
+        libdragon_sys::display_close();
+    }
+}
 
 /// Get a display buffer for rendering
 ///
@@ -249,5 +273,3 @@ pub fn get_num_buffers() -> u32 { unsafe { libdragon_sys::display_get_num_buffer
 ///
 /// See [`display_get_fps`](libdragon_sys::display_get_fps) for details.
 pub fn get_fps() -> f32 { unsafe { libdragon_sys::display_get_fps() } }
-
-
