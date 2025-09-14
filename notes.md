@@ -104,20 +104,20 @@ We rerun the unit tests and the examples.
 
 | Example     | Compile | Run     | Remark |
 |-------------|---------|---------|--------|
-| a440        |         |         |        |
-| audioplayer |         |         |        |
-| customfont  |         |         |        |
-| dfstest     |         |         |        |
-| fontdemo    |         |         |        |
-| gldemo      |         |         |        |
-| importglb   |         |         |        |
-| joypadtest  |         |         |        |
-| mixertest   |         |         |        |
-| rdpqtest    |         |         |        |
-| rspqdemo    |         |         |        |
-| spritemap   |         |         |        |
-| test        |         |         |        |
-| vtest       |         |         |        |
+| a440        | Ok      | Ok      |        |
+| audioplayer | Ok      | Ok      |        |
+| customfont  | Ok      | Ok      |        |
+| dfstest     | Ok      | Ok      |        |
+| fontdemo    | Ok      | Ok      |        |
+| gldemo      | Ok      | Ok      |        |
+| importglb   | Ok      | Ok      |        |
+| joypadtest  | Ok      | Ok      |        |
+| mixertest   | Ok      | Ok      |        |
+| rdpqtest    | Ok      | Ok      |        |
+| rspqdemo    | Ok      | Ok      |        |
+| spritemap   | Ok      | Ok      |        |
+| test        | Ok      | Ok      |        |
+| vtest       | Ok      | Ok      |        |
 
 Then we check the `Cargo.toml` file of each project to pick a newer version of each dependency if available.
 
