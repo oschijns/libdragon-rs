@@ -1,7 +1,6 @@
 #![no_std]
 #![feature(asm_experimental_arch)]
 #![feature(ascii_char)]
-#![feature(cfg_version)]
 #![allow(clippy::missing_safety_doc)]
 
 use core::arch::asm;

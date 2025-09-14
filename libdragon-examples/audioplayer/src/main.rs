@@ -1,13 +1,12 @@
 #![no_std]
 #![no_main]
 
+use audio::{mixer, xm64::Xm64, ym64::Ym64};
 use libdragon::{
     display::{BitDepth, FilterOptions, Gamma, Resolution},
     graphics::Graphics,
     *,
 };
-
-use audio::{mixer, xm64::Xm64, ym64::Ym64};
 
 #[no_mangle]
 extern "C" fn main() -> ! {

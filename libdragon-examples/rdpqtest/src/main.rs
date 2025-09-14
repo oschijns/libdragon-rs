@@ -2,17 +2,14 @@
 #![no_main]
 
 use core::sync::atomic::{AtomicBool, Ordering};
-
-use libdragon::*;
-
+use core_maths::*;
 use libdragon::{
     display::{BitDepth, FilterOptions, Gamma, Resolution},
     sprite::Sprite,
     surface::TexFormat,
     timer::Timer,
+    *,
 };
-
-use core_maths::*;
 use rand_mt::Mt64;
 
 struct Object {

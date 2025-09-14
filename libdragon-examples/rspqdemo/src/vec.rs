@@ -1,6 +1,5 @@
-use libdragon::*;
-
 use crate::Vec4;
+use libdragon::*;
 
 pub struct Vec {
     rsp_vec: rsp::RspUcode,

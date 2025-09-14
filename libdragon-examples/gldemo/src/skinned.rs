@@ -1,9 +1,7 @@
-use libdragon::*;
-
+use crate::Camera;
 use ::core::ptr::addr_of;
 use core_maths::*;
-
-use crate::Camera;
+use libdragon::*;
 
 pub struct Skinned;
 

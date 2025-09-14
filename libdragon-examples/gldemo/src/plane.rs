@@ -1,8 +1,6 @@
-use libdragon::*;
-
 use crate::Vertex;
-
 use ::core::mem::offset_of;
+use libdragon::*;
 
 const PLANE_SIZE: f32 = 20.0;
 const PLANE_SEGMENTS: usize = 16;

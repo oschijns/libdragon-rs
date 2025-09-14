@@ -1,13 +1,12 @@
 #![no_std]
 #![no_main]
 
+use audio::{mixer, wav64::Wav64};
 use libdragon::{
     display::{BitDepth, FilterOptions, Gamma, Resolution},
     graphics::Graphics,
     *,
 };
-
-use audio::{mixer, wav64::Wav64};
 
 const CHANNEL_SFX1: i32 = 0;
 const CHANNEL_SFX2: i32 = 1;

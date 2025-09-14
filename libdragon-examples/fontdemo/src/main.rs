@@ -1,10 +1,10 @@
 #![no_std]
 #![no_main]
 
-#[allow(unused_imports)]
-use libdragon::*;
-
-use libdragon::display::{BitDepth, FilterOptions, Gamma, Resolution};
+use libdragon::{
+    display::{BitDepth, FilterOptions, Gamma, Resolution},
+    *,
+};
 
 const FONT_PACIFICO: u8 = 1;
 const FONT_ZEROVELOCITY: u8 = 2;

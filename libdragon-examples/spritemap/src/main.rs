@@ -2,11 +2,9 @@
 #![no_main]
 
 use core::sync::atomic::{AtomicU32, Ordering};
-
-use libdragon::*;
-
 use display::{BitDepth, FilterOptions, Gamma, Resolution};
 use graphics::Graphics;
+use libdragon::*;
 use sprite::Sprite;
 use timer::Timer;
 

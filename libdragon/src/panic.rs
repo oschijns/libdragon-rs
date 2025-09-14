@@ -2,20 +2,13 @@ use crate::*;
 use core::panic::PanicInfo;
 
 #[panic_handler]
+#[allow(clippy::incompatible_msrv)]
 fn panic(info: &PanicInfo) -> ! {
     let (file, line) = match info.location() {
         Some(location) => (CString::new(location.file()).unwrap(), location.line()),
         _ => (CString::new("<unknown>").unwrap(), 0),
     };
 
-    #[cfg(not(version("1.81")))]
-    let msg = if let Some(args) = info.message() {
-        CString::new(format!("{args}").as_str()).unwrap()
-    } else {
-        CString::new("<unknown>").unwrap()
-    };
-
-    #[cfg(version("1.81"))]
     let msg = if let Some(args) = info.message().as_str() {
         CString::new(args).unwrap()
     } else {

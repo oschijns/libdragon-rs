@@ -1,11 +1,10 @@
 #![no_std]
 #![no_main]
 
-use libdragon::*;
-
 use dfs::Read;
 use display::{BitDepth, FilterOptions, Gamma, Resolution};
 use graphics::{make_color, Graphics};
+use libdragon::*;
 use sprite::Sprite;
 
 fn read_sprite(filename: &str) -> Sprite<'_> {

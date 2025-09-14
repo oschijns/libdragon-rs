@@ -22,14 +22,13 @@ doc = true
 crate-type = ["lib"]
 
 [build-dependencies]
-bindgen = { version = "0.69", features = ["experimental"] }
+bindgen = { version = "0.72", features = ["experimental"] }
 execute = "0.2"
 filetime = "0.2"
-reqwest = "0.11"
-tokio = { version = "1.36", features = ["full"] }
-error-chain = "0.12"
-tempfile = "3.10"
-zip = "0.6"
+reqwest = "0.12"
+tokio = { version = "1.47", features = ["full"] }
+tempfile = "3.22"
+zip = "5.1"
 doxygen-rs = "0.4"
 
 

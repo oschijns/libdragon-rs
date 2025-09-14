@@ -6,10 +6,10 @@ const NUM_VECTORS: usize = NUM_VECTOR_SLOTS * 2;
 const NUM_MATRICES: usize = 4;
 const MTX_SLOT: usize = 30;
 
+mod vec;
+
 use core_maths::*;
 use libdragon::*;
-
-mod vec;
 use vec::{VecMtx, VecSlot};
 
 fn print_vectors(arr: &[Vec4]) {

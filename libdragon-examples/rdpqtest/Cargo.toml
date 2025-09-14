@@ -9,7 +9,7 @@ rust-version.workspace = true
 
 [dependencies]
 libdragon = { path = "../../libdragon" }
-rand_mt = { version = "4.2.2", default-features = false }
+rand_mt = { version = "5.0.0", default-features = false }
 core_maths = "0.1.0"
 
 [build-dependencies]

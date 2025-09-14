@@ -1,10 +1,9 @@
 #![no_std]
 #![no_main]
 
+use core::f32::consts::PI;
 use core_maths::*;
 use libdragon::*;
-
-use core::f32::consts::PI;
 
 const PLAYBACK_RATE: i32 = 44100;
 

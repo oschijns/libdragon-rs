@@ -1,10 +1,8 @@
-use libdragon::*;
-
 use crate::Vertex;
-
 use ::core::mem::offset_of;
 use core::f32::consts::PI;
 use core_maths::*;
+use libdragon::*;
 
 const SPHERE_RADIUS: f32 = 20.0;
 const SPHERE_MIN_RINGS: usize = 4;

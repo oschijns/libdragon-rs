@@ -1,9 +1,7 @@
 #![no_std]
 #![no_main]
 
-use libdragon::*;
-
-use libdragon::{console::RenderMode, dfs::Read};
+use libdragon::{console::RenderMode, dfs::Read, *};
 
 const MAX_LIST: usize = 20;
 
