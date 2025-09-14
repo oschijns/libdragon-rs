@@ -12,7 +12,7 @@ default-members = [
 
 package.rust-version = "1.75.0"
 package.edition = "2021"
-package.version = "0.1.0"
+package.version = "0.1.1"
 package.authors = ["Chuck <chuck+github@borboggle.com>"]
 package.license = "FreeBSD License"
 package.repository = "https://github.com/sarchar/libdragon-rs"

@@ -8,7 +8,7 @@ use display::{BitDepth, FilterOptions, Gamma, Resolution};
 use graphics::{make_color, Graphics};
 use sprite::Sprite;
 
-fn read_sprite(filename: &str) -> Sprite {
+fn read_sprite(filename: &str) -> Sprite<'_> {
     let mut fp = dfs::File::open(dfs::PathBuf::from(filename), "r").unwrap();
     let size = fp.size().unwrap();
     let mut buf = Vec::new();

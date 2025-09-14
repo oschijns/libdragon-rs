@@ -1,8 +1,7 @@
 #![no_std]
 #![feature(asm_experimental_arch)]
-#![feature(panic_info_message)]
-#![feature(error_in_core)]
 #![feature(ascii_char)]
+#![feature(cfg_version)]
 #![allow(clippy::missing_safety_doc)]
 
 use core::arch::asm;
@@ -399,6 +398,7 @@ pub fn physical_ref<T>(v: &T) -> &T {
 
 /// Symbol at the start of code (start of ROM contents after header)
 #[inline]
+#[allow(static_mut_refs)]
 pub fn libdragon_text_start<T>() -> &'static mut [T] {
     unsafe {
         core::slice::from_raw_parts_mut(
@@ -410,12 +410,14 @@ pub fn libdragon_text_start<T>() -> &'static mut [T] {
 
 /// Symbol at the end of code, data, and sdata (set by the linker)
 #[inline]
+#[allow(static_mut_refs)]
 pub fn rom_end<T>() -> &'static mut [T] {
     unsafe { core::slice::from_raw_parts_mut(libdragon_sys::__rom_end.as_mut_ptr() as *mut _, 0) }
 }
 
 /// Symbol at the end of code, data, sdata, and bss (set by the linker)
 #[inline]
+#[allow(static_mut_refs)]
 pub fn bss_end<T>() -> &'static mut [T] {
     unsafe { core::slice::from_raw_parts_mut(libdragon_sys::__bss_end.as_mut_ptr() as *mut _, 0) }
 }
@@ -432,8 +434,8 @@ pub fn memory_barrier() {
     }
 }
 
-/// Ticks helper functions.
 pub mod ticks {
+    //! Ticks helper functions.
     //! For anything not self-explanatory, see LibDragon's n64sys.h header file for documetation
     //! and details.
 
@@ -798,6 +800,7 @@ pub mod interrupts {
         ($lower_name:ident, $upper_name:ident) => {
             paste! {
                 static mut [< $upper_name _CALLBACK >]: Option<InterruptCallback> = None;
+
                 /// Register an interrupt handler.
                 ///
                 /// See LibDragon's interrupt.h for details.
@@ -807,6 +810,7 @@ pub mod interrupts {
                         libdragon_sys::[<register_ $upper_name _handler>](Some([<_ $lower_name _handler>]));
                     }
                 }
+
                 /// Unregister an interrupt handler.
                 ///
                 /// See LibDragon's interrupt.h for details.
@@ -816,6 +820,8 @@ pub mod interrupts {
                         libdragon_sys::[<unregister_ $upper_name _handler>](Some([<_ $lower_name _handler>]));
                     }
                 }
+
+                #[allow(static_mut_refs)]
                 extern "C" fn [<_ $lower_name _handler>]() {
                     let cb = unsafe { [<$upper_name _CALLBACK>].as_mut().unwrap() };
                     cb();

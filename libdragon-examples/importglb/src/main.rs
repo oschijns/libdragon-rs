@@ -1,15 +1,11 @@
 #![no_std]
 #![no_main]
-#![feature(offset_of)]
-
-use libdragon::*;
 
 use libdragon::{
     display::{BitDepth, FilterOptions, Gamma, Resolution},
     model64::*,
+    *,
 };
-
-use core_maths::*;
 
 struct App<'a> {
     camera:    Camera,

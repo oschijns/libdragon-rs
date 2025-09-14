@@ -1,21 +1,50 @@
-use error_chain::error_chain;
-use std::{
-    env,
-    fs::{self, File},
-    path::PathBuf,
-    process::{exit, Command},
-};
-
 use execute::Execute;
 use filetime::FileTime;
+use std::{
+    env, error, fmt,
+    fs::{self, File},
+    io,
+    path::PathBuf,
+    process::{Command, exit},
+    result,
+};
 
-error_chain! {
-    foreign_links {
-        Io(std::io::Error);
-        HttpRequest(reqwest::Error);
-        Zip(zip::result::ZipError);
+#[derive(Debug)]
+pub enum Error {
+    Io(io::Error),
+    HttpRequest(reqwest::Error),
+    Zip(zip::result::ZipError),
+}
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Error::Io(err) => write!(f, "IO error: {err}"),
+            Error::HttpRequest(err) => write!(f, "HTTP request error: {err}"),
+            Error::Zip(err) => write!(f, "Zip error: {err}"),
+        }
     }
 }
+impl error::Error for Error {
+    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
+        match self {
+            Error::Io(err) => Some(err),
+            Error::HttpRequest(err) => Some(err),
+            Error::Zip(err) => Some(err),
+        }
+    }
+}
+impl From<io::Error> for Error {
+    fn from(err: io::Error) -> Error { Error::Io(err) }
+}
+impl From<reqwest::Error> for Error {
+    fn from(err: reqwest::Error) -> Error { Error::HttpRequest(err) }
+}
+
+impl From<zip::result::ZipError> for Error {
+    fn from(err: zip::result::ZipError) -> Error { Error::Zip(err) }
+}
+
+pub type Result<T> = result::Result<T, Error>;
 
 #[derive(Debug)]
 struct Cb;
@@ -37,7 +66,9 @@ async fn main() -> Result<()> {
     let toolchain_dir = out_dir.clone().join("toolchain");
 
     // configure N64_INST for building libdragon and the toolchain
-    env::set_var("N64_INST", toolchain_dir.display().to_string());
+    unsafe {
+        env::set_var("N64_INST", toolchain_dir.display().to_string());
+    }
     println!("cargo:rustc-env=N64_INST={}", toolchain_dir.display());
     eprintln!("N64_INST={}", toolchain_dir.display());
 
@@ -57,7 +88,7 @@ async fn main() -> Result<()> {
             let tmp_file = tmp_dir.path().join("gcc-toolchain-mips64-linux.zip");
             {
                 let mut fp: File = File::create(tmp_file.clone())?;
-                eprintln!("Tempfile={:?}", fp);
+                eprintln!("Tempfile={fp:?}");
                 let _ = std::io::copy(&mut content, &mut fp);
             }
 
@@ -69,7 +100,7 @@ async fn main() -> Result<()> {
             let mut toolchain_file = archive.by_name("gcc-toolchain-mips64-x86_64.zip")?;
 
             let mut final_fp = File::create(download_file.clone())?;
-            eprintln!("Output={:?}", final_fp);
+            eprintln!("Output={final_fp:?}");
             let _ = std::io::copy(&mut toolchain_file, &mut final_fp);
         } else {
             eprintln!("Skipping download");
@@ -146,7 +177,7 @@ async fn main() -> Result<()> {
         .arg("tools")
         .arg("-j")
         .arg("4");
-    eprintln!("make: {:?}", make);
+    eprintln!("make: {make:?}");
     let make_output = make.execute_output().unwrap();
     if let Some(exit_code) = make_output.status.code() {
         if exit_code != 0 {
@@ -155,7 +186,7 @@ async fn main() -> Result<()> {
             eprintln!("stderr: {}", String::from_utf8(make_output.stderr).unwrap());
             exit(1);
         }
-        eprintln!("make output: {:?}", make_output);
+        eprintln!("make output: {make_output:?}");
     }
 
     // install libdragon and tools
@@ -262,7 +293,7 @@ async fn main() -> Result<()> {
     //           .arg("-I")
     //           .arg(toolchain_dir.clone().join("mips64-libdragon-elf").join("include"));
 
-    eprintln!("compile: {:?}", compile_fns);
+    eprintln!("compile: {compile_fns:?}");
     if compile_fns.execute_check_exit_status_code(0).is_err() {
         eprintln!("Could not compile static_fns.c");
         exit(1);

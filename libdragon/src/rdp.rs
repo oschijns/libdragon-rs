@@ -1,8 +1,7 @@
 use crate::*;
-
 use sprite::Sprite;
 
-/// RDP registers
+// RDP registers
 
 /// DP start register
 pub const DP_START: Register<u32> = Register {
@@ -37,7 +36,7 @@ pub const DP_TMEM_BUSY: Register<u32> = Register {
     address: 0xA410_001C as *mut _,
 };
 
-/// Status bits (reading DP_STATUS)
+// Status bits (reading DP_STATUS)
 
 /// DP is using DMEM DMA
 pub const DP_STATUS_DMEM_DMA: u32 = libdragon_sys::DP_STATUS_DMEM_DMA;
@@ -62,7 +61,7 @@ pub const DP_STATUS_END_VALID: u32 = libdragon_sys::DP_STATUS_END_VALID;
 /// DP command start register is valid
 pub const DP_STATUS_START_VALID: u32 = libdragon_sys::DP_STATUS_START_VALID;
 
-/// Write status bits (writing DP_STATUS)
+// Write status bits (writing DP_STATUS)
 
 /// clear [DP_STATUS_DMEM_DMA] bit
 pub const DP_WSTATUS_RESET_XBUS_DMEM_DMA: u32 = libdragon_sys::DP_WSTATUS_RESET_XBUS_DMEM_DMA;

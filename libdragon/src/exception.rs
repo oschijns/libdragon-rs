@@ -209,6 +209,7 @@ static mut EXCEPTION_HANDLER: Option<Box<ExceptionHandlerInternal>> = None;
 /// -> call chain, false -> break from calling the next exception handler).
 ///
 /// See [`register_exception_handler`](libdragon_sys::register_exception_handler) for details.
+#[allow(static_mut_refs)]
 pub fn register_exception_handler(cb: ExceptionHandlerCallback) {
     let cb = Box::new(ExceptionHandlerInternal {
         user_callback: cb,
@@ -217,7 +218,7 @@ pub fn register_exception_handler(cb: ExceptionHandlerCallback) {
 
     interrupts::disable();
     unsafe {
-        let old_eh = core::mem::replace(&mut EXCEPTION_HANDLER, Some(cb));
+        let old_eh = EXCEPTION_HANDLER.replace(cb);
         let old = libdragon_sys::register_exception_handler(Some(exception_handler));
         if old_eh.is_some() {
             // Old handler is a Rust handler, so copy over EXCEPTION_HANDLER instead of 'old'
@@ -237,6 +238,7 @@ pub fn register_exception_handler(cb: ExceptionHandlerCallback) {
     interrupts::enable();
 }
 
+#[allow(static_mut_refs)]
 extern "C" fn exception_handler(exc: *mut libdragon_sys::exception_t) {
     let cb = unsafe { EXCEPTION_HANDLER.as_ref().unwrap() };
     let mut call_chain = (cb.user_callback)(Exception { ptr: exc });
@@ -273,6 +275,7 @@ pub fn register_syscall_handler(cb: SysCallHandlerCallback, first_code: u32, las
     }
 }
 
+#[allow(static_mut_refs)]
 extern "C" fn syscall_handler(exc: *mut libdragon_sys::exception_t, code: ::core::ffi::c_uint) {
     let cb = unsafe { SYSCALL_HANDLER.as_ref().unwrap() };
     (cb.user_callback)(Exception { ptr: exc }, code);

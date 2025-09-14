@@ -624,8 +624,8 @@ pub fn profile_get_data() -> ProfileData {
     let mut data = Box::<ProfileData>::default();
     unsafe {
         libdragon_sys::rspq_profile_get_data(core::mem::transmute::<
-            _,
-            *mut libdragon_sys::rspq_profile_data_t,
+            *mut rspq::ProfileData,
+            *mut libdragon_sys::rspq_profile_data_s,
         >(data.as_mut() as *mut _));
     }
     *data.as_ref()

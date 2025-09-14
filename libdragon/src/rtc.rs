@@ -33,7 +33,7 @@ impl Time {
         if !r {
             return None;
         }
-        Some(unsafe { core::mem::transmute(t.assume_init()) })
+        Some(unsafe { core::mem::transmute::<libdragon_sys::rtc_time_t, Time>(t.assume_init()) })
     }
 
     /// High-level convenience helper to set the RTC date/time.
@@ -41,7 +41,12 @@ impl Time {
     /// See [`rtc_set`](libdragon_sys::rtc_set) for details.
     #[inline]
     pub fn set(&mut self) -> Option<()> {
-        let r = unsafe { libdragon_sys::rtc_set(core::mem::transmute(self as *mut _)) };
+        let r = unsafe {
+            libdragon_sys::rtc_set(core::mem::transmute::<
+                *mut Time,
+                *mut libdragon_sys::rtc_time_t,
+            >(self as *mut _))
+        };
         if !r {
             return None;
         }
@@ -53,7 +58,12 @@ impl Time {
     /// See [`rtc_normalize_time`](libdragon_sys::rtc_normalize_time) for details.
     #[inline]
     pub fn normalize(&mut self) {
-        unsafe { libdragon_sys::rtc_normalize_time(core::mem::transmute(self as *mut _)) }
+        unsafe {
+            libdragon_sys::rtc_normalize_time(core::mem::transmute::<
+                *mut Time,
+                *mut libdragon_sys::rtc_time_t,
+            >(self as *mut _))
+        }
     }
 }
 

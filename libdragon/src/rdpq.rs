@@ -677,8 +677,7 @@ pub fn set_texture_image_raw(
 pub fn set_lookup_address<T>(index: u8, rdram_addr: &[T]) {
     assert!(
         index > 0 && index <= 15,
-        "Lookup address index out of range [1,15]: {}",
-        index
+        "Lookup address index out of range [1,15]: {index}"
     );
     unsafe {
         __rdpq_write8(
@@ -1494,8 +1493,8 @@ pub mod consts {
     pub const FOG_STANDARD: Blender =
         crate::blender!(IN_RGB * SHADE_ALPHA + FOG_RGB * INV_MUX_ALPHA);
 
-    /// SOME_OTHER_MODES RDP Color Combiner configuration
     pub mod cc {
+        //! SOME_OTHER_MODES RDP Color Combiner configuration
         //! Helper macros for [`combiner1`] and [`combiner2`] macros, which create
         //! [Combiner] states.
         //!
@@ -1704,8 +1703,8 @@ pub mod consts {
         pub const _COMB2B_ALPHA_MUL_0: u64 = 7;
     }
 
-    /// SOME_OTHER_MODES RDP Color Blender configuration
     pub mod bl {
+        //! SOME_OTHER_MODES RDP Color Blender configuration
         //! Helper macros for [`blender`](crate::rdpq::blender) and [`blender2`](crate::rdpq::blender) macros, which create
         //! [Blender](crate::rdpq::Blender) states.
         //!

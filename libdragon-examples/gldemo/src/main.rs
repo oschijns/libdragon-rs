@@ -1,6 +1,5 @@
 #![no_std]
 #![no_main]
-#![feature(offset_of)]
 
 use libdragon::{
     display::{BitDepth, FilterOptions, Gamma, Resolution},
@@ -29,8 +28,6 @@ use skinned::Skinned;
 
 mod prim_test;
 use prim_test::PrimTest;
-
-use core_maths::*;
 
 #[repr(C)]
 struct Vertex {

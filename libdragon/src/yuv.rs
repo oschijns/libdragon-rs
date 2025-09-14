@@ -85,7 +85,7 @@ pub trait ColorspaceImpl {
         x0: f32,
         y0: f32,
         parms: rdpq::BlitParms,
-    ) -> Blitter {
+    ) -> Blitter<'_> {
         assert!(
             ::core::mem::size_of::<libdragon_sys::yuv_blitter_t>() == 4,
             "if this struct gets larger, write a C wrapper"

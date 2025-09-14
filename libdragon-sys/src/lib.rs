@@ -3,8 +3,7 @@
 #![allow(non_upper_case_globals)]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
-#![allow(improper_ctypes)] // TODO getting warnings on u128 types
-
+#![allow(unnecessary_transmutes)]
 // disable some clippy suggestions for generated code
 #![allow(clippy::useless_transmute)]
 #![allow(clippy::too_many_arguments)]

@@ -33,6 +33,7 @@ pub fn close() {
 type FillBufferCallback = Box<dyn FnMut(&mut [i16]) + 'static + Sync + Send>;
 static mut FILL_BUFFER_CALLBACK: Option<FillBufferCallback> = None;
 
+#[allow(static_mut_refs)]
 extern "C" fn fill_buffer_callback_rust(buffer: *mut ::core::ffi::c_short, numsamples: usize) {
     let buf: &mut [i16] = unsafe {
         ::core::slice::from_raw_parts_mut(buffer, 2 * numsamples) // two channels * numsamples
@@ -95,7 +96,7 @@ pub fn get_buffer_length() -> usize { unsafe { libdragon_sys::audio_get_buffer_l
 ///
 /// Rust-specific: this function is a wrapper around
 /// [`audio_write_begin`](libdragon_sys::audio_write_begin)
-/// and [`audio_write_end`](libdragon_sys::audio_write_end).  
+/// and [`audio_write_end`](libdragon_sys::audio_write_end).
 ///
 /// This function will call `audio_write_begin`, which may block,
 /// and then call the provided `cb` callback with a buffer slice to write to. The size

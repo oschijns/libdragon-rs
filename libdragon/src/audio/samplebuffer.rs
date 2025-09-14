@@ -73,9 +73,10 @@ impl SampleBuffer {
     /// for managing the memory, and it must persist as long as self.
     ///
     /// See [`samplebuffer_init`](libdragon_sys::samplebuffer_init) for details.
+    #[allow(clippy::mem_replace_option_with_none)]
     pub fn init<'a>(&'a mut self, uncached_mem: &'a mut [u8]) {
         // free backed memory
-        if let Some(ptr) = self.owned_memory.take() {
+        if let Some(ptr) = core::mem::replace(&mut self.owned_memory, None) {
             unsafe {
                 libdragon_sys::free_uncached(ptr as *mut ::core::ffi::c_void);
             }

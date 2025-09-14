@@ -62,33 +62,38 @@ if let Some(_) = core::mem::replace(&mut self.backing_instance, None) { ... }
 if self.backing_instance.take().is_some() { ... }
 
 // caused
-AI reading from RDRAM address 0xa9490 which is modified in the cache (missing cache writeback?) on Arcade_S900.xm64
+// on file Arcade_S900.xm64
+// error: AI reading from RDRAM address 0xa9490 which is modified in the cache (missing cache writeback?)
 ```
 
 
 ## Upgrading the Rust's toolchain
 
-We upgrade the _Rust_'s edition to 2024 while keeping the _Rust_ version to `1.75.0` (if possible).
-We fix `rust-toolchain.toml` and `mips-nintendo64-none.json` accordingly.
+Bump the _Rust_'s compiler nightly channel and we fix `rust-toolchain.toml`
+and `mips-nintendo64-none.json` accordingly.
 
 We rerun the unit tests and the examples.
 
 | Example     | Compile | Run     | Remark |
 |-------------|---------|---------|--------|
-| a440        |         |         |        |
-| audioplayer |         |         |        |
-| customfont  |         |         |        |
-| dfstest     |         |         |        |
-| fontdemo    |         |         |        |
-| gldemo      |         |         |        |
-| importglb   |         |         |        |
-| joypadtest  |         |         |        |
-| mixertest   |         |         |        |
-| rdpqtest    |         |         |        |
-| rspqdemo    |         |         |        |
-| spritemap   |         |         |        |
-| test        |         |         |        |
-| vtest       |         |         |        |
+| a440        | Ok      | Ok      |        |
+| audioplayer | Ok      | Ok      |        |
+| customfont  | Ok      | Ok      |        |
+| dfstest     | Ok      | Ok      |        |
+| fontdemo    | Ok      | Ok      |        |
+| gldemo      | Ok      | Ok      |        |
+| importglb   | Ok      | Ok      |        |
+| joypadtest  | Ok      | Ok      |        |
+| mixertest   | Ok      | Ok      |        |
+| rdpqtest    | Ok      | Ok      |        |
+| rspqdemo    | Ok      | Ok      |        |
+| spritemap   | Ok      | Ok      |        |
+| test        | Ok      | Ok      |        |
+| vtest       | Ok      | Ok      |        |
+
+### Notes:
+`mips-nintendo64-none.json` is now renamed `mips64-nintendo64-none.json`
+to reflect the change for `mips` architecture to `mips64` architecture.
 
 
 ## Upgrade the dependencies
