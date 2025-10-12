@@ -1,50 +1,8 @@
-use execute::Execute;
-use filetime::FileTime;
 use std::{
-    env, error, fmt,
-    fs::{self, File},
-    io,
+    env, io,
     path::PathBuf,
-    process::{Command, exit},
-    result,
+    process::{exit, Command},
 };
-
-#[derive(Debug)]
-pub enum Error {
-    Io(io::Error),
-    HttpRequest(reqwest::Error),
-    Zip(zip::result::ZipError),
-}
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Error::Io(err) => write!(f, "IO error: {err}"),
-            Error::HttpRequest(err) => write!(f, "HTTP request error: {err}"),
-            Error::Zip(err) => write!(f, "Zip error: {err}"),
-        }
-    }
-}
-impl error::Error for Error {
-    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
-        match self {
-            Error::Io(err) => Some(err),
-            Error::HttpRequest(err) => Some(err),
-            Error::Zip(err) => Some(err),
-        }
-    }
-}
-impl From<io::Error> for Error {
-    fn from(err: io::Error) -> Error { Error::Io(err) }
-}
-impl From<reqwest::Error> for Error {
-    fn from(err: reqwest::Error) -> Error { Error::HttpRequest(err) }
-}
-
-impl From<zip::result::ZipError> for Error {
-    fn from(err: zip::result::ZipError) -> Error { Error::Zip(err) }
-}
-
-pub type Result<T> = result::Result<T, Error>;
 
 #[derive(Debug)]
 struct Cb;
@@ -52,121 +10,66 @@ struct Cb;
 impl bindgen::callbacks::ParseCallbacks for Cb {
     fn process_comment(&self, comment: &str) -> Option<String> {
         //eprintln!("cmt: {:?}", comment);
-        Some(doxygen_rs::transform(comment))
+        // Try to transform the comment, but fall back to original on error
+        match std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            doxygen_rs::transform(comment)
+        })) {
+            Ok(transformed) => Some(transformed),
+            Err(_) => {
+                // If doxygen transformation fails, just skip the transformation
+                // and return the original comment
+                eprintln!("cargo:warning=Failed to transform doxygen comment, using original");
+                Some(comment.to_string())
+            }
+        }
     }
 }
 
-const TOOLCHAIN_URL: &str = "https://github.com/sarchar/libdragon/releases/download/toolchain-continuous-prerelease/gcc-toolchain-mips64-linux.zip";
-
-#[tokio::main]
-async fn main() -> Result<()> {
+fn main() -> io::Result<()> {
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
     let src_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
     let libdragon_dir = src_dir.clone().join("libdragon");
     let toolchain_dir = out_dir.clone().join("toolchain");
 
-    // configure N64_INST for building libdragon and the toolchain
-    unsafe {
-        env::set_var("N64_INST", toolchain_dir.display().to_string());
-    }
-    println!("cargo:rustc-env=N64_INST={}", toolchain_dir.display());
-    eprintln!("N64_INST={}", toolchain_dir.display());
+    // Check if N64_INST is set, if not use our out_dir toolchain
+    let n64_inst =
+        env::var("N64_INST").unwrap_or_else(|_| toolchain_dir.to_string_lossy().to_string());
+    let n64_inst_path = PathBuf::from(&n64_inst);
 
-    if !cfg!(feature = "buildtoolchain") {
-        let download_dir = out_dir.clone();
-        let download_file = download_dir.clone().join("gcc-toolchain-mips64-x86_64.zip");
-
-        // Don't download toolchain file if it exists
-        if !download_file.exists() {
-            let url = TOOLCHAIN_URL;
-            eprintln!("Downloading gcc-toolchain-mips64-linux.zip ...");
-            let response = reqwest::get(url).await?;
-            let mut content = std::io::Cursor::new(response.bytes().await?);
-
-            // the zip we actually want is inside the downloaded zip, so save the download to a tempfile
-            let tmp_dir = tempfile::Builder::new().prefix("libdragon-rs").tempdir()?;
-            let tmp_file = tmp_dir.path().join("gcc-toolchain-mips64-linux.zip");
-            {
-                let mut fp: File = File::create(tmp_file.clone())?;
-                eprintln!("Tempfile={fp:?}");
-                let _ = std::io::copy(&mut content, &mut fp);
-            }
-
-            eprintln!(
-                "Copying gcc-toolchain-mips64-x86_64.zip to {}",
-                download_dir.display()
-            );
-            let mut archive = zip::ZipArchive::new(File::open(tmp_file)?)?;
-            let mut toolchain_file = archive.by_name("gcc-toolchain-mips64-x86_64.zip")?;
-
-            let mut final_fp = File::create(download_file.clone())?;
-            eprintln!("Output={final_fp:?}");
-            let _ = std::io::copy(&mut toolchain_file, &mut final_fp);
+    // Detect GCC version dynamically
+    let gcc_version = {
+        let gcc_dir = n64_inst_path.join("lib").join("gcc").join("mips64-elf");
+        if gcc_dir.exists() {
+            std::fs::read_dir(&gcc_dir)
+                .ok()
+                .and_then(|mut entries| entries.next())
+                .and_then(|entry| entry.ok())
+                .and_then(|entry| entry.file_name().into_string().ok())
+                .unwrap_or_else(|| "14.2.0".to_string())
         } else {
-            eprintln!("Skipping download");
+            "14.2.0".to_string()
         }
-
-        // Don't extract the archive if the toolchain directory exists
-        if !toolchain_dir.exists() {
-            let archive_file = File::open(download_file.clone())?;
-            let mut archive = zip::ZipArchive::new(archive_file)?;
-            archive.extract(toolchain_dir.clone())?;
-            eprintln!("Toolchain extracted to {}", toolchain_dir.display());
-        } else {
-            eprintln!("Skipping extract");
-        }
-    } else {
-        // build toolchain
-        // tell cargo that if build-toolchain.sh script changes we should re-run this script
-        println!("cargo:rerun-if-changed=libdragon/tools/build-toolchain.sh");
-        println!("cargo:rerun-if-changed=libdragon");
-
-        // create the build directory under out/
-        let build_toolchain_dir = out_dir.clone().join("build-toolchain");
-        fs::create_dir_all(&build_toolchain_dir).expect("Error creating build directory");
-
-        // if {out}/mips64-libdragon-elf/bin/... doesn't exist OR if
-        // <xyz> is newer than <xyz>, build toolchain
-        // build the toolchain. execute from out for the build
-        let build_toolchain_script = libdragon_dir
-            .clone()
-            .join("tools")
-            .join("build-toolchain.sh");
-        let gcc = toolchain_dir
-            .clone()
-            .join("bin")
-            .join("mips64-libdragon-elf-gcc");
-        let need_toolchain_build = !fs::metadata(gcc).is_ok_and(|metadata| {
-            let gcc_time = FileTime::from_last_modification_time(&metadata);
-            let build_script_time = FileTime::from_last_modification_time(
-                &fs::metadata(build_toolchain_script.clone()).unwrap(),
-            );
-            build_script_time <= gcc_time
-        });
-        if need_toolchain_build {
-            let mut build_toolchain = Command::new("bash");
-            build_toolchain.arg(build_toolchain_script.into_os_string());
-            build_toolchain.current_dir(build_toolchain_dir.into_os_string());
-            let output = build_toolchain.execute_output().unwrap();
-            if let Some(exit_code) = output.status.code() {
-                if exit_code != 0 {
-                    eprintln!("There was an error building the mips64-libdragon-elf toolchain");
-                    exit(1);
-                }
-            } else {
-                eprintln!("Build incomplete");
-                exit(1);
-            }
-        } else {
-            eprintln!("Skipping toolchain build");
-        }
-    }
+    };
 
     // Create the build directory
     let libdragon_build_dir = out_dir.clone().join("libdragon_build");
     let mut mkdir = Command::new("mkdir");
     mkdir.arg("-p").arg(&libdragon_build_dir);
-    let _ = mkdir.execute_check_exit_status_code(0); // Let's hope this doesn't ever fail
+    let _ = mkdir.output()?;
+
+    // Check if the toolchain exists
+    let toolchain_bin = n64_inst_path.join("bin").join("mips64-elf-gcc");
+    if !toolchain_bin.exists() {
+        eprintln!("N64 toolchain not found at: {}", n64_inst_path.display());
+        eprintln!("Please install the libdragon toolchain and set N64_INST environment variable.");
+        eprintln!("See: https://github.com/DragonMinded/libdragon/wiki/Installing-libdragon");
+        exit(1);
+    }
+
+    println!(
+        "cargo:warning=Using N64 toolchain at: {}",
+        n64_inst_path.display()
+    );
 
     // build libdragon
     let mut make = Command::new("make");
@@ -176,43 +79,82 @@ async fn main() -> Result<()> {
         .arg("libdragon")
         .arg("tools")
         .arg("-j")
-        .arg("4");
-    eprintln!("make: {make:?}");
-    let make_output = make.execute_output().unwrap();
-    if let Some(exit_code) = make_output.status.code() {
-        if exit_code != 0 {
-            eprintln!("There was an error building libdragon");
-            eprintln!("stdout: {}", String::from_utf8(make_output.stdout).unwrap());
-            eprintln!("stderr: {}", String::from_utf8(make_output.stderr).unwrap());
-            exit(1);
+        .arg("4")
+        .env("N64_INST", &n64_inst_path);
+
+    let build_output = make.output();
+    if build_output.is_err() || !build_output.as_ref().unwrap().status.success() {
+        eprintln!("There was an error building libdragon");
+        if let Ok(output) = build_output {
+            eprintln!("Build stderr: {}", String::from_utf8_lossy(&output.stderr));
         }
-        eprintln!("make output: {make_output:?}");
+        exit(1);
     }
 
-    // install libdragon and tools
+    // Create a local install directory for libdragon
+    let libdragon_install_dir = out_dir.join("libdragon_install");
+    std::fs::create_dir_all(&libdragon_install_dir)?;
+
+    // install libdragon and tools to local directory
     let mut install = Command::new("make");
     install
         .arg("-C")
         .arg(libdragon_dir.clone().into_os_string())
         .current_dir(&libdragon_build_dir)
         .arg("install")
-        .arg("tools-install");
-    if install.execute_check_exit_status_code(0).is_err() {
+        .arg("tools-install")
+        .arg(format!("INSTALLDIR={}", libdragon_install_dir.display()))
+        .env("N64_INST", &n64_inst_path);
+
+    let install_output = install.output();
+    if install_output.is_err() || !install_output.as_ref().unwrap().status.success() {
         eprintln!("There was an error installing libdragon");
+        if let Ok(output) = install_output {
+            eprintln!(
+                "Install stderr: {}",
+                String::from_utf8_lossy(&output.stderr)
+            );
+            eprintln!(
+                "Install stdout: {}",
+                String::from_utf8_lossy(&output.stdout)
+            );
+        }
         exit(1);
     }
 
-    // link against libdragon.a and libdragonsys.a
+    // Check that the libdragon libraries were installed
+    let libdragon_lib = libdragon_install_dir
+        .join("mips64-elf")
+        .join("lib")
+        .join("libdragon.a");
+    let dragonsys_lib = libdragon_install_dir
+        .join("mips64-elf")
+        .join("lib")
+        .join("libdragonsys.a");
+    if !libdragon_lib.exists() || !dragonsys_lib.exists() {
+        eprintln!("libdragon installation failed: libraries not found");
+        eprintln!("Expected: {}", libdragon_lib.display());
+        eprintln!("Expected: {}", dragonsys_lib.display());
+        exit(1);
+    }
+    println!("cargo:warning=libdragon libraries installed successfully");
+
+    // link against libdragon.a and libdragonsys.a from local install and toolchain
     println!(
-        "cargo:rustc-link-search=native={}/mips64-libdragon-elf/lib",
-        toolchain_dir.display()
+        "cargo:rustc-link-search=native={}/mips64-elf/lib",
+        libdragon_install_dir.display()
+    );
+    println!(
+        "cargo:rustc-link-search=native={}/mips64-elf/lib",
+        n64_inst_path.display()
     );
     println!("cargo:rustc-link-lib=static=dragon");
     println!("cargo:rustc-link-lib=static=dragonsys");
 
     println!(
-        "cargo:rustc-link-search=native={}/lib/gcc/mips64-libdragon-elf/14.1.0",
-        toolchain_dir.display()
+        "cargo:rustc-link-search=native={}/lib/gcc/mips64-elf/{}",
+        n64_inst_path.display(),
+        gcc_version
     );
     println!("cargo:rustc-link-lib=static=c");
     println!("cargo:rustc-link-lib=static=g");
@@ -220,14 +162,44 @@ async fn main() -> Result<()> {
     println!("cargo:rustc-link-lib=static=gcc");
     println!("cargo:rustc-link-lib=static=m");
 
+    // Verify that the toolchain was installed correctly
+    let toolchain_include = n64_inst_path.join("mips64-elf").join("include");
+    let errno_header = toolchain_include.join("sys").join("errno.h");
+    if !errno_header.exists() {
+        eprintln!(
+            "Toolchain installation failed: {} does not exist",
+            errno_header.display()
+        );
+        eprintln!(
+            "Make sure libdragon toolchain is properly installed at N64_INST={}",
+            n64_inst_path.display()
+        );
+        exit(1);
+    }
+
     let static_fns_path = out_dir.clone().join("static_fns.c");
 
     let bindings = bindgen::Builder::default()
-        .clang_arg(format!(
-            "-I{}/mips64-libdragon-elf/include",
-            toolchain_dir.display()
-        ))
-        .clang_args(&["-target", "mips-nintendo64-none", "-mabi=n32", "-DN64"])
+        .clang_arg(format!("-I{}/include", libdragon_dir.display()))
+        .clang_arg(format!("-I{}/include", libdragon_install_dir.display()))
+        .clang_arg(format!("-I{}/mips64-elf/include", n64_inst_path.display()))
+        .clang_arg(format!("--sysroot={}/mips64-elf", n64_inst_path.display()))
+        .clang_args(&[
+            "-target",
+            "mips-nintendo64-none",
+            "-mabi=n32",
+            "-DN64",
+            "-isystem",
+            &format!("{}/include", libdragon_install_dir.display()),
+            "-isystem",
+            &format!("{}/mips64-elf/include", n64_inst_path.display()),
+            "-isystem",
+            &format!(
+                "{}/lib/gcc/mips64-elf/{}/include",
+                n64_inst_path.display(),
+                gcc_version
+            ),
+        ])
         .header("wrapper.h")
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .parse_callbacks(Box::new(Cb {}))
@@ -264,87 +236,34 @@ async fn main() -> Result<()> {
         .arg("-I")
         .arg(src_dir.clone())
         .arg("-I")
-        .arg(toolchain_dir.clone().join("include"))
+        .arg(n64_inst_path.clone().join("include"))
         .arg("-I")
-        .arg(
-            toolchain_dir
-                .clone()
-                .join("mips64-libdragon-elf")
-                .join("include"),
-        );
-    // With gcc...
-    //let static_fns_obj_path = out_dir.clone().join("static_fns.o");
-    //let mut compile_fns = Command::new(toolchain_dir.clone().join("bin").join("mips64-libdragon-elf-gcc"));
-    //compile_fns.arg("-march=vr4300").arg("-mtune=vr4300")
-    //           .arg("-mabi=n32").arg("-mno-abicalls").arg("-G").arg("0").arg("-mno-gpopt")
-    //           .arg("-falign-functions=32")
-    //           .arg("-ffunction-sections").arg("-fdata-sections").arg("-g")
-    //           .arg(format!("-ffile-prefix-map={}=", out_dir.clone().display()))
-    //           .arg("-DN64").arg("-Wall").arg("-std=gnu99")
-    //           .arg("-O2")
-    //           .arg("-c")
-    //           .arg("-o")
-    //           .arg(&static_fns_obj_path)
-    //           .arg(static_fns_path)
-    //           .arg("-I")
-    //           .arg(src_dir.clone())
-    //           .arg("-I")
-    //           .arg(toolchain_dir.clone().join("include"))
-    //           .arg("-I")
-    //           .arg(toolchain_dir.clone().join("mips64-libdragon-elf").join("include"));
+        .arg(n64_inst_path.clone().join("mips64-elf").join("include"));
 
-    eprintln!("compile: {compile_fns:?}");
-    if compile_fns.execute_check_exit_status_code(0).is_err() {
+    eprintln!("compile: {:?}", compile_fns);
+    if compile_fns.output().is_err() {
         eprintln!("Could not compile static_fns.c");
         exit(1);
     }
 
     // Add the static_fns.o object to an archive
-    let mut add_archive = Command::new(
-        toolchain_dir
-            .clone()
-            .join("bin")
-            .join("mips64-libdragon-elf-ar"),
-    );
+    let mut add_archive = Command::new(n64_inst_path.clone().join("bin").join("mips64-elf-ar"));
     add_archive
         .arg("-crus")
         .arg(
-            toolchain_dir
+            n64_inst_path
                 .clone()
-                .join("mips64-libdragon-elf")
+                .join("mips64-elf")
                 .join("lib")
                 .join("libextern.a"),
         )
         .arg(static_fns_obj_path);
-    if add_archive.execute_check_exit_status_code(0).is_err() {
+    if add_archive.output().is_err() {
         eprintln!("Could not add static_fns.o to libdragon.a");
         exit(1);
     }
 
-    // And link to the archive
-    println!("cargo:rustc-link-lib=static=extern");
-
-    // set vars for parent crates
-    println!("cargo:n64_inst={}", toolchain_dir.display());
-    println!(
-        "cargo:n64_includedir={}/mips64-libdragon-elf/inlude",
-        toolchain_dir.display()
-    );
-    println!(
-        "cargo:n64_libdir={}/mips64-libdragon-elf/lib",
-        toolchain_dir.display()
-    );
-    println!("cargo:linker_script={}/n64.ld", libdragon_dir.display());
-    println!("cargo:rsp_linker_script={}/rsp.ld", libdragon_dir.display());
-    println!(
-        "cargo:toolchain_bin={}/bin/mips64-libdragon-elf-",
-        toolchain_dir.display()
-    );
-    println!("cargo:n64_tooldir={}/bin", toolchain_dir.display());
-    println!(
-        "cargo:header={}/mips64-libdragon-elf/lib/header",
-        toolchain_dir.display()
-    );
-
     Ok(())
 }
+
+// https://github.com/sarchar/libdragon-rs/blob/main/libdragon-sys/build.rs
